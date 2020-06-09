@@ -1,7 +1,7 @@
 {
-  "app_id": 9000,
-  "title": "My Awesome E-Com Plus App",
-  "slug": "my-awesome-ecom-plus-app",
+  "app_id": 120079,
+  "title": "Mercado Livre",
+  "slug": "mercado-livre",
   "type": "external",
   "state": "active",
   "authentication": true,
@@ -26,6 +26,6 @@
     "products/price": [],
     "products/variations/price": []
   },
-  "auth_callback_uri": "https://us-central1-ecom-app-boilerplate.cloudfunctions.net/app/ecom/auth-callback",
+  "auth_callback_uri": "https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/ecom/auth-callback",
   "version": "1.0.0"
 }
