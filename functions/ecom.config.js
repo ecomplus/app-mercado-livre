@@ -6,7 +6,7 @@
  */
 
 const app = {
-  app_id: 9000,
+  app_id: 120079,
   title: 'My Awesome E-Com Plus App',
   slug: 'my-awesome-app',
   type: 'external',
