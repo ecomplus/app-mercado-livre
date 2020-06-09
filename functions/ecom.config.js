@@ -7,8 +7,8 @@
 
 const app = {
   app_id: 120079,
-  title: 'My Awesome E-Com Plus App',
-  slug: 'my-awesome-app',
+  title: 'Mercado Livre',
+  slug: 'mercado-livre',
   type: 'external',
   state: 'active',
   authentication: true,

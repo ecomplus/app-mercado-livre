@@ -1,8 +1,8 @@
 {
-  "name": "@ecomplus/application-starter",
+  "name": "@ecomplus/app-mercado-livre",
   "private": true,
   "version": "1.0.0-starter.13",
-  "description": "Boilerplate for E-Com Plus apps with Firebase Cloud Functions",
+  "description": "E-Com Plus app to integrate ML marketplace",
   "main": "functions/index.js",
   "scripts": {
     "serve": "echo 'Firebase runs with legacy Node.js 8; Use `npm run deploy` instead.'",
