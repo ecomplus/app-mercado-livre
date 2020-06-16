@@ -54,9 +54,9 @@ const app = {
       'POST'           // Create procedures to receive webhooks
     ],
     products: [
-      // 'GET',           // Read products with public and private fields
-      // 'POST',          // Create products
-      // 'PATCH',         // Edit products
+      'GET',           // Read products with public and private fields
+      'POST',          // Create products
+      'PATCH',         // Edit products
       // 'PUT',           // Overwrite products
       // 'DELETE',        // Delete products
     ],
