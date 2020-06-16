@@ -13,7 +13,11 @@
     "procedures": [
       "POST"
     ],
-    "products": [],
+    "products": [
+      "GET",
+      "POST",
+      "PATCH"
+    ],
     "brands": [],
     "categories": [],
     "customers": [],
