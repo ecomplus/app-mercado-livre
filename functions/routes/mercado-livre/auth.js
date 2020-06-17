@@ -11,6 +11,6 @@ exports.get = ({ appSdk }, req, res) => {
   })
   const url = `https://api.mercadolibre.com/oauth/token?${params}`
   axios.post(url)
-    .then(res => res.json(res))
+    .then(data => res.json(data))
     .catch(error => res.send(error))
 }
