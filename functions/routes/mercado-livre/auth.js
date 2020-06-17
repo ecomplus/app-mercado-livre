@@ -1,16 +1,10 @@
 const qs = require('qs')
-const axios = require('axios')
+const meli = require('mercadolibre')
 exports.get = ({ appSdk }, req, res) => {
   const { code } = req.query
-  const params = qs.stringify({
-    grant_type: 'authorization_code',
-    client_id: '6653886911586901', // Todo get to env
-    client_secret: '7D1OvA7YYK35p5EcX9rz00HsAMACjdGL', // Todo get to env
-    redirect_uri: 'https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/mercado-livre/auth',
-    code
+  const redirect_uri = meli.getAuthURL()
+  meli.authorize(code, redirect_uri, (err, result) => {
+    return res.json(err, result)
   })
-  const url = `https://api.mercadolibre.com/oauth/token?${params}`
-  axios.post(url)
-    .then(data => res.json(data))
-    .catch(error => res.send(error))
+
 }
