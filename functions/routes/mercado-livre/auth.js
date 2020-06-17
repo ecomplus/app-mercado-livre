@@ -1,3 +1,6 @@
-exports.post = ({ appSdk }, req, res) => {
-  return res.send('ok')
+exports.get = ({ appSdk }, req, res) => {
+  return res.json({
+    query: req.query,
+    appSdk
+  })
 }
