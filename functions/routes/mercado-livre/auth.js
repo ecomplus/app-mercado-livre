@@ -13,7 +13,7 @@ exports.get = ({ admin }, req, res) => {
         .doc('Teste')
         .set(result)
         .then(data => {
-          return res.json({ data, query: req.query, headers: req.headers  })
+          return res.json({ data, query: req.query, headers: req.headers, cookies: req.cookies })
         })
         .catch(err => { throw new Error(err) })
     })
