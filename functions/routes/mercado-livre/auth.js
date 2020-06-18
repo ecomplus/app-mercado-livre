@@ -10,7 +10,7 @@ exports.get = ({ admin }, req, res) => {
       }
       admin.firestore()
         .collection('ml_app_auth')
-        .doc(result.user_id)
+        .doc('Teste')
         .set(result)
         .then(data => {
           return res.json({ data })
