@@ -1,4 +1,4 @@
-exports.get = (req, res) => {
+exports.get = ({ appSdk }, req, res) => {
   try {
     res.set('x-store-id', 'x1054')
     res.cookie('storeId', 's1054')
