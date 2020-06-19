@@ -13,6 +13,7 @@ admin.initializeApp()
 // web server with Express
 const express = require('express')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 const server = express()
 const router = express.Router()
 const routes = './routes'
@@ -26,6 +27,7 @@ const { ecomServerIps, setup } = require('@ecomplus/application-sdk')
 
 server.use(bodyParser.urlencoded({ extended: false }))
 server.use(bodyParser.json())
+server.use(cookieParser())
 
 server.use((req, res, next) => {
   if (req.url.startsWith('/ecom/')) {
