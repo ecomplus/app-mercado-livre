@@ -8,9 +8,11 @@ exports.get = ({ admin }, req, res) => {
       if (err) {
         throw new Error(err)
       }
+      const { sotre_id } = req.cookies
+
       admin.firestore()
         .collection('ml_app_auth')
-        .doc('Teste')
+        .doc(`${sotre_id}`)
         .set(result)
         .then(data => {
           return res.json({ data, query: req.query, headers: req.headers, cookies: req.cookies })
