@@ -8,6 +8,7 @@ exports.post = ({ admin }, req, res) => {
       .then(auths => {
         auths.forEach(auth => {
           console.log('=====auth', auth.data())
+          const redirectUri = 'https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/mercado-livre/auth'
           const { access_token, refresh_token } = auth.data()
           const meliObject = new meli.Meli(
             '6653886911586901',
@@ -15,9 +16,11 @@ exports.post = ({ admin }, req, res) => {
             access_token,
             refresh_token
           )
-          console.log('==== access and refresh===', access_token, refresh_token)
-          meliObject.refreshAccessToken((error, result) => {
-            console.log('=====results', result, error)
+          meliObject.authorize(refresh_token, redirectUri, (error, result) => {
+            console.log('=====authorize', result, error)
+            meliObject.refreshAccessToken((err, res) => {
+              console.log('=====refreshAccessToken', res, err)
+            })
           })
         })
         return res.json('ok')
