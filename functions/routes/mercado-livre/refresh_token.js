@@ -2,7 +2,6 @@ const meli = require('mercadolibre')
 
 exports.post = ({ admin }, req, res) => {
   try {
-    const results = []
     admin.firestore()
       .collection('ml_app_auth')
       .get()
@@ -16,10 +15,10 @@ exports.post = ({ admin }, req, res) => {
             refresh_token
           )
           meliObject.refreshAccessToken((error, result) => {
-            results.push({result, error})
+            console.log('=====results', result, error)
           })
         })
-        return res.json(results)
+        return res.json('ok')
       })
       .catch(err => res.status(500).send(err))
   } catch (error) {
