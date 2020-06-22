@@ -14,6 +14,7 @@ exports.post = ({ admin }, req, res) => {
             access_token,
             refresh_token
           )
+          console.log('==== access and refresh===', access_token, refresh_token)
           meliObject.refreshAccessToken((error, result) => {
             console.log('=====results', result, error)
           })
