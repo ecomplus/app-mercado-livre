@@ -7,6 +7,7 @@ exports.post = ({ admin }, req, res) => {
       .get()
       .then(auths => {
         auths.forEach(auth => {
+          console.log('=====auth', auth)
           const { access_token, refresh_token } = auth
           const meliObject = new meli.Meli(
             '6653886911586901',
