@@ -22,7 +22,6 @@ exports.post = ({ admin }, req, res) => {
         return res.json(results)
       })
       .catch(err => res.status(500).send(err))
-    return res.send('ok')
   } catch (error) {
     return res.status(500).send(error)
   }
