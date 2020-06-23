@@ -32,7 +32,7 @@ exports.post = ({ admin }, req, res) => {
               updated_at: new Date(),
               created_at
             }
-            promises.push(this.updateToken(auth.id, authData))
+            promises.push(updateToken(auth.id, authData))
           })
         })
         Promise.all(promises)
