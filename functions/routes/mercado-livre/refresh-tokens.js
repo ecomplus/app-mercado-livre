@@ -48,7 +48,6 @@ exports.post = ({ admin }, req, res) => {
           console.log('[ALL REFRESH TOKENS UPDATED]', res)
           return res.send('[ALL REFRESH TOKENS UPDATED]')
         })
-        return res.send('ok')
       })
       .catch(err => { throw err })
   } catch (error) {
