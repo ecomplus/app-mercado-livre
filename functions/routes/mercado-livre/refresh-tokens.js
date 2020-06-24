@@ -45,11 +45,11 @@ exports.post = ({ admin }, req, res) => {
         })
         Promise.all(promises).then((res) => {
           console.log('[ALL REFRESH TOKENS UPDATED]', res)
-          return res.send('ALL REFRESH TOKENS UPDATED')
+          return res.send('[ALL REFRESH TOKENS UPDATED]')
         })
         return res.send('ok')
       })
-      .catch(err => res.status(500).send(err))
+      .catch(err => { throw err })
   } catch (error) {
     return res.status(500).send(error)
   }
