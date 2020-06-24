@@ -1,4 +1,5 @@
 const meli = require('mercadolibre')
+const { ml } = require('firebase-tools').config()
 
 const updateToken = (storeId, auth) => {
   console.log('[updateToken]', storeId, auth)
@@ -19,8 +20,8 @@ exports.post = ({ admin }, req, res) => {
         auths.forEach(auth => {
           const { access_token, refresh_token, created_at } = auth.data()
           const meliObject = new meli.Meli(
-            '6653886911586901',
-            '7D1OvA7YYK35p5EcX9rz00HsAMACjdGL',
+            ml.client_id,
+            ml.secret_key,
             access_token,
             refresh_token
           )
