@@ -43,6 +43,7 @@ exports.post = ({ admin }, req, res) => {
         auths.forEach(auth => {
           promises.push(refreshToken(auth.data()))
         })
+        console.log(promises)
         Promise.all(promises).then((res) => {
           console.log('[ALL REFRESH TOKENS UPDATED]', res)
           return res.send('[ALL REFRESH TOKENS UPDATED]')
