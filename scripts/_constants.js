@@ -16,3 +16,5 @@ if (!project) {
 exports.project = project
 
 exports.baseUri = SERVER_BASE_URI || `https://us-central1-${project}.cloudfunctions.net/app/`
+
+exports.mlRedirecUri = 'https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/mercado-livre/auth'

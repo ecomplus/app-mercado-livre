@@ -5,7 +5,7 @@ exports.get = ({ admin }, req, res) => {
   try {
     const { code } = req.query
     const meliObject = new meli.Meli(ml.client_id, ml.secret_key)
-    const redirectUri = 'https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/mercado-livre/auth'
+    const redirectUri = ml.redirect_uri
     meliObject.authorize(code, redirectUri, (err, result) => {
       if (err) {
         throw new Error(err)

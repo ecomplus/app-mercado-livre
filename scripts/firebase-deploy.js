@@ -11,7 +11,7 @@ const {
 require('./scripts-minification')
 
 const { name, version } = require('../package.json')
-const { project, baseUri } = require('./_constants')
+const { project, baseUri, mlRedirecUri } = require('./_constants')
 const client = require('firebase-tools')
 
 const config = [
@@ -19,7 +19,8 @@ const config = [
   `pkg.name=${name}`,
   `server.operator_token=${SERVER_OPERATOR_TOKEN}`,
   `ml.client_id=${ML_CLIENT_ID}`,
-  `ml.secret_key=${ML_SECRET_KEY}`
+  `ml.secret_key=${ML_SECRET_KEY}`,
+  `ml.redirect_uri=${mlRedirecUri}`
 ]
 
 if (SERVER_BASE_URI) {
