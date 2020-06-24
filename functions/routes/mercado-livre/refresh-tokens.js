@@ -1,5 +1,5 @@
 const meli = require('mercadolibre')
-const { ml } = require('firebase-tools').config()
+const { ml } = require('firebase-functions').config()
 
 const updateToken = (storeId, auth) => {
   console.log('[updateToken]', storeId, auth)
