@@ -1,6 +1,7 @@
 const meli = require('mercadolibre')
 
 const updateToken = (storeId, auth) => {
+  console.log('[updateToken]', storeId, auth)
   return admin.firestore()
   .collection('ml_app_auth')
   .doc(`${storeId}`)

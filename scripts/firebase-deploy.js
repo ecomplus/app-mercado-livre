@@ -3,7 +3,9 @@ require('dotenv').config()
 const {
   FIREBASE_TOKEN,
   SERVER_OPERATOR_TOKEN,
-  SERVER_BASE_URI
+  SERVER_BASE_URI,
+  ML_CLIENT_ID,
+  ML_SECRET_KEY
 } = process.env
 
 require('./scripts-minification')
@@ -15,8 +17,11 @@ const client = require('firebase-tools')
 const config = [
   `pkg.version=${version}`,
   `pkg.name=${name}`,
-  `server.operator_token=${SERVER_OPERATOR_TOKEN}`
+  `server.operator_token=${SERVER_OPERATOR_TOKEN}`,
+  `ml.client_id=${ML_CLIENT_ID}`,
+  `ml.secret_key=${ML_SECRET_KEY}`
 ]
+
 if (SERVER_BASE_URI) {
   config.push(`server.base_uri=${SERVER_BASE_URI}`)
 }
