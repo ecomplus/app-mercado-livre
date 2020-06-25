@@ -1,0 +1,24 @@
+name: Call ML refresh tokens
+
+on:
+  schedule:
+    - cron: '30 1,7,13,19 * * *'
+  push:
+    branches:
+      - master
+    paths:
+      - 'assets/ml-refresh-tokens'
+jobs:
+  call-ml-refresh-tokens:
+    name: 'Fetch ml refrash tokens on cloud function'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run cURL POST
+        env:
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          SERVER_OPERATOR_TOKEN: ${{ secrets.SERVER_OPERATOR_TOKEN }}
+        run: |
+          curl --silent --show-error --fail \
+            -H "X-Operator-Token: $SERVER_OPERATOR_TOKEN" \
+            -X POST https://us-central1-$FIREBASE_PROJECT_ID.cloudfunctions.net/app/mercado-livre/refresh-tokens
