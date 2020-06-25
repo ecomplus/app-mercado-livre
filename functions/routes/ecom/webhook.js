@@ -31,7 +31,7 @@ exports.post = ({ appSdk }, req, res) => {
       }
 
       /* DO YOUR CUSTOM STUFF HERE */
-
+      console.log('[APP DATA]',appData, storeId, trigger)
       // all done
       res.send(ECHO_SUCCESS)
     })
