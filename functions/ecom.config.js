@@ -147,6 +147,7 @@ const procedures = []
 
 /**
  * Uncomment and edit code above to configure `triggers` and receive respective `webhooks`:
+*/
 
 const { baseUri } = require('./__env')
 
@@ -155,20 +156,20 @@ procedures.push({
 
   triggers: [
     // Receive notifications when new order is created:
-    {
-      resource: 'orders',
-      action: 'create',
-    },
+    // {
+    //   resource: 'orders',
+    //   action: 'create',
+    // },
 
     // Receive notifications when order financial/fulfillment status changes:
-    {
-      resource: 'orders',
-      field: 'financial_status',
-    },
-    {
-      resource: 'orders',
-      field: 'fulfillment_status',
-    },
+    // {
+    //   resource: 'orders',
+    //   field: 'financial_status',
+    // },
+    // {
+    //   resource: 'orders',
+    //   field: 'fulfillment_status',
+    // },
 
     // Receive notifications when products/variations stock quantity changes:
     {
@@ -182,16 +183,16 @@ procedures.push({
     },
 
     // Receive notifications when cart is edited:
-    {
-      resource: 'carts',
-      action: 'change',
-    },
+    // {
+    //   resource: 'carts',
+    //   action: 'change',
+    // },
 
     // Receive notifications when customer is deleted:
-    {
-      resource: 'customers',
-      action: 'delete',
-    },
+    // {
+    //   resource: 'customers',
+    //   action: 'delete',
+    // },
 
     // Feel free to create custom combinations with any Store API resource, subresource, action and field.
   ],
@@ -208,6 +209,7 @@ procedures.push({
   ]
 })
 
+/*
  * You may also edit `routes/ecom/webhook.js` to treat notifications properly.
  */
 
