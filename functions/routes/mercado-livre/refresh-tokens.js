@@ -13,7 +13,7 @@ const refreshToken = (admin, storeId, data) => {
       )
       meliObject.refreshAccessToken((err, res) => {
         if (err) {
-          console.error('[ERROR TO REFRESH TOKEN]', err)
+          console.error('[ML - ERROR TO REFRESH TOKEN]', err)
           throw err
         }
         const authData = {
@@ -44,7 +44,7 @@ exports.post = ({ admin }, req, res) => {
           promises.push(refreshToken(admin, auth.id, auth.data()))
         })
         Promise.all(promises).then(() => {
-          console.log('[ALL REFRESH TOKENS UPDATED]')
+          console.log('[ML - ALL REFRESH TOKENS UPDATED]')
           return res.send('ok')
         })
       })
