@@ -25,7 +25,6 @@ const refreshToken = (admin, storeId, data) => {
           .collection('ml_app_auth')
           .doc(`${storeId}`)
           .set(authData)
-        console.log('[NEW AUTH]', doc)
         return resolve(doc)
       })
     } catch (error) {
@@ -44,7 +43,6 @@ exports.post = ({ admin }, req, res) => {
         auths.forEach(auth => {
           promises.push(refreshToken(admin, auth.id, auth.data()))
         })
-        console.log(promises)
         Promise.all(promises).then(() => {
           console.log('[ALL REFRESH TOKENS UPDATED]')
           return res.send('ok')
