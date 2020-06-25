@@ -45,9 +45,9 @@ exports.post = ({ admin }, req, res) => {
           promises.push(refreshToken(admin, auth.id, auth.data()))
         })
         console.log(promises)
-        Promise.all(promises).then((res) => {
-          console.log('[ALL REFRESH TOKENS UPDATED]', res)
-          return res.send('[ALL REFRESH TOKENS UPDATED]')
+        Promise.all(promises).then(() => {
+          console.log('[ALL REFRESH TOKENS UPDATED]')
+          return res.send('ok')
         })
       })
       .catch(err => { throw err })
