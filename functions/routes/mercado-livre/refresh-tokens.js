@@ -1,7 +1,7 @@
 const meli = require('mercadolibre')
 const { ml } = require('firebase-functions').config()
 
-const refreshToken = ({ access_token, refresh_token, created_at }) => {
+const refreshToken = (admin, { access_token, refresh_token, created_at }) => {
   return new Promise((resolve, reject) => {
     try {
       const meliObject = new meli.Meli(
@@ -41,7 +41,7 @@ exports.post = ({ admin }, req, res) => {
       .get()
       .then(auths => {
         auths.forEach(auth => {
-          promises.push(refreshToken(auth.data()))
+          promises.push(refreshToken(admin, auth.data()))
         })
         console.log(promises)
         Promise.all(promises).then((res) => {
