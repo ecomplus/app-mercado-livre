@@ -35,8 +35,10 @@ exports.post = ({ appSdk }, req, res) => {
       /* DO YOUR CUSTOM STUFF HERE */
       if (trigger.resource === 'products') {
         const mlProduct = new MlProduct(trigger)
+        mlProduct.save()
+          .then(result => res.send(result))
+          .catch(err => res.status(500).send(err))
       }
-      console.log('[APP DATA]',appData, storeId, trigger)
       // all done
       return res.send(ECHO_SUCCESS)
     })

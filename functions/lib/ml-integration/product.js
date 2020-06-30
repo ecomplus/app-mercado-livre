@@ -67,7 +67,15 @@ class MLProduct {
   }
 
   save() {
-    console.log('[ML-INTEGRATION:SALVE PRODUCT]', this)
+    return new Promise((resolve, reject) => {
+      try {
+        console.log('[ML-INTEGRATION:SALVE PRODUCT]', this)
+        resolve(true)
+      } catch (error) {
+        console.error('[ML-INTEGRATION:SALVE PRODUCT]', error)
+        reject(error)
+      }
+    })
   }
 
 }
