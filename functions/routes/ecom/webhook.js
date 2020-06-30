@@ -1,5 +1,7 @@
 // read configured E-Com Plus app data
 const getAppData = require('./../../lib/store-api/get-app-data')
+const MlProduct = require('../../lib/ml-integration/product')
+
 
 const SKIP_TRIGGER_NAME = 'SkipTrigger'
 const ECHO_SUCCESS = 'SUCCESS'
@@ -31,9 +33,12 @@ exports.post = ({ appSdk }, req, res) => {
       }
 
       /* DO YOUR CUSTOM STUFF HERE */
+      if (trigger.resource === 'products') {
+        const mlProduct = new MlProduct(trigger)
+      }
       console.log('[APP DATA]',appData, storeId, trigger)
       // all done
-      res.send(ECHO_SUCCESS)
+      return res.send(ECHO_SUCCESS)
     })
 
     .catch(err => {
