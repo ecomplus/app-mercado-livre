@@ -36,8 +36,8 @@ exports.post = ({ appSdk }, req, res) => {
       if (trigger.resource === 'products') {
         const mlProduct = new MlProduct(trigger)
         mlProduct.save()
-          .then(result => res.send(result))
-          .catch(err => res.status(500).send(err))
+          .then()
+          .catch(err => { throw err })
       }
       // all done
       return res.send(ECHO_SUCCESS)
