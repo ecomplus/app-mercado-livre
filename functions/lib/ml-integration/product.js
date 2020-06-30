@@ -69,7 +69,35 @@ class MLProduct {
   save() {
     return new Promise((resolve, reject) => {
       try {
-        console.log('[ML-INTEGRATION:SALVE PRODUCT]', this)
+        const {
+          title,
+          price,
+          category_id,
+          available_quantity,
+          buying_mode,
+          condition,
+          listing_type_id,
+          description,
+          video,
+          sale_terms,
+          picutres,
+          atrributes
+        } = this
+        const mlPayload = {
+          title,
+          price,
+          category_id,
+          available_quantity,
+          buying_mode,
+          condition,
+          listing_type_id,
+          description,
+          video,
+          sale_terms,
+          picutres,
+          atrributes
+        }
+        console.log('[ML-INTEGRATION:SALVE PRODUCT]', mlPayload)
         resolve(true)
       } catch (error) {
         console.error('[ML-INTEGRATION:SALVE PRODUCT]', error)
