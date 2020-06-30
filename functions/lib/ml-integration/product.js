@@ -49,7 +49,7 @@ class MLProduct {
   }
 
   get pictures() {
-    return this.ecomProduct.picutres
+    return this.ecomProduct.pictures
   }
 
   get atrributes() {
