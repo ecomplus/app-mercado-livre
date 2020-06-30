@@ -34,7 +34,7 @@ exports.post = ({ appSdk }, req, res) => {
 
       /* DO YOUR CUSTOM STUFF HERE */
       if (trigger.resource === 'products') {
-        const mlProduct = new MlProduct(trigger)
+        const mlProduct = new MlProduct(trigger.body)
         mlProduct.save()
           .then()
           .catch(err => { throw err })
