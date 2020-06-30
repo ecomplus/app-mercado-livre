@@ -48,7 +48,7 @@ class MLProduct {
     return []
   }
 
-  get picutres() {
+  get pictures() {
     return this.ecomProduct.picutres
   }
 
@@ -80,7 +80,7 @@ class MLProduct {
           description,
           video,
           sale_terms,
-          picutres,
+          pictures,
           atrributes
         } = this
         const mlPayload = {
@@ -94,7 +94,7 @@ class MLProduct {
           description,
           video,
           sale_terms,
-          picutres,
+          pictures,
           atrributes
         }
         console.log('[ML-INTEGRATION:SALVE PRODUCT]', mlPayload)
