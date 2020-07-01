@@ -8,7 +8,7 @@ const ECHO_SUCCESS = 'SUCCESS'
 const ECHO_SKIP = 'SKIP'
 const ECHO_API_ERROR = 'STORE_API_ERR'
 
-exports.post = ({ appSdk }, req, res) => {
+exports.post = ({ admin, appSdk }, req, res) => {
   // receiving notification from Store API
   const { storeId } = req
 
@@ -34,10 +34,8 @@ exports.post = ({ appSdk }, req, res) => {
 
       /* DO YOUR CUSTOM STUFF HERE */
       if (trigger.resource === 'products') {
-        const mlProduct = new MlProduct(trigger.body)
+        const mlProduct = new MlProduct(admin, sotoreId, trigger.body)
         mlProduct.save()
-          .then()
-          .catch(err => { throw err })
       }
       // all done
       return res.send(ECHO_SUCCESS)

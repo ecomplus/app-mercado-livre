@@ -1,5 +1,8 @@
+const getMeliInstance = require('./get-meli-instance')
+
 class MLProduct {
-  constructor(ecomProduct) {
+  constructor(admin, storeId, ecomProduct) {
+    this.storeId = storeId
     this.ecomProduct = ecomProduct
   }
 
@@ -97,8 +100,14 @@ class MLProduct {
           pictures,
           atrributes
         }
+
         console.log('[ML-INTEGRATION:SALVE PRODUCT]', mlPayload)
-        resolve(true)
+        getMeliInstance().then(instance => {
+          return instance.post('/items', mlPayload, (err, res) => {
+            console.log('[ML - MELI SAVE]', err, res)
+            return resolve(true)
+          })
+        }).catch((err) => { throw err })
       } catch (error) {
         console.error('[ML-INTEGRATION:SALVE PRODUCT]', error)
         reject(error)
