@@ -35,7 +35,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
       /* DO YOUR CUSTOM STUFF HERE */
       if (trigger.resource === 'products') {
         try {
-          const mlProduct = new MlProduct(admin, sotoreId, trigger.body)
+          const mlProduct = new MlProduct(admin, storeId, trigger.body)
           mlProduct.save()
           .then(mlResult => console.log('[ML RESULT]', mlResult))
           .catch(err => console.log('[ML ERROR]', err))
