@@ -37,7 +37,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
         const mlProduct = new MlProduct(admin, sotoreId, trigger.body)
         mlProduct.save()
         .then(mlResult => console.log('[ML RESULT]', mlResult))
-        .catch(e => console.log('[ML ERROR]', err))
+        .catch(err => console.log('[ML ERROR]', err))
       }
       // all done
       return res.send(ECHO_SUCCESS)
