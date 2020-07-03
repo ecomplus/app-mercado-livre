@@ -11,7 +11,7 @@ module.exports = (admin, storeID) => {
       .then(snapshot => {
         const { access_token } = snapshot.data()
         console.log('[access_token]', access_token)
-        const meliObj = new meli.meli(
+        const meliObj = new meli.Meli(
           client_id,
           secret_key,
           access_token
