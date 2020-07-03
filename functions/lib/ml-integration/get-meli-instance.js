@@ -6,7 +6,7 @@ module.exports = (admin, storeID) => {
     const { client_id, secret_key } = ml
     admin.firestore()
       .collection('ml_app_auth')
-      .doc(storeID)
+      .doc(`${storeID}`)
       .get()
       .then(snapshot => {
         const { access_token } = snapshot.data()
