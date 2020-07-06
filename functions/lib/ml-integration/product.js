@@ -93,7 +93,7 @@ class MLProduct {
           // video: this.video,
           sale_terms: this.sale_terms,
           pictures: this.pictures,
-          atrributes: this.atrributes,
+          // atrributes: this.atrributes,
           currency_id: this.currency_id
         }
 
