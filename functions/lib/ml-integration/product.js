@@ -39,7 +39,7 @@ class MLProduct {
   }
 
   get description() {
-    return { plain_text: this.ecomProduct.body_html }
+    return { plain_text: 'teste' }
   }
 
   get video() {
