@@ -53,7 +53,11 @@ class MLProduct {
   }
 
   get pictures() {
-    return this.ecomProduct.pictures
+    const { pictures } = this.ecomProduct
+    if (pictures && pictures.length > 0) {
+      return pictures.map(({ url }) => ({ source: url }))
+    }
+    return []
   }
 
   get atrributes() {
