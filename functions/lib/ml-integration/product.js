@@ -44,7 +44,7 @@ class MLProduct {
 
   get video() {
     // Todo: check if exists video in ecom product
-    return ''
+    return []
   }
 
   get sale_terms() {
