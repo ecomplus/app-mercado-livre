@@ -98,7 +98,7 @@ class MLProduct {
         }
 
         console.log('[ML-INTEGRATION:SALVE PRODUCT  ]', mlPayload, this.ecomProduct, this.storeId)
-        // return resolve(mlPayload)
+        return resolve(mlPayload)
         // getMeliInstance(this.admin, this.storeId).then(instance => {
         //   return instance.post('/items', mlPayload, (err, res) => {
         //     console.log('[ML - MELI SAVE]', err, res)
