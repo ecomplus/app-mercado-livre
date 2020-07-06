@@ -90,7 +90,7 @@ class MLProduct {
           condition: this.condition,
           listing_type_id: this.listing_type_id,
           description: this.description,
-          video: this.video,
+          // video: this.video,
           sale_terms: this.sale_terms,
           pictures: this.pictures,
           atrributes: this.atrributes,
