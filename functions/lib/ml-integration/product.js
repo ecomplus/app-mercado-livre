@@ -17,7 +17,7 @@ class MLProduct {
 
   get category_id() {
     // Todo: check how to parser
-    return ''
+    return 'MLB272126'
   }
 
   get available_quantity() {
