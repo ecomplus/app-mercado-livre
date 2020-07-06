@@ -74,36 +74,27 @@ class MLProduct {
     ]
   }
 
+  get currency_id() {
+    return "BRL"
+  }
+
   save() {
     return new Promise((resolve, reject) => {
       try {
-        const {
-          title,
-          price,
-          category_id,
-          available_quantity,
-          buying_mode,
-          condition,
-          listing_type_id,
-          description,
-          video,
-          sale_terms,
-          pictures,
-          atrributes
-        } = this
         const mlPayload = {
-          title,
-          price,
-          category_id,
-          available_quantity,
-          buying_mode,
-          condition,
-          listing_type_id,
-          description,
-          video,
-          sale_terms,
-          pictures,
-          atrributes
+          title: this.title,
+          price: this.price,
+          category_id: this.category_id,
+          available_quantity: this.available_quantity,
+          buying_mode: this.buying_mode,
+          condition: this.condition,
+          listing_type_id: this.listing_type_id,
+          description: this.description,
+          video: this.video,
+          sale_terms: this.sale_terms,
+          pictures: this.pictures,
+          atrributes: this.atrributes,
+          currency_id: this.currency_id
         }
 
         console.log('[ML-INTEGRATION:SALVE PRODUCT  ]', mlPayload, this.ecomProduct, this.storeId)
