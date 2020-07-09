@@ -34,6 +34,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
 
       /* DO YOUR CUSTOM STUFF HERE */
       if (trigger.resource === 'products') {
+        console.log('[trigger]', trigger)
         try {
           const mlProduct = new MlProduct(admin, storeId, trigger.body)
           mlProduct.save()
