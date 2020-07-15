@@ -8,11 +8,31 @@ class MLProduct {
   }
 
   get title() {
+    // Todo: check max_title_length by category
     return this.ecomProduct.name
   }
 
-  get price() {
-    return this.ecomProduct.price
+  get description() {
+    return { plain_text: this.ecomProduct.body_html }
+  }
+
+  get condition() {
+    return this.ecomProduct.condition
+  }
+
+  get available_quantity() {
+    return this.ecomProduct.quantity
+  }
+
+  get pictures() {
+    const { pictures } = this.ecomProduct
+    if (pictures && pictures.length > 0) {
+      const mlPictures = pictures.map(({ small }) => ({ source: small.url }))
+      mlPictures.concat(pictures.map(({ normal }) => ({ source: normal.url })))
+      mlPictures.concat(pictures.map(({ big }) => ({ source: big.url })))
+      return mlPictures
+    }
+    return []
   }
 
   get category_id() {
@@ -20,26 +40,26 @@ class MLProduct {
     return 'MLB272126'
   }
 
-  get available_quantity() {
-    return this.ecomProduct.quantity
-  }
-
   get buying_mode() {
-    // Todo: check how to work
     return 'buy_it_now'
   }
 
-  get condition() {
-    return this.ecomProduct.condition
+  get price() {
+    return this.ecomProduct.price
+  }
+
+  get currency_id() {
+    return "BRL"
+  }
+
+  get payment_methods() {
+    // Todo: checkar how to works
+    return []
   }
 
   get listing_type_id() {
     // Todo: checko how to work
     return 'gold_special'
-  }
-
-  get description() {
-    return { plain_text: 'teste' }
   }
 
   get video() {
@@ -49,14 +69,6 @@ class MLProduct {
 
   get sale_terms() {
     // Todo: check how to work
-    return []
-  }
-
-  get pictures() {
-    const { pictures } = this.ecomProduct
-    if (pictures && pictures.length > 0) {
-      return pictures.map(({ big }) => ({ source: big.url }))
-    }
     return []
   }
 
@@ -72,10 +84,6 @@ class MLProduct {
         value: '7898095297749'
       }
     ]
-  }
-
-  get currency_id() {
-    return "BRL"
   }
 
   save() {
@@ -98,13 +106,13 @@ class MLProduct {
         }
 
         console.log('[ML-INTEGRATION:SALVE PRODUCT  ]', mlPayload, this.ecomProduct, this.storeId)
-        return resolve(mlPayload)
-        // getMeliInstance(this.admin, this.storeId).then(instance => {
-        //   return instance.post('/items', mlPayload, (err, res) => {
-        //     console.log('[ML - MELI SAVE]', err, res)
-        //     return resolve(true)
-        //   })
-        // }).catch((err) => { reject(err) })
+        // return resolve(mlPayload)
+        return getMeliInstance(this.admin, this.storeId).then(instance => {
+          return instance.post('/items', mlPayload, (err, res) => {
+            console.log('[ML - MELI SAVE]', err, res)
+            return resolve(true)
+          })
+        }).catch((err) => { reject(err) })
       } catch (error) {
         console.error('[ML-INTEGRATION:SALVE PRODUCT]', error)
         reject(error)
