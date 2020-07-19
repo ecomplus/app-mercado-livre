@@ -105,7 +105,7 @@ class MLProduct {
           currency_id: this.currency_id
         }
 
-        console.log('[ML-INTEGRATION:SALVE PRODUCT  ]', mlPayload, this.ecomProduct, this.storeId)
+        console.log('[ML-INTEGRATION:SALVE PRODUCT  ]', mlPayload, JSON.stringify(this.ecomProduct, null, 2), this.storeId)
         return resolve(mlPayload)
         // return getMeliInstance(this.admin, this.storeId).then(instance => {
         //   return instance.post('/items', mlPayload, (err, res) => {
