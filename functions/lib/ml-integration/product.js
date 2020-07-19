@@ -106,13 +106,13 @@ class MLProduct {
         }
 
         console.log('[ML-INTEGRATION:SALVE PRODUCT  ]', mlPayload, this.ecomProduct, this.storeId)
-        return resolve(mlPayload)
-        // return getMeliInstance(this.admin, this.storeId).then(instance => {
-        //   return instance.post('/items', mlPayload, (err, res) => {
-        //     console.log('[ML - MELI SAVE]', err, res)
-        //     return resolve(true)
-        //   })
-        // }).catch((err) => { reject(err) })
+        // return resolve(mlPayload)
+        return getMeliInstance(this.admin, this.storeId).then(instance => {
+          return instance.post('/items', mlPayload, (err, res) => {
+            console.log('[ML - MELI SAVE]', err, res)
+            return resolve(true)
+          })
+        }).catch((err) => { reject(err) })
       } catch (error) {
         console.error('[ML-INTEGRATION:SALVE PRODUCT]', error)
         reject(error)
