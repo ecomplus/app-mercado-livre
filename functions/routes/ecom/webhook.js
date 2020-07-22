@@ -1,7 +1,7 @@
 // read configured E-Com Plus app data
 const getAppData = require('./../../lib/store-api/get-app-data')
-const MlProduct = require('../../lib/ml-integration/product')
-
+const ProductDirector = require('../../lib/ml-integration/ProductDirector')
+const MlProductBuilder = require('../../lib/ml-integration/MlProductBuilder')
 
 const SKIP_TRIGGER_NAME = 'SkipTrigger'
 const ECHO_SUCCESS = 'SUCCESS'
@@ -34,15 +34,12 @@ exports.post = ({ admin, appSdk }, req, res) => {
 
       /* DO YOUR CUSTOM STUFF HERE */
       if (trigger.resource === 'products') {
-        console.log('[trigger]', trigger)
         try {
-          const mlProduct = new MlProduct(admin, storeId, trigger.body)
-          mlProduct.save()
-          .then(mlResult => console.log('[ML RESULT]', mlResult))
-          .catch(err => console.log('[ML ERROR]', err))
+          const productDirector = new ProductDirector(new MlProductBuilder(trigger.body))
+          productDirector.handlerProduct()
+          console.log('[ML-PRODUCT-BUILDER]', productDirector.getProduct())
         } catch (error) {
-          console.error('[ML ERROR ON SAVE PRODUCT]', error)
-          throw error
+          console.error('[ERROR-ML-PRODUCT-BUILDER]', error)
         }
       }
       // all done
