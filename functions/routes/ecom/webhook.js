@@ -36,7 +36,12 @@ exports.post = ({ admin, appSdk }, req, res) => {
       if (trigger.resource === 'products') {
         try {
           const resource = `products/${trigger.body._id}/metafields.json`
-          appSdk.apiRequest(storeId, resource, 'POST', { test: 'test metafields' })
+          appSdk
+            .apiRequest(storeId, resource, 'POST', { test: 'test metafields' })
+            .then(res => {
+              console.log('[apiRequest]', res)
+            })
+            .catch(err => '[apiRequest ERROR]', err)
           const productDirector = new ProductDirector(new MlProductBuilder(trigger.body))
           productDirector.handlerProduct()
           console.log('[ML-PRODUCT-BUILDER]', productDirector.getProduct())
