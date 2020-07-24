@@ -20,6 +20,10 @@ class ProductDirector {
   getProduct() {
     return this.productBuilder.getProduct();
   }
+
+  save(callback) {
+    return this.productBuilder.save(callback)
+  }
 }
 
 module.exports = ProductDirector
