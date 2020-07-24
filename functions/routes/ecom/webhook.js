@@ -59,7 +59,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
                       {
                         id: Date.now().toString(16),
                         namespace: 'ml_id',
-                        value: _id
+                        value: id
                       }
                     ]
                   })
