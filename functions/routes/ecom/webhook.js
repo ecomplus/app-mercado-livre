@@ -38,11 +38,12 @@ exports.post = ({ admin, appSdk }, req, res) => {
         try {
           getMlInstance(admin, storeId)
             .then(mlInstance => {
-              console.log('[WEBHOOK ML INSTANCE]', mlInstance)
-              const productDirector = new ProductDirector(new MlProductBuilder(mlInstance, rigger.body))
+              const productDirector = new ProductDirector(new MlProductBuilder(rigger.body, mlInstance))
+              console.log(productDirector)
               productDirector.handlerProduct()
               productDirector.save((err, res) => {
                 if (err) {
+                  console.log(err)
                   throw err
                 }
                 const { _id } = res

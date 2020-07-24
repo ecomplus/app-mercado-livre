@@ -1,9 +1,9 @@
 const ProductBuilder = require('./ProductBuilder')
 
 class MlProductBuilder extends ProductBuilder{
-  constructor(mlInstance, productSchema) {
-    this.mlInstance = mlInstance
+  constructor(productSchema, mlInstance) {
     super(productSchema)
+    this.mlInstance = mlInstance
   }
 
   buildTitle() {
