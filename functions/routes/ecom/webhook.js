@@ -65,7 +65,6 @@ exports.post = ({ admin, appSdk }, req, res) => {
                 }
                 console.log('[DATA]', data)
                 appSdk
-                  .apiRequest(storeId, resource, method, bodyUpdate)
                   .apiRequest(storeId, resource, 'PATCH', data)
                   .then(r => {
                     console.log('[apiRequest]', r)
