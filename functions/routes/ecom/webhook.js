@@ -4,6 +4,7 @@ const ProductDirector = require('../../lib/ml-integration/ProductDirector')
 const MlProductBuilder = require('../../lib/ml-integration/MlProductBuilder')
 const getMlInstance = require('../../lib/ml-integration/get-meli-instance')
 
+const { randomObjectId } = require('@ecomplus/utils')
 const SKIP_TRIGGER_NAME = 'SkipTrigger'
 const ECHO_SUCCESS = 'SUCCESS'
 const ECHO_SKIP = 'SKIP'
@@ -56,7 +57,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
                 const data = {
                   hidden_metafields: [
                     {
-                      _id: Date.now().toString(16),
+                      _id: randomObjectId(),
                       namespace: 'ml_id',
                       value: id
                     }
@@ -64,6 +65,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
                 }
                 console.log('[DATA]', data)
                 appSdk
+                  .apiRequest(storeId, resource, method, bodyUpdate)
                   .apiRequest(storeId, resource, 'PATCH', data)
                   .then(r => {
                     console.log('[apiRequest]', r)
