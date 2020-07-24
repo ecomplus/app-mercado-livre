@@ -57,7 +57,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
                   .apiRequest(storeId, resource, 'PATCH', {
                     hidden_metafields: [
                       {
-                        id: Date.now().toString(16),
+                        _id: Date.now().toString(16),
                         namespace: 'ml_id',
                         value: id
                       }
