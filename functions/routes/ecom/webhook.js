@@ -42,12 +42,14 @@ exports.post = ({ admin, appSdk }, req, res) => {
               const productDirector = new ProductDirector(new MlProductBuilder(trigger.body, mlInstance))
               console.log(productDirector)
               productDirector.handlerProduct()
-              productDirector.save((err, res) => {
+              productDirector.save((err, productResponse) => {
                 if (err) {
                   console.log(err)
                   throw err
                 }
-                const { _id } = res
+                const { _id } = productResponse
+                console.log('[trigger]', trigger.body)
+                console.log('[productResponse]', productResponse)
                 const resource = `products/${trigger.body._id}.json`
                 console.log('[resource]', resource)
                 console.log('[ML_ID]', _id)
