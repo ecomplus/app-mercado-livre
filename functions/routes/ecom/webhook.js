@@ -53,21 +53,26 @@ exports.post = ({ admin, appSdk }, req, res) => {
                 const resource = `products/${trigger.resource_id}.json`
                 console.log('[resource]', resource)
                 console.log('[ML_ID]', id)
+                const data = {
+                  hidden_metafields: [
+                    {
+                      _id: Date.now().toString(16),
+                      namespace: 'ml_id',
+                      value: id
+                    }
+                  ]
+                }
+                console.log('[DATA]', data)
                 appSdk
-                  .apiRequest(storeId, resource, 'PATCH', {
-                    hidden_metafields: [
-                      {
-                        _id: Date.now().toString(16),
-                        namespace: 'ml_id',
-                        value: id
-                      }
-                    ]
-                  })
+                  .apiRequest(storeId, resource, 'PATCH', data)
                   .then(r => {
                     console.log('[apiRequest]', r)
                     return res.send(ECHO_SUCCESS)
                   })
-                  .catch(err => { throw err })
+                  .catch(err => {
+                    err.name = SKIP_TRIGGER_NAME
+                    throw err
+                  })
               })
             }).catch((err => { throw err }))
         } catch (error) {
