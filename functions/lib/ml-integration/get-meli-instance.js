@@ -16,7 +16,6 @@ module.exports = (admin, storeID) => {
           secret_key,
           access_token
         )
-        console.log['ML - INIT MELI OBJ', meliObj]
         return resolve(meliObj)
       })
       .catch(err => reject(err))
