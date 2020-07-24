@@ -67,11 +67,11 @@ class MlProductBuilder extends ProductBuilder{
       mlId = hidden_metafields.find(({ namespace }) => namespace === 'ml_id')
     }
     if (mlId) {
-      return meliObject.put(`/items/${mlId}`, this.getProduct(), (err, res) => {
+      return this.mlInstance.put(`/items/${mlId}`, this.getProduct(), (err, res) => {
         return callback(err, res)
       })
     }
-    return meliObject.post('/items', this.getProduct(), (err, res) => {
+    return this.mlInstance.post('/items', this.getProduct(), (err, res) => {
       return callback(err, res)
     })
   }
