@@ -2,6 +2,7 @@
 const getAppData = require('./../../lib/store-api/get-app-data')
 const ProductDirector = require('../../lib/ml-integration/ProductDirector')
 const MlProductBuilder = require('../../lib/ml-integration/MlProductBuilder')
+const getMlInstance = require('../../lib/ml-integration/get-meli-instance')
 
 const SKIP_TRIGGER_NAME = 'SkipTrigger'
 const ECHO_SUCCESS = 'SUCCESS'
@@ -35,24 +36,39 @@ exports.post = ({ admin, appSdk }, req, res) => {
       /* DO YOUR CUSTOM STUFF HERE */
       if (trigger.resource === 'products') {
         try {
-          // const resource = `products/${trigger.body._id}/metafields.json`
-          // appSdk
-          //   .apiRequest(storeId, resource, 'POST', { test: 'test metafields' })
-          //   .then(res => {
-          //     console.log('[apiRequest]', res)
-          //   })
-          //   .catch(err => '[apiRequest ERROR]', err)
-          const productDirector = new ProductDirector(new MlProductBuilder(trigger.body))
-          productDirector.handlerProduct()
-          console.log('[ML-PRODUCT-BUILDER]', productDirector.getProduct())
+          getMlInstance(admin, storeId)
+            .then(mlInstance => {
+              const productDirector = new ProductDirector(new MlProductBuilder(mlInstance, rigger.body))
+              productDirector.handlerProduct()
+              productDirector.save((err, res) => {
+                if (err) {
+                  throw err
+                }
+                const { _id } = res
+                const resource = `products/${trigger.body._id}.json`
+                appSdk
+                  .apiRequest(storeId, resource, 'PATCH', {
+                    hidden_metafields: [
+                      {
+                        id: Date.now().toString(16),
+                        namespace: 'ml_id',
+                        value: _id
+                      }
+                    ]
+                  })
+                  .then(r => {
+                    console.log('[apiRequest]', r)
+                    return res.send(ECHO_SUCCESS)
+                  })
+                  .catch(err => { throw err })
+              })
+            }).catch((err => { throw err }))
         } catch (error) {
-          console.error('[ERROR-ML-PRODUCT-BUILDER]', error)
+          console.error('[ERROR PRODUCT INTEGRATE]', error)
+          throw error
         }
       }
-      // all done
-      return res.send(ECHO_SUCCESS)
     })
-
     .catch(err => {
       if (err.name === SKIP_TRIGGER_NAME) {
         // trigger ignored by app configuration

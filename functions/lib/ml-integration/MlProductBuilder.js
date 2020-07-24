@@ -1,7 +1,8 @@
 const ProductBuilder = require('./ProductBuilder')
 
 class MlProductBuilder extends ProductBuilder{
-  constructor(productSchema) {
+  constructor(mlInstance, productSchema) {
+    this.mlInstance = mlInstance
     super(productSchema)
   }
 
@@ -59,6 +60,21 @@ class MlProductBuilder extends ProductBuilder{
     this.product.seller_custom_field = this.productSchema.sku
   }
 
+  save(callback) {
+    const { hidden_metafields } = this.productSchema
+    let mlId
+    if (hidden_metafields) {
+      mlId = hidden_metafields.find(({ namespace }) => namespace === 'ml_id')
+    }
+    if (mlId) {
+      return meliObject.put(`/items/${mlId}`, this.getProduct(), (err, res) => {
+        return callback(err, res)
+      })
+    }
+    return meliObject.post('/items', this.getProduct(), (err, res) => {
+      return callback(err, res)
+    })
+  }
 }
 
 module.exports = MlProductBuilder
