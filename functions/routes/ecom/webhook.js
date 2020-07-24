@@ -49,6 +49,8 @@ exports.post = ({ admin, appSdk }, req, res) => {
                 }
                 const { _id } = res
                 const resource = `products/${trigger.body._id}.json`
+                console.log('[resource]', resource)
+                console.log('[ML_ID]', _id)
                 appSdk
                   .apiRequest(storeId, resource, 'PATCH', {
                     hidden_metafields: [
