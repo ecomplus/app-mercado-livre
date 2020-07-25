@@ -8,7 +8,8 @@
   "modules": {},
   "auth_scope": {
     "stores/me": [
-      "GET"
+      "GET",
+      "POST"
     ],
     "procedures": [
       "POST"
