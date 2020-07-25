@@ -53,7 +53,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
                 }
                 const { id } = productResponse
                 const resource = `products/${trigger.resource_id}.json`
-                const data = {
+                let data = {
                   hidden_metafields: [
                     {
                       _id: randomObjectId(),
