@@ -53,12 +53,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
                 }
                 const { id } = productResponse
                 const resource = `products/${trigger.resource_id}/metafields.json`
-                let metaFields = [
-                  {
-                    field: 'ml_id',
-                    value: id
-                  }
-                ]
+                const metaFields = { field: 'ml_id', value: id }
                 appSdk
                   .apiRequest(storeId, resource, 'POST', metaFields)
                   .then(() => {
