@@ -62,12 +62,14 @@ class MlProductBuilder extends ProductBuilder{
 
   save(callback) {
     const { hidden_metafields } = this.productSchema
+    console.log('[SAVE... hidden_metafields]', hidden_metafields)
     let mlId
     if (hidden_metafields) {
       mlId = hidden_metafields.find(({ namespace }) => namespace === 'ml_id')
     }
+    console.log('[SAVE... mlId]', mlId)
     if (mlId) {
-      return this.mlInstance.put(`/items/${mlId}`, this.getProduct(), (err, res) => {
+      return this.mlInstance.put(`/items/${mlId.value}`, this.getProduct(), (err, res) => {
         return callback(err, res)
       })
     }
