@@ -54,12 +54,14 @@ exports.post = ({ admin, appSdk }, req, res) => {
                 const { id } = productResponse
                 const resource = `products/${trigger.resource_id}/metafields.json`
                 const metaFields = { field: 'ml_id', value: id }
+                console.log(metafields)
                 appSdk
                   .apiRequest(storeId, resource, 'POST', metaFields)
                   .then(() => {
                     return res.send(ECHO_SUCCESS)
                   })
                   .catch(err => {
+                    console.log('[apiRequest ERROR]', err)
                     err.name = SKIP_TRIGGER_NAME
                     throw err
                   })
