@@ -48,17 +48,14 @@ exports.post = ({ admin, appSdk }, req, res) => {
                   console.log(err)
                   throw err
                 }
+                console.log('[body]', trigger.body)
                 const { hidden_metafields } = trigger.body
                 if (hidden_metafields &&
                     hidden_metafields.find(({ namespace }) => namespace === 'ml_id')) {
                   return res.send(ECHO_SUCCESS)
                 }
                 const { id } = productResponse
-                console.log('[trigger]', trigger.body)
-                console.log('[productResponse]', productResponse)
                 const resource = `products/${trigger.resource_id}.json`
-                console.log('[resource]', resource)
-                console.log('[ML_ID]', id)
                 const data = {
                   hidden_metafields: [
                     {
@@ -68,11 +65,9 @@ exports.post = ({ admin, appSdk }, req, res) => {
                     }
                   ]
                 }
-                console.log('[DATA]', data)
                 appSdk
                   .apiRequest(storeId, resource, 'PATCH', data)
-                  .then(r => {
-                    console.log('[apiRequest]', r)
+                  .then(() => {
                     return res.send(ECHO_SUCCESS)
                   })
                   .catch(err => {
@@ -85,8 +80,9 @@ exports.post = ({ admin, appSdk }, req, res) => {
           console.error('[ERROR PRODUCT INTEGRATE]', error)
           throw error
         }
+      } else {
+        return res.send(ECHO_SUCCESS)
       }
-      return res.send(ECHO_SUCCESS)
     })
     .catch(err => {
       if (err.name === SKIP_TRIGGER_NAME) {
