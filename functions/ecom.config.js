@@ -48,7 +48,8 @@ const app = {
    */
   auth_scope: {
     'stores/me': [
-      'GET'            // Read store info
+      'GET',            // Read store info
+      'POST'
     ],
     procedures: [
       'POST'           // Create procedures to receive webhooks
