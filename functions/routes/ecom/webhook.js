@@ -48,24 +48,22 @@ exports.post = ({ admin, appSdk }, req, res) => {
                 }
                 const { hidden_metafields } = trigger.body
                 if (hidden_metafields &&
-                    hidden_metafields.find(({ namespace }) => namespace === 'ml_id')) {
+                  hidden_metafields.find(({ namespace }) => namespace === 'ml_id')) {
                   return res.send(ECHO_SUCCESS)
                 }
                 const { id } = productResponse
                 const resource = `products/${trigger.resource_id}.json`
-                let data = {
-                  hidden_metafields: [
-                    {
-                      _id: randomObjectId(),
-                      namespace: 'ml_id',
-                      value: id
-                    }
-                  ]
-                }
-                data = !hidden_metafields ? data : data.hidden_metafields.concat(hidden_metafields)
-                console.log('[hidden_metafields updated: ]', data)
+                let metaFields = [
+                  {
+                    _id: randomObjectId(),
+                    namespace: 'ml_id',
+                    value: id
+                  }
+                ]
+                metaFields = !hidden_metafields ? data : metaFields.concat(hidden_metafields)
+                console.log('[hidden_metafields updated: ]', metaFields)
                 appSdk
-                  .apiRequest(storeId, resource, 'PATCH', data)
+                  .apiRequest(storeId, resource, 'PATCH', { hidden_metafields: metaFields })
                   .then(() => {
                     return res.send(ECHO_SUCCESS)
                   })
