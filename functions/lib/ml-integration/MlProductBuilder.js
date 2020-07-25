@@ -61,11 +61,11 @@ class MlProductBuilder extends ProductBuilder{
   }
 
   save(callback) {
-    const { hidden_metafields } = this.productSchema
-    console.log('[SAVE... hidden_metafields]', hidden_metafields)
+    const { metafields } = this.productSchema
+    console.log('[SAVE... hidden_metafields]', metafields)
     let mlId
-    if (hidden_metafields) {
-      mlId = hidden_metafields.find(({ namespace }) => namespace === 'ml_id')
+    if (metafields) {
+      mlId = metafields.find(({ field }) => field === 'ml_id')
     }
     console.log('[SAVE... mlId]', mlId)
     if (mlId) {
