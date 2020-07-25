@@ -39,16 +39,13 @@ exports.post = ({ admin, appSdk }, req, res) => {
         try {
           getMlInstance(admin, storeId)
             .then(mlInstance => {
-              console.log('[WEBHOOK]', mlInstance)
               const productDirector = new ProductDirector(new MlProductBuilder(trigger.body, mlInstance))
-              console.log(productDirector)
               productDirector.handlerProduct()
               productDirector.save((err, productResponse) => {
                 if (err) {
                   console.log(err)
                   throw err
                 }
-                console.log('[body]', trigger.body)
                 const { hidden_metafields } = trigger.body
                 if (hidden_metafields &&
                     hidden_metafields.find(({ namespace }) => namespace === 'ml_id')) {
@@ -65,6 +62,8 @@ exports.post = ({ admin, appSdk }, req, res) => {
                     }
                   ]
                 }
+                data = !hidden_metafields ? data : data.hidden_metafields.concat(hidden_metafields)
+                console.log('[hidden_metafields updated: ]', data)
                 appSdk
                   .apiRequest(storeId, resource, 'PATCH', data)
                   .then(() => {
