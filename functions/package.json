@@ -17,8 +17,8 @@
     "axios": "^0.19.2",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
-    "firebase-admin": "^8.12.1",
-    "firebase-functions": "^3.6.2",
+    "firebase-admin": "^8.13.0",
+    "firebase-functions": "^3.8.0",
     "mercadolibre": "0.0.13"
   },
   "devDependencies": {
