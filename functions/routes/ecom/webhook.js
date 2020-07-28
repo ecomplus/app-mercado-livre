@@ -4,7 +4,6 @@ const ProductDirector = require('../../lib/ml-integration/ProductDirector')
 const MlProductBuilder = require('../../lib/ml-integration/MlProductBuilder')
 const getMlInstance = require('../../lib/ml-integration/get-meli-instance')
 
-const { randomObjectId } = require('@ecomplus/utils')
 const SKIP_TRIGGER_NAME = 'SkipTrigger'
 const ECHO_SUCCESS = 'SUCCESS'
 const ECHO_SKIP = 'SKIP'
@@ -35,45 +34,46 @@ exports.post = ({ admin, appSdk }, req, res) => {
       }
 
       /* DO YOUR CUSTOM STUFF HERE */
-      if (trigger.resource === 'products') {
-        try {
-          getMlInstance(admin, storeId)
-            .then(mlInstance => {
-              const productDirector = new ProductDirector(new MlProductBuilder(trigger.body, mlInstance))
-              productDirector.handlerProduct()
-              productDirector.save((err, productResponse) => {
-                if (err) {
-                  console.log(err)
-                  throw err
-                }
-                const { metafields } = trigger.body
-                if (metafields &&
-                  metafields.find(({ field }) => field === 'ml_id')) {
-                  return res.send(ECHO_SUCCESS)
-                }
-                const { id } = productResponse
-                const resource = `products/${trigger.resource_id}/metafields.json`
-                const metaFields = { field: 'ml_id', value: id }
-                console.log(metafields)
-                appSdk
-                  .apiRequest(storeId, resource, 'POST', metaFields)
-                  .then(() => {
-                    return res.send(ECHO_SUCCESS)
-                  })
-                  .catch(err => {
-                    console.log('[apiRequest ERROR]', err)
-                    err.name = SKIP_TRIGGER_NAME
-                    throw err
-                  })
-              })
-            }).catch((err => { throw err }))
-        } catch (error) {
-          console.error('[ERROR PRODUCT INTEGRATE]', error)
-          throw error
-        }
-      } else {
-        return res.send(ECHO_SUCCESS)
-      }
+      // if (trigger.resource === 'products') {
+      //   try {
+      //     getMlInstance(admin, storeId)
+      //       .then(mlInstance => {
+      //         const productDirector = new ProductDirector(new MlProductBuilder(trigger.body, mlInstance))
+      //         productDirector.handlerProduct()
+      //         productDirector.save((err, productResponse) => {
+      //           if (err) {
+      //             console.log(err)
+      //             throw err
+      //           }
+      //           const { metafields } = trigger.body
+      //           if (metafields &&
+      //             metafields.find(({ field }) => field === 'ml_id')) {
+      //             return res.send(ECHO_SUCCESS)
+      //           }
+      //           const { id } = productResponse
+      //           const resource = `products/${trigger.resource_id}/metafields.json`
+      //           const metaFields = { field: 'ml_id', value: id }
+      //           console.log(metafields)
+      //           appSdk
+      //             .apiRequest(storeId, resource, 'POST', metaFields)
+      //             .then(() => {
+      //               return res.send(ECHO_SUCCESS)
+      //             })
+      //             .catch(err => {
+      //               console.log('[apiRequest ERROR]', err)
+      //               err.name = SKIP_TRIGGER_NAME
+      //               throw err
+      //             })
+      //         })
+      //       }).catch((err => { throw err }))
+      //   } catch (error) {
+      //     console.error('[ERROR PRODUCT INTEGRATE]', error)
+      //     throw error
+      //   }
+      // } else {
+      //   return res.send(ECHO_SUCCESS)
+      // }
+      return res.send(ECHO_SUCCESS)
     })
     .catch(err => {
       if (err.name === SKIP_TRIGGER_NAME) {

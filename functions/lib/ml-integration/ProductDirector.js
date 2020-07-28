@@ -21,8 +21,8 @@ class ProductDirector {
     return this.productBuilder.getProduct();
   }
 
-  save(callback) {
-    return this.productBuilder.save(callback)
+  create(callback) {
+    return this.productBuilder.create(callback)
   }
 }
 

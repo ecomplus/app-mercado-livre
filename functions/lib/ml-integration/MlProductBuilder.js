@@ -60,7 +60,7 @@ class MlProductBuilder extends ProductBuilder{
     this.product.seller_custom_field = this.productSchema.sku
   }
 
-  save(callback) {
+  create(callback) {
     const { metafields } = this.productSchema
     console.log('[SAVE... hidden_metafields]', metafields)
     let mlId
