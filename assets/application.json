@@ -26,9 +26,13 @@
     "carts": [],
     "orders/fulfillments": [],
     "orders/payments_history": [],
-    "products/quantity": [],
+    "products/quantity": [
+      "GET"
+    ],
     "products/variations/quantity": [],
-    "products/price": [],
+    "products/price": [
+      "GET"
+    ],
     "products/variations/price": []
   },
   "auth_callback_uri": "https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/ecom/auth-callback",
