@@ -116,7 +116,7 @@ const app = {
      * Stock and price management only.
      */
     'products/quantity': [
-      // 'GET',           // Read product available quantity
+      'GET',           // Read product available quantity
       // 'PUT',           // Set product stock quantity
     ],
     'products/variations/quantity': [
@@ -124,7 +124,7 @@ const app = {
       // 'PUT',           // Set variation stock quantity
     ],
     'products/price': [
-      // 'GET',           // Read product current sale price
+      'GET',           // Read product current sale price
       // 'PUT',           // Set product sale price
     ],
     'products/variations/price': [
