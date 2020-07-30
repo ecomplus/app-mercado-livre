@@ -10,15 +10,22 @@ const ECHO_SKIP = 'SKIP'
 const ECHO_API_ERROR = 'STORE_API_ERR'
 
 exports.post = ({ admin, appSdk }, req, res) => {
-  const { storeId } = req
+  const storeId = parseInt(req.get('x-store-id'), 10) || req.query.storeId
+  const { body } = req
+  if (!storeId) {
+    res.status(401)
+    return res.send({
+      error: 'Unauthorized',
+      message: 'Missing store_id'
+    })
+  }
 
   getAppData({ appSdk, storeId })
     .then(() => {
       try {
-        const trigger = req.body
         getMlInstance(admin, storeId)
           .then(mlInstance => {
-            const productDirector = new ProductDirector(new MlProductBuilder(trigger.body, mlInstance))
+            const productDirector = new ProductDirector(new MlProductBuilder(body, mlInstance))
             productDirector.handlerProduct()
             productDirector.save((err, productResponse) => {
               if (err) {
@@ -26,7 +33,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
                 throw err
               }
               const { id } = productResponse
-              const resource = `products/${trigger.resource_id}/metafields.json`
+              const resource = `products/${body._id}/metafields.json`
               const metaFields = { field: 'ml_id', value: id }
               appSdk
                 .apiRequest(storeId, resource, 'POST', metaFields)
