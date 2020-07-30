@@ -20,7 +20,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
     })
   }
 
-  getAppData({ appSdk, storeId })
+  getAppData({ appSdk, storeId }, true)
     .then(() => {
       try {
         getMlInstance(admin, storeId)
