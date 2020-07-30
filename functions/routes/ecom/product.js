@@ -1,4 +1,4 @@
-const getAppData = require('./../../lib/store-api/get-app-data')
+const getAppData = require('../../lib/store-api/get-app-data')
 const ProductDirector = require('../../lib/ml-integration/ProductDirector')
 const MlProductBuilder = require('../../lib/ml-integration/MlProductBuilder')
 const getMlInstance = require('../../lib/ml-integration/get-meli-instance')
@@ -20,10 +20,12 @@ exports.post = ({ admin, appSdk }, req, res) => {
     })
   }
 
+  console.log('[admin]', admin)
+  console.log('[appSDK]', appSdk)
   console.log('[storeId...]', storeId)
-
-  getAppData({ appSdk, storeId }, true)
-    .then(() => {
+  return getAppData({ appSdk, storeId }, true)
+    .then((config) => {
+      console.log('[config]', config)
       try {
         getMlInstance(admin, storeId)
           .then(mlInstance => {
@@ -53,6 +55,9 @@ exports.post = ({ admin, appSdk }, req, res) => {
         console.error('[ERROR PRODUCT INTEGRATE]', error)
         throw error
       }
+    })
+    .then(() => {
+      res.sendStatus(200)
     })
     .catch(err => {
       if (err.name === SKIP_TRIGGER_NAME) {
