@@ -20,6 +20,8 @@ exports.post = ({ admin, appSdk }, req, res) => {
     })
   }
 
+  console.log('[storeId...]', storeId)
+
   getAppData({ appSdk, storeId }, true)
     .then(() => {
       try {
