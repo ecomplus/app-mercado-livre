@@ -25,8 +25,12 @@ exports.post = ({ admin, appSdk }, req, res) => {
   console.log('[storeId...]', storeId)
   return appSdk.getAuth(storeId)
     .then(auth => {
-      console.log('[AUTH...]', auth)
-      return getAppData({ appSdk, storeId, auth }, true)
+      try {
+        console.log('[AUTH...]', auth)
+        return getAppData({ appSdk, storeId, auth }, true)
+      } catch (error) {
+        throw error
+      }
     })
     // .then((config) => {
     //   console.log('[config]', config)
