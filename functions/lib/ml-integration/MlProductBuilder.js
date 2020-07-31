@@ -60,19 +60,18 @@ class MlProductBuilder extends ProductBuilder{
     this.product.seller_custom_field = this.productSchema.sku
   }
 
-  create(callback) {
+  update(callback) {
     const { metafields } = this.productSchema
-    console.log('[SAVE... hidden_metafields]', metafields)
-    let mlId
-    if (metafields) {
-      mlId = metafields.find(({ field }) => field === 'ml_id')
+    const mlId = (metafields || []).find(({ field }) => field === 'ml_id')
+    if (!mlId) {
+      return callback(new Error('ml_id was not found in metafields'))
     }
-    console.log('[SAVE... mlId]', mlId)
-    if (mlId) {
-      return this.mlInstance.put(`/items/${mlId.value}`, this.getProduct(), (err, res) => {
-        return callback(err, res)
-      })
-    }
+    return this.mlInstance.put(`/items/${mlId.value}`, this.getProduct(), (err, res) => {
+      return callback(err, res)
+    })
+  }
+
+  create(callback) {
     return this.mlInstance.post('/items', this.getProduct(), (err, res) => {
       return callback(err, res)
     })
