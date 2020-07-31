@@ -26,6 +26,10 @@
     "carts": [],
     "orders/fulfillments": [],
     "orders/payments_history": [],
+    "products/metafields": [
+      "GET",
+      "POST"
+    ],
     "products/quantity": [
       "GET"
     ],
