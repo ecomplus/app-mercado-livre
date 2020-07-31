@@ -23,66 +23,66 @@ exports.post = ({ admin, appSdk }, req, res) => {
   console.log('[admin]', admin)
   console.log('[appSDK]', appSdk)
   console.log('[storeId...]', storeId)
-  appSdk.getAuth(storeId)
-  .then(auth => {
-    console.log('[AUTH...]', auth)
-    res.send('ok')
-  })
-  .catch(err => {
-    const { message } = err
-    console.error(err)
-    res.status(500)
-    res.send({
-      error: 'get_token_err',
-      message
+  // appSdk.getAuth(storeId)
+  // .then(auth => {
+  //   console.log('[AUTH...]', auth)
+  //   res.send('ok')
+  // })
+  // .catch(err => {
+  //   const { message } = err
+  //   console.error(err)
+  //   res.status(500)
+  //   res.send({
+  //     error: 'get_token_err',
+  //     message
+  //   })
+  // })
+  return getAppData({ appSdk, storeId }, true)
+    .then((config) => {
+      console.log('[config]', config)
+      try {
+        getMlInstance(admin, storeId)
+          .then(mlInstance => {
+            const productDirector = new ProductDirector(new MlProductBuilder(body, mlInstance))
+            productDirector.handlerProduct()
+            productDirector.save((err, productResponse) => {
+              if (err) {
+                console.log(err)
+                throw err
+              }
+              const { id } = productResponse
+              const resource = `products/${body._id}/metafields.json`
+              const metaFields = { field: 'ml_id', value: id }
+              appSdk
+                .apiRequest(storeId, resource, 'POST', metaFields)
+                .then(() => {
+                  return res.send(ECHO_SUCCESS)
+                })
+                .catch(err => {
+                  console.log('[apiRequest ERROR]', err)
+                  err.name = SKIP_TRIGGER_NAME
+                  throw err
+                })
+            })
+          }).catch((err => { throw err }))
+      } catch (error) {
+        console.error('[ERROR PRODUCT INTEGRATE]', error)
+        throw error
+      }
     })
-  })
-  // return getAppData({ appSdk, storeId }, true)
-    // .then((config) => {
-    //   console.log('[config]', config)
-    //   try {
-    //     getMlInstance(admin, storeId)
-    //       .then(mlInstance => {
-    //         const productDirector = new ProductDirector(new MlProductBuilder(body, mlInstance))
-    //         productDirector.handlerProduct()
-    //         productDirector.save((err, productResponse) => {
-    //           if (err) {
-    //             console.log(err)
-    //             throw err
-    //           }
-    //           const { id } = productResponse
-    //           const resource = `products/${body._id}/metafields.json`
-    //           const metaFields = { field: 'ml_id', value: id }
-    //           appSdk
-    //             .apiRequest(storeId, resource, 'POST', metaFields)
-    //             .then(() => {
-    //               return res.send(ECHO_SUCCESS)
-    //             })
-    //             .catch(err => {
-    //               console.log('[apiRequest ERROR]', err)
-    //               err.name = SKIP_TRIGGER_NAME
-    //               throw err
-    //             })
-    //         })
-    //       }).catch((err => { throw err }))
-    //   } catch (error) {
-    //     console.error('[ERROR PRODUCT INTEGRATE]', error)
-    //     throw error
-    //   }
-    // })
-    // .then(() => {
-    //   res.sendStatus(200)
-    // })
-    // .catch(err => {
-    //   if (err.name === SKIP_TRIGGER_NAME) {
-    //     res.send(ECHO_SKIP)
-    //   } else {
-    //     res.status(500)
-    //     const { message } = err
-    //     res.send({
-    //       error: ECHO_API_ERROR,
-    //       message
-    //     })
-    //   }
-    // })
+    .then(() => {
+      res.sendStatus(200)
+    })
+    .catch(err => {
+      if (err.name === SKIP_TRIGGER_NAME) {
+        res.send(ECHO_SKIP)
+      } else {
+        res.status(500)
+        const { message } = err
+        res.send({
+          error: ECHO_API_ERROR,
+          message
+        })
+      }
+    })
 }
