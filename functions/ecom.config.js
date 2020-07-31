@@ -111,6 +111,11 @@ const app = {
       // 'DELETE',        // Delete payments history entry
     ],
 
+    "products/metafields": [
+      "GET",
+      "POST"
+    ],
+
     /**
      * Set above 'quantity' and 'price' subresources if you don't need access for full product document.
      * Stock and price management only.
