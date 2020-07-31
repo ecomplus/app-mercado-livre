@@ -3,7 +3,11 @@ class ProductDirector {
     this.productBuilder = productBuilder
   }
 
-  handlerProduct() {
+  getProduct() {
+    return this.productBuilder.getProduct();
+  }
+
+  buildProductToCreate() {
     this.productBuilder.buildTitle()
     this.productBuilder.buildDescription()
     this.productBuilder.buildCondition()
@@ -17,11 +21,8 @@ class ProductDirector {
     // this.productBuilder.buildVariations()
   }
 
-  getProduct() {
-    return this.productBuilder.getProduct();
-  }
-
   create(callback) {
+    this.buildProductToCreate();
     return this.productBuilder.create(callback)
   }
 }
