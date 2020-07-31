@@ -51,9 +51,6 @@ exports.post = ({ admin, appSdk }, req, res) => {
         throw error
       }
     })
-    .then(() => {
-      res.sendStatus(200)
-    })
     .catch(err => {
       if (err.name === SKIP_TRIGGER_NAME) {
         res.send(ECHO_SKIP)
