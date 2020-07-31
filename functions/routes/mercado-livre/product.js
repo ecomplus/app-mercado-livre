@@ -19,24 +19,6 @@ exports.post = ({ admin, appSdk }, req, res) => {
       message: 'Missing store_id'
     })
   }
-
-  console.log('[admin]', admin)
-  console.log('[appSDK]', appSdk)
-  console.log('[storeId...]', storeId)
-  // appSdk.getAuth(storeId)
-  // .then(auth => {
-  //   console.log('[AUTH...]', auth)
-  //   res.send('ok')
-  // })
-  // .catch(err => {
-  //   const { message } = err
-  //   console.error(err)
-  //   res.status(500)
-  //   res.send({
-  //     error: 'get_token_err',
-  //     message
-  //   })
-  // })
   return getAppData({ appSdk, storeId }, true)
     .then((config) => {
       console.log('[config]', config)
@@ -44,8 +26,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
         getMlInstance(admin, storeId)
           .then(mlInstance => {
             const productDirector = new ProductDirector(new MlProductBuilder(body, mlInstance))
-            productDirector.handlerProduct()
-            productDirector.save((err, productResponse) => {
+            productDirector.create((err, productResponse) => {
               if (err) {
                 console.log(err)
                 throw err
