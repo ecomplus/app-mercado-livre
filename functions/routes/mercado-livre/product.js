@@ -23,15 +23,21 @@ exports.post = ({ admin, appSdk }, req, res) => {
   console.log('[admin]', admin)
   console.log('[appSDK]', appSdk)
   console.log('[storeId...]', storeId)
-  return appSdk.getAuth(storeId)
-    .then(auth => {
-      try {
-        console.log('[AUTH...]', auth)
-        return getAppData({ appSdk, storeId, auth }, true)
-      } catch (error) {
-        throw error
-      }
+  appSdk.getAuth(storeId)
+  .then(auth => {
+    console.log('[AUTH...]', auth)
+    res.send('ok')
+  })
+  .catch(err => {
+    const { message } = err
+    console.error(err)
+    res.status(500)
+    res.send({
+      error: 'get_token_err',
+      message
     })
+  })
+  // return getAppData({ appSdk, storeId }, true)
     // .then((config) => {
     //   console.log('[config]', config)
     //   try {
@@ -64,19 +70,19 @@ exports.post = ({ admin, appSdk }, req, res) => {
     //     throw error
     //   }
     // })
-    .then(() => {
-      res.sendStatus(200)
-    })
-    .catch(err => {
-      if (err.name === SKIP_TRIGGER_NAME) {
-        res.send(ECHO_SKIP)
-      } else {
-        res.status(500)
-        const { message } = err
-        res.send({
-          error: ECHO_API_ERROR,
-          message
-        })
-      }
-    })
+    // .then(() => {
+    //   res.sendStatus(200)
+    // })
+    // .catch(err => {
+    //   if (err.name === SKIP_TRIGGER_NAME) {
+    //     res.send(ECHO_SKIP)
+    //   } else {
+    //     res.status(500)
+    //     const { message } = err
+    //     res.send({
+    //       error: ECHO_API_ERROR,
+    //       message
+    //     })
+    //   }
+    // })
 }
