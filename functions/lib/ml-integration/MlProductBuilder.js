@@ -15,7 +15,7 @@ class MlProductBuilder extends ProductBuilder {
     const { gtin } = this.productSchema
     if (gtin && gtin.length > 0) {
       for (const item of gtin) {
-        this._attributes.push({ "id": "GTIN", "value_name": gtin })
+        this._attributes.push({ "id": "GTIN", "value_name": item })
       }
     }
   }
