@@ -5,8 +5,6 @@ class ProductBuilder {
     this.productSchema = productSchema
   }
 
-  buildTitle() { }
-
   getProduct() {
     return this.product
   }

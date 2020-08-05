@@ -18,6 +18,7 @@ class ProductDirector {
     this.productBuilder.buildPrice()
     this.productBuilder.buildPictures()
     this.productBuilder.buildSellerCustomField()
+    this.productBuilder.buildGtin()
     this.productBuilder.buildAttributes()
     // this.productBuilder.buildVariations()
   }
