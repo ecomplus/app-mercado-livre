@@ -1,13 +1,23 @@
 const ProductBuilder = require('./ProductBuilder')
 
-class MlProductBuilder extends ProductBuilder{
+class MlProductBuilder extends ProductBuilder {
   constructor(productSchema, mlInstance) {
     super(productSchema)
     this.mlInstance = mlInstance
+    this._attributes = []
   }
 
   buildTitle() {
     this.product.title = this.productSchema.name
+  }
+
+  buildGtin() {
+    const { gtin } = this.productSchema
+    if (gtin && gtin.length > 0) {
+      for (const item of gtin) {
+        this._attributes.push({ "id": "GTIN", "value_name": item })
+      }
+    }
   }
 
   buildDescription() {
@@ -58,6 +68,12 @@ class MlProductBuilder extends ProductBuilder{
 
   buildSellerCustomField() {
     this.product.seller_custom_field = this.productSchema.sku
+  }
+
+  buildAttributes() {
+    if (this._attributes.length > 0) {
+      this.product.attributes = this._attributes
+    }
   }
 
   update(callback) {
