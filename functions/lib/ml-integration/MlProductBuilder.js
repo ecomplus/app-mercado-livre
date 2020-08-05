@@ -90,7 +90,7 @@ class MlProductBuilder extends ProductBuilder {
   create(callback) {
     console.log(this.getProduct())
     return this.mlInstance.post('/items', this.getProduct(), (err, res) => {
-      console.log(err)
+      console.log(err, res)
       return callback(err, res)
     })
   }
