@@ -10,6 +10,7 @@ exports.post = ({ admin }, req, res) => {
       //   .set(authData)
       //   .then(() => res.send('ok'))
       //   .catch(err => { throw new Error(err) })
+      return res.status(204).send()
   } catch (error) {
     return res.status(500).send(error)
   }
