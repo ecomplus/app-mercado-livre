@@ -19,7 +19,11 @@ class ProductDirector {
     this.productBuilder.buildPictures()
     this.productBuilder.buildSellerCustomField()
     this.productBuilder.buildGtin()
+    this.productBuilder.buildBrand()
+    this.productBuilder.buildDimensions()
+    this.productBuilder.buildSpecifications()
     this.productBuilder.buildAttributes()
+    this.productBuilder.buildWeight()
     // this.productBuilder.buildVariations()
   }
 
