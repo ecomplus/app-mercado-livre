@@ -1,11 +1,21 @@
 const ProductBuilder = require('./ProductBuilder')
 
 class MlProductBuilder extends ProductBuilder {
-  constructor(productSchema, mlInstance) {
+  constructor(productSchema, mlInstance, options = {}) {
     super(productSchema)
     this.mlInstance = mlInstance
+    this.options = options
     this._attributes = []
     this._variations = []
+  }
+
+  getSpecByProps(specs, props) {
+    for (let i = 0; i < props.length; i++) {
+      if (specs[props[i]]) {
+        return specs[props[i]][0]
+      }
+    }
+    return {}
   }
 
   buildTitle() {
@@ -25,11 +35,11 @@ class MlProductBuilder extends ProductBuilder {
   }
 
   buildListingTypes() {
-    this.product.listing_type_id = 'gold_special'
+    this.product.listing_type_id = this.options.listing_type_id
   }
 
   buildCategory() {
-    this.product.category_id = 'MLB272126'
+    this.product.category_id = this.options.category_id
   }
 
   buildCurrency() {
@@ -125,30 +135,25 @@ class MlProductBuilder extends ProductBuilder {
 
   buildModel(specifications) {
     const variations = ['model', 'modelo']
-    for (const key of Object.keys(specifications)) {
-      if (variations.includes(key)) {
-        for (const model of specifications[key]) {
-          this._attributes.push({
-            id: 'MODEL',
-            value_name: model.text,
-          })
-        }
-      }
-    }
+    this._attributes.push({
+      id: 'MODEL',
+      value_name: this.getSpecByProps(specifications, variations).text,
+    })
   }
 
   buildMaterial(specifications) {
     const variations = ['material']
-    for (const key of Object.keys(specifications)) {
-      if (variations.includes(key)) {
-        for (const material of specifications[key]) {
-          this._attributes.push({
-            id: 'MATERIAL',
-            value_name: material.text,
-          })
-        }
-      }
-    }
+    this._attributes.push({
+      id: 'MATERIAL',
+      value_name: this.getSpecByProps(specifications, variations).text,
+    })
+  }
+
+  buildUnitsPerPckage(specifications) {
+    this._attributes.push({
+      id: 'UNITS_PER_PACKAGE',
+      value_name: this.getSpecByProps(specifications, ['package_quantity']).text || 1
+    })
   }
 
   buildSpecifications() {
@@ -156,6 +161,7 @@ class MlProductBuilder extends ProductBuilder {
     if (specifications) {
       this.buildModel(specifications)
       this.buildMaterial(specifications)
+      this.buildUnitsPerPckage(specifications)
     }
   }
 
