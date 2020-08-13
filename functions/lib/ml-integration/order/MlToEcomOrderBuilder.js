@@ -9,7 +9,7 @@ class MlToEcomOrderBuilder extends OrderBuilder {
   }
 
   buildAmount() {
-    this.amount = {
+    this.order.amount = {
       total: this.orderSchema.total_amount,
       subtotal: this.orderSchema.paid_amount
     }
@@ -51,6 +51,7 @@ class MlToEcomOrderBuilder extends OrderBuilder {
               })
             })
         }
+        this.order.items = items
         resolve()
       } catch (error) {
         reject(error)
