@@ -1,8 +1,5 @@
 // read configured E-Com Plus app data
 const getAppData = require('./../../lib/store-api/get-app-data')
-const ProductDirector = require('../../lib/ml-integration/ProductDirector')
-const MlProductBuilder = require('../../lib/ml-integration/MlProductBuilder')
-const getMlInstance = require('../../lib/ml-integration/get-meli-instance')
 
 const SKIP_TRIGGER_NAME = 'SkipTrigger'
 const ECHO_SUCCESS = 'SUCCESS'
