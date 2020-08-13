@@ -20,20 +20,22 @@ class MlToEcomOrderBuilder extends OrderBuilder {
       const { quantity, unit_price, item } = mlItem
       const { seller_custom_field } = item
       const resource = `/products.json?sku=${seller_custom_field}`
-      console.log('[resource]', resource)
       return this.appSdk.apiRequest(this.storeId, resource)
         .then(({ response }) => {
-          console.log('[RESPONSE]', response)
-          console.log('[DATA]', response.data)
-          const { data } = response
-          const { result } = data
-          if (result) {
-            return resolve({
-              _id: randomObjectId(),
-              product_id: result[0]._id,
-              quantity,
-              price: unit_price
-            })
+          if (response.data && response.data.result) {
+            const productId = result[0]._id
+            return this.appSdk.apiRequest(this.storeId, `/products/${productId}.json`)
+              .then(({response}) => {
+                const { data } = response
+                return resolve({
+                  _id: randomObjectId(),
+                  product_id: data._id,
+                  quantity,
+                  sku: seller_custom_field,
+                  name: data.name,
+                  price: unit_price
+                })
+              })
           }
           reject('No product found with this sku')
         })
