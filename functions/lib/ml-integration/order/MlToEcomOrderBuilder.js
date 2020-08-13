@@ -23,7 +23,7 @@ class MlToEcomOrderBuilder extends OrderBuilder {
       return this.appSdk.apiRequest(this.storeId, resource)
         .then(({ response }) => {
           if (response.data && response.data.result) {
-            const productId = result[0]._id
+            const productId = response.data.result[0]._id
             return this.appSdk.apiRequest(this.storeId, `/products/${productId}.json`)
               .then(({response}) => {
                 const { data } = response
