@@ -52,10 +52,12 @@ class MlToEcomOrderBuilder extends OrderBuilder {
         for (const mlItem of this.orderSchema.order_items) {
           promises.push(this.buildItem(mlItem))
         }
-        Promise.all(promises, items => {
-          this.order.items = items
-          resolve()
-        }).catch(err => reject(err))
+        Promise.all(promises)
+          .then(items => {
+            this.order.items = items
+            resolve()
+          })
+          .catch(err => reject(err))
       } catch (error) {
         reject(error)
       }
