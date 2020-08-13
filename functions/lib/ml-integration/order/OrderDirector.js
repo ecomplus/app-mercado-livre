@@ -8,7 +8,8 @@ class OrderDirector {
   }
 
   builderOrderToCreate() {
-
+    this.orderBuilder.buildAmount()
+    this.orderBuilder.buildItems()
   }
 
   create(callback) {
