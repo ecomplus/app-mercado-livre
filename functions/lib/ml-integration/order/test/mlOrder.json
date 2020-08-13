@@ -1,0 +1,137 @@
+{
+  "id": 2626820578,
+  "date_created": "2020-08-11T22:47:54.000-04:00",
+  "date_closed": "2020-08-11T22:47:55.000-04:00",
+  "last_updated": "2020-08-11T22:47:56.000-04:00",
+  "manufacturing_ending_date": null,
+  "feedback": {
+    "sale": null,
+    "purchase": null
+  },
+  "mediations": [],
+  "comments": null,
+  "pack_id": null,
+  "pickup_id": null,
+  "order_request": {
+    "return": null,
+    "change": null
+  },
+  "fulfilled": null,
+  "total_amount": 800,
+  "paid_amount": 800,
+  "coupon": {
+    "id": null,
+    "amount": 0
+  },
+  "expiration_date": "2020-09-08T22:47:56.000-04:00",
+  "order_items": [
+    {
+      "item": {
+        "id": "MLB1625159260",
+        "title": "Item De Teste  Por Favor, Não Ofertar!",
+        "category_id": "MLB272126",
+        "variation_id": null,
+        "seller_custom_field": "FSR7315",
+        "variation_attributes": [],
+        "warranty": null,
+        "condition": "new",
+        "seller_sku": null
+      },
+      "quantity": 1,
+      "unit_price": 800,
+      "full_unit_price": 800,
+      "currency_id": "BRL",
+      "manufacturing_days": null,
+      "sale_fee": 88,
+      "listing_type_id": "gold_special"
+    }
+  ],
+  "currency_id": "BRL",
+  "payments": [
+    {
+      "id": 8144067088,
+      "order_id": 2626820578,
+      "payer_id": 621019154,
+      "collector": {
+        "id": 593020850
+      },
+      "card_id": 8922381644,
+      "site_id": "MLB",
+      "reason": "Item De Teste  Por Favor, Não Ofertar!",
+      "payment_method_id": "elo",
+      "currency_id": "BRL",
+      "installments": 2,
+      "issuer_id": "687",
+      "atm_transfer_reference": {
+        "company_id": null,
+        "transaction_id": "1234567"
+      },
+      "coupon_id": null,
+      "activation_uri": null,
+      "operation_type": "regular_payment",
+      "payment_type": "credit_card",
+      "available_actions": [
+        "refund"
+      ],
+      "status": "approved",
+      "status_code": null,
+      "status_detail": "accredited",
+      "transaction_amount": 800,
+      "taxes_amount": 0,
+      "shipping_cost": 0,
+      "coupon_amount": 0,
+      "overpaid_amount": 0,
+      "total_paid_amount": 839.92,
+      "installment_amount": 419.96,
+      "deferred_period": null,
+      "date_approved": "2020-08-11T22:47:55.000-04:00",
+      "authorization_code": "1234567",
+      "transaction_order_id": null,
+      "date_created": "2020-08-11T22:47:55.000-04:00",
+      "date_last_modified": "2020-08-11T22:47:55.000-04:00"
+    }
+  ],
+  "shipping": {
+    "id": 40053468633
+  },
+  "status": "paid",
+  "status_detail": null,
+  "tags": [
+    "test_order",
+    "not_delivered",
+    "paid"
+  ],
+  "buyer": {
+    "id": 621019154,
+    "nickname": "TESTZCTPW7YL",
+    "email": "ttest.4tmrh66+2-ogi3denrygiydmmbx@mail.mercadolivre.com",
+    "first_name": "Test",
+    "last_name": "Test",
+    "billing_info": {
+      "doc_type": "CPF",
+      "doc_number": "06896429623"
+    }
+  },
+  "seller": {
+    "id": 593020850,
+    "nickname": "TEST7VYAKNDT",
+    "email": "ttest.m7dc92+2-ogi3denrygiydmmjq@mail.mercadolivre.com",
+    "first_name": "Test",
+    "last_name": "Test",
+    "phone": {
+      "area_code": "01",
+      "extension": "",
+      "number": "1111-1111",
+      "verified": false
+    },
+    "alternative_phone": {
+      "area_code": "",
+      "extension": "",
+      "number": ""
+    }
+  },
+  "taxes": {
+    "amount": null,
+    "currency_id": null
+  }
+}

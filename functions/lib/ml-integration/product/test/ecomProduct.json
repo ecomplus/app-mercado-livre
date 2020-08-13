@@ -1,0 +1,276 @@
+{
+  "_id": "5efb0f7c14ff772fde7bff4f",
+  "visible": true,
+  "available": true,
+  "manage_stock": true,
+  "name": "Item de Teste – Por favor, NÃO OFERTAR!",
+  "sku": "FSR7315",
+  "price": 800,
+  "quantity": 100,
+  "body_html": "<div>Produto de teste ML</div>",
+  "pictures": [
+    {
+      "zoom": {
+        "url": "https://ecom-jvxboxzk.sfo2.digitaloceanspaces.com/@1558964957646-1550854259186-borda-cadeira-gamer-pcyes-mad-racer-v8-azul.jpg"
+      },
+      "small": {
+        "url": "https://ecom-jvxboxzk.sfo2.digitaloceanspaces.com/imgs/100px/@1558964957646-1550854259186-borda-cadeira-gamer-pcyes-mad-racer-v8-azul.jpg"
+      },
+      "normal": {
+        "url": "https://ecom-jvxboxzk.sfo2.digitaloceanspaces.com/imgs/400px/@1558964957646-1550854259186-borda-cadeira-gamer-pcyes-mad-racer-v8-azul.jpg"
+      },
+      "big": {
+        "url": "https://ecom-jvxboxzk.sfo2.digitaloceanspaces.com/imgs/700px/@1558964957646-1550854259186-borda-cadeira-gamer-pcyes-mad-racer-v8-azul.jpg"
+      },
+      "_id": "307420159351170978000000"
+    }
+  ],
+  "keywords": [
+    "gamer"
+  ],
+  "brands": [
+    {
+      "_id": "5efb0f3414ff772fde7bff4d",
+      "name": "dxracer"
+    }
+  ],
+  "categories": [
+    {
+      "_id": "5c700a6bc626be23430d4f8a",
+      "name": "Cadeira Gamer",
+      "slug": "cadeira-gamer"
+    },
+    {
+      "_id": "5c701cb1c626be23430d4fe9",
+      "name": "Físicos",
+      "slug": "fisicos"
+    },
+    {
+      "_id": "5c6ffa5bc626be23430d4f54",
+      "name": "Monitores TV",
+      "slug": "monitores-tv"
+    },
+    {
+      "_id": "5c7009fdc626be23430d4f82",
+      "name": "Teclados",
+      "slug": "teclados"
+    },
+    {
+      "_id": "5c700a9cc626be23430d4f8c",
+      "name": "Smartphones",
+      "slug": "smartphones"
+    },
+    {
+      "_id": "5c7009bec626be23430d4f80",
+      "name": "Periféricos",
+      "slug": "perifericos"
+    }
+  ],
+  "weight": {
+    "value": 200,
+    "unit": "g"
+  },
+  "dimensions": {
+    "width": {
+      "value": 50,
+      "unit": "cm"
+    },
+    "height": {
+      "value": 180,
+      "unit": "cm"
+    },
+    "length": {
+      "value": 500,
+      "unit": "cm"
+    }
+  },
+  "slug": "produto-teste-ml",
+  "commodity_type": "physical",
+  "ad_relevance": 0,
+  "currency_id": "BRL",
+  "currency_symbol": "R$",
+  "condition": "new",
+  "adult": true,
+  "auto_fill_related_products": true,
+  "views": 0,
+  "sales": 0,
+  "google_product_category_id": 2271,
+  "price_change_records": [
+    {
+      "date_of_change": "2020-06-30T12:34:59.910Z",
+      "price": 41.11,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5efb317314ff772fde7c02ff"
+    },
+    {
+      "date_of_change": "2020-07-01T11:53:33.298Z",
+      "price": 456.98,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5efc793d14ff772fde7c3482"
+    },
+    {
+      "date_of_change": "2020-07-03T11:28:41.179Z",
+      "price": 300,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5eff166914ff772fde7d05bd"
+    },
+    {
+      "date_of_change": "2020-07-28T00:34:34.075Z",
+      "price": 150,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f1f729af023684cdbd4b514"
+    }
+  ],
+  "cost_price": 25,
+  "variations": [
+    {
+      "name": "Item de Teste – Por favor, NÃO OFERTAR! / 1 / Azul / Série Tank",
+      "_id": "750330159664121914600006",
+      "specifications": {
+        "size": [
+          {
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "colors": [
+          {
+            "text": "Azul",
+            "value": "#0000ff"
+          }
+        ],
+        "modelo": [
+          {
+            "text": "Série Tank",
+            "value": "serie_tank"
+          }
+        ]
+      },
+      "sku": "FSR7315-346-1"
+    },
+    {
+      "name": "Item de Teste – Por favor, NÃO OFERTAR! / 5 / Azul / Série Tank",
+      "_id": "750330159664121914600007",
+      "specifications": {
+        "size": [
+          {
+            "text": "5",
+            "value": "5"
+          }
+        ],
+        "colors": [
+          {
+            "text": "Azul",
+            "value": "#0000ff"
+          }
+        ],
+        "modelo": [
+          {
+            "text": "Série Tank",
+            "value": "serie_tank"
+          }
+        ]
+      },
+      "sku": "FSR7315-749-2"
+    }
+  ],
+  "hidden_metafields": [
+    {
+      "_id": "234098159571663182500000",
+      "namespace": "ml_id",
+      "value": "MLB1607941164"
+    },
+    {
+      "_id": "156870159519520857901223",
+      "field": "trustvox_id",
+      "value": "meu_id_no_trustvox"
+    }
+  ],
+  "metafields": [
+    {
+      "field": "ml_id",
+      "value": "MLB1606674218",
+      "_id": "5f237562f023684cdbd5dfe6"
+    },
+    {
+      "field": "ml_id",
+      "value": "MLB1606674218",
+      "_id": "5f2375d3f023684cdbd5e001"
+    },
+    {
+      "field": "ml_id",
+      "value": "MLB1606674218",
+      "_id": "5f2378c9f023684cdbd5e121"
+    },
+    {
+      "field": "ml_id",
+      "value": "MLB1613383520",
+      "_id": "5f2378ecf023684cdbd5e12a"
+    },
+    {
+      "field": "ml_id",
+      "value": "MLB1613383848",
+      "_id": "5f237920f023684cdbd5e138"
+    },
+    {
+      "field": "ml_id",
+      "value": "MLB1613391133",
+      "_id": "5f237a0cf023684cdbd5e178"
+    },
+    {
+      "field": "ml_id",
+      "value": "MLB1613394183",
+      "_id": "5f237b34f023684cdbd5e1c6"
+    },
+    {
+      "field": "ml_id",
+      "value": "MLB1613400907",
+      "_id": "5f237bf5f023684cdbd5e1f7"
+    },
+    {
+      "field": "ml_id",
+      "value": "MLB1618113439",
+      "_id": "5f29ff37f023684cdbd75aec"
+    },
+    {
+      "field": "ml_id",
+      "value": "MLB1618135170",
+      "_id": "5f2a0b86f023684cdbd75c62"
+    },
+    {
+      "field": "ml_id",
+      "value": "MLB1618165550",
+      "_id": "5f2a14cff023684cdbd75d5d"
+    },
+    {
+      "field": "ml_id",
+      "value": "MLB1618162291",
+      "_id": "5f2a1537f023684cdbd75d66"
+    }
+  ],
+  "notes": "Produto em duplicidade, SKU não sincronizado ao TINY",
+  "gtin": [
+    "7896902211933"
+  ],
+  "specifications": {
+    "material": [
+      {
+        "text": "Metal",
+        "value": "metal"
+      }
+    ],
+    "modelo": [
+      {
+        "text": "Série Tank",
+        "value": "serie_tank"
+      }
+    ]
+  },
+  "updated_at": "2020-08-05T15:32:03.026Z",
+  "store_id": 1011,
+  "created_at": "2020-08-05T15:32:03.026Z"
+}

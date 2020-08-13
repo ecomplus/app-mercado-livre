@@ -4,7 +4,7 @@ class ProductDirector {
   }
 
   getProduct() {
-    return this.productBuilder.getProduct();
+    return this.productBuilder.getProduct()
   }
 
   buildProductToCreate() {
@@ -28,7 +28,7 @@ class ProductDirector {
   }
 
   create(callback) {
-    this.buildProductToCreate();
+    this.buildProductToCreate()
     return this.productBuilder.create(callback)
   }
 }

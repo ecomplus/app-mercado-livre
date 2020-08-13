@@ -1,6 +1,6 @@
 const getAppData = require('../../lib/store-api/get-app-data')
-const ProductDirector = require('../../lib/ml-integration/ProductDirector')
-const MlProductBuilder = require('../../lib/ml-integration/MlProductBuilder')
+const ProductDirector = require('../../lib/ml-integration/product/ProductDirector')
+const MlProductBuilder = require('../../lib/ml-integration/product/MlProductBuilder')
 const getMlInstance = require('../../lib/ml-integration/get-meli-instance')
 
 
