@@ -22,7 +22,11 @@
     "brands": [],
     "categories": [],
     "customers": [],
-    "orders": [],
+    "orders": [
+      "GET",
+      "POST",
+      "PATCH"
+    ],
     "carts": [],
     "orders/fulfillments": [],
     "orders/payments_history": [],
