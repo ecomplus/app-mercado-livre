@@ -19,7 +19,7 @@ class MlToEcomOrderBuilder extends OrderBuilder {
     return new Promise((resolve, reject) => {
       const resource = `/products.json?sku=${sku}`
       console.log('[resource]', resource)
-      return this.appSdk.apiRequest(this.storeId, resource, 'GET', {}, auth)
+      return this.appSdk.apiRequest(this.storeId, resource)
         .then(res => {
           console.log(res)
           resolve(res)
