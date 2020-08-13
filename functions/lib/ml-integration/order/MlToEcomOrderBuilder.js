@@ -22,7 +22,7 @@ class MlToEcomOrderBuilder extends OrderBuilder {
       return this.appSdk.apiRequest(this.storeId, resource)
         .then(({ response }) => {
           const { data } = response
-          const { result } = data.data
+          const { result } = data
           if (result) {
             return resolve(result[0]._id)
           }
