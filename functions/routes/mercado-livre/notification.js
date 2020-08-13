@@ -33,6 +33,8 @@ exports.post = ({ admin, appSdk }, req, res) => {
               console.log('[ERROR TO GET MELI ORDER]', err)
               throw err
             }
+            console.log('[ML ORDER]', res)
+            console.log('[STORE_ID]', storeId)
             const order = res.body
             const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, storeId))
             orderDirector.create((err, res) => {
