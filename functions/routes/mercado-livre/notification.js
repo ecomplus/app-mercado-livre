@@ -28,20 +28,20 @@ exports.post = ({ admin, appSdk }, req, res) => {
             ml.screte_key,
             access_token
           )
-          return meliObject.get(body.resource, (err, res) => {
+          return meliObject.get(body.resource, (err, mlOrder) => {
             if (err) {
               console.log('[ERROR TO GET MELI ORDER]', err)
               throw err
             }
-            console.log('[ML ORDER]', res)
+            console.log('[ML ORDER]', mlOrder)
             console.log('[STORE_ID]', storeId)
-            const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(res, appSdk, storeId))
-            orderDirector.create((err, res) => {
+            const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(mlOrder, appSdk, storeId))
+            orderDirector.create((err, order) => {
               if (err) {
                 console.log('[ERROR orderDirector...]', err)
                 throw err
               }
-              console.log('[SUCCESS: ORDER CREATED]', res)
+              console.log('[SUCCESS: ORDER CREATED]', order)
               return res.send(ECHO_SUCCESS)
             })
           })

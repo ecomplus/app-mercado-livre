@@ -38,13 +38,13 @@ class MlToEcomOrderBuilder extends OrderBuilder {
   buildItems() {
     return new Promise((resolve, reject) => {
       try {
-        const items = []
+        this.order.items = []
         for (const mlItem of this.orderSchema.order_items) {
           const { quantity, unit_price, item } = mlItem
           const { seller_custom_field } = item
           this.getProductId(seller_custom_field)
             .then(productId => {
-              items.push({
+              this.order.items.push({
                 _id: randomObjectId(),
                 product_id: productId,
                 quantity,
@@ -52,7 +52,6 @@ class MlToEcomOrderBuilder extends OrderBuilder {
               })
             })
         }
-        this.order.items = items
         resolve()
       } catch (error) {
         reject(error)
