@@ -20,9 +20,12 @@ class MlToEcomOrderBuilder extends OrderBuilder {
       const resource = `/products.json?sku=${sku}`
       console.log('[resource]', resource)
       return this.appSdk.apiRequest(this.storeId, resource)
-        .then(res => {
-          console.log(res)
-          resolve(res)
+        .then(({ data }) => {
+          const { result } = data
+          if (result) {
+            return resolve(result[0]._id)
+          }
+          reject('No product found with this sku')
         })
         .catch(err => {
           console.log(err)
@@ -32,19 +35,27 @@ class MlToEcomOrderBuilder extends OrderBuilder {
   }
 
   buildItems() {
-    const items = []
-    for (const mlItem of this.orderSchema.order_items) {
-      const { quantity, unit_price, item } = mlItem
-      const { seller_custom_field } = item
-      this.getProductId(seller_custom_field)
-        .then(res => console.log(res))
-      // items.push({
-      //   _id: randomObjectId(),
-      //   product_id,
-      //   quantity,
-      //   price: unit_price
-      // })
-    }
+    return new Promise((resolve, reject) => {
+      try {
+        const items = []
+        for (const mlItem of this.orderSchema.order_items) {
+          const { quantity, unit_price, item } = mlItem
+          const { seller_custom_field } = item
+          this.getProductId(seller_custom_field)
+            .then(productId => {
+              items.push({
+                _id: randomObjectId(),
+                product_id: productId,
+                quantity,
+                price: unit_price
+              })
+            })
+        }
+        resolve()
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   create(callback) {

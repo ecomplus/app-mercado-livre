@@ -8,13 +8,21 @@ class OrderDirector {
   }
 
   builderOrderToCreate() {
-    this.orderBuilder.buildAmount()
-    this.orderBuilder.buildItems()
+    return new Promise((resolve, reject) => {
+      try {
+        this.orderBuilder.buildAmount()
+        this.orderBuilder.buildItems()
+          .then(() => resolve())
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   create(callback) {
-    this.builderOrderToCreate()
-    return this.orderBuilder.create(callback)
+    this.builderOrderToCreate().then(() => {
+      return this.orderBuilder.create(callback)
+    })
   }
 }
 
