@@ -35,8 +35,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
             }
             console.log('[ML ORDER]', res)
             console.log('[STORE_ID]', storeId)
-            const order = res.body
-            const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, storeId))
+            const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(res, appSdk, storeId))
             orderDirector.create((err, res) => {
               if (err) {
                 console.log('[ERROR orderDirector...]', err)
