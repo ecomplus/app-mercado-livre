@@ -19,20 +19,30 @@ exports.post = ({ admin, appSdk }, req, res) => {
       message: 'Missing store_id'
     })
   }
+  const { listing_type_id, category_id, product } = body
+  if (!listing_type_id || !category_id || !product) {
+    res.status(400)
+    return res.send({
+      error: 'Bad Request',
+      message: 'The body does not contains some or none of the following properties [listing_type_id, category_id, product]'
+    })
+  }
   return getAppData({ appSdk, storeId }, true)
     .then((config) => {
-      console.log('[config]', config)
       try {
         getMlInstance(admin, storeId)
           .then(mlInstance => {
-            const productDirector = new ProductDirector(new MlProductBuilder(body, mlInstance))
+            const options = { listing_type_id, category_id }
+            const productDirector = new ProductDirector(new MlProductBuilder(product, mlInstance, options))
             productDirector.create((err, productResponse) => {
               if (err) {
-                console.log(err)
                 throw err
               }
+              if (productResponse.error) {
+                return res.status(422).json(productResponse)
+              }
               const { id } = productResponse
-              const resource = `products/${body._id}/metafields.json`
+              const resource = `products/${product._id}/metafields.json`
               const metaFields = { field: 'ml_id', value: id }
               appSdk
                 .apiRequest(storeId, resource, 'POST', metaFields)
@@ -40,8 +50,6 @@ exports.post = ({ admin, appSdk }, req, res) => {
                   return res.send(ECHO_SUCCESS)
                 })
                 .catch(err => {
-                  console.log('[apiRequest ERROR]', err)
-                  err.name = SKIP_TRIGGER_NAME
                   throw err
                 })
             })

@@ -19,7 +19,6 @@ exports.post = ({ admin, appSdk }, req, res) => {
       .where('user_id', '=', body.user_id)
       .get()
       .then(users => {
-        console.log('[USERS FIND]', users)
         users.forEach(user => {
           const { access_token } = user.data()
           const storeId = user.id
@@ -30,23 +29,23 @@ exports.post = ({ admin, appSdk }, req, res) => {
           )
           return meliObject.get(body.resource, (err, mlOrder) => {
             if (err) {
-              console.log('[ERROR TO GET MELI ORDER]', err)
               throw err
             }
-            console.log('[ML ORDER]', mlOrder)
-            console.log('[STORE_ID]', storeId)
+            appSdk.requestApi
             const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(mlOrder, appSdk, storeId))
             orderDirector.create((err, order) => {
               if (err) {
-                console.log('[ERROR orderDirector...]', err)
+                console.log(err.response.data)
                 throw err
               }
-              console.log('[SUCCESS: ORDER CREATED]', order)
-              return res.send(ECHO_SUCCESS)
+              return res.json(order.response.data)
             })
           })
 
         })
+      })
+      .catch(error => {
+        throw(error)
       })
   } catch (error) {
     if (err.name === SKIP_TRIGGER_NAME) {

@@ -55,10 +55,11 @@ class MlProductBuilder extends ProductBuilder {
     const sources = []
     if (pictures && pictures.length > 0) {
       pictures.map(({ small, normal, big, zoom }) => {
-        sources.push({ source: small.url })
-        sources.push({ source: normal.url })
-        sources.push({ source: big.url })
-        sources.push({ source: zoom.url })
+        const urls = [small || [], normal || [], big || [], zoom || []].map(({ url }) => url)
+        console.log(urls)
+        urls.forEach(url => {
+          if (url) sources.push({ source: url})
+        })
       })
       this.product.pictures = sources
     }

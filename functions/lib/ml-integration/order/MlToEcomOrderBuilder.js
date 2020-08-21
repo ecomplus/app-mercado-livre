@@ -25,7 +25,7 @@ class MlToEcomOrderBuilder extends OrderBuilder {
           if (response.data && response.data.result) {
             const productId = response.data.result[0]._id
             return this.appSdk.apiRequest(this.storeId, `/products/${productId}.json`)
-              .then(({response}) => {
+              .then(({ response }) => {
                 const { data } = response
                 return resolve({
                   _id: randomObjectId(),
@@ -40,7 +40,6 @@ class MlToEcomOrderBuilder extends OrderBuilder {
           reject('No product found with this sku')
         })
         .catch(err => {
-          console.log(err)
           reject(err)
         })
     })
@@ -66,17 +65,30 @@ class MlToEcomOrderBuilder extends OrderBuilder {
     })
   }
 
+  buildTransactions() {
+    this.order.transactions = [
+      {
+        _id: randomObjectId(),
+        intermediator: {
+          transaction_id: this.orderSchema.id
+        }
+
+      },
+      {
+        app: {
+          intermediator: {
+            code: 'mlmp'
+          }
+        }
+      }
+    ]
+  }
+
   create(callback) {
     const resource = '/orders.json'
     this.appSdk
-      .getAuth(this.storeId)
-      .then(auth => {
-        console.log('[AUTH]', auth)
-        this.appSdk
-          .apiRequest(this.storeId, resource, 'POST', this.getOrder(), auth)
-          .then(res => callback(null, res))
-          .catch(err => callback(err))
-      })
+      .apiRequest(this.storeId, resource, 'POST', this.getOrder())
+      .then(res => callback(null, res))
       .catch(err => callback(err))
   }
 }
