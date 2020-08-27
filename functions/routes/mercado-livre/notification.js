@@ -20,11 +20,9 @@ exports.post = async ({ admin, appSdk }, req, res) => {
     mlService.findOrder(body.resource, (error, order) => {
       const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, mlService.user.storeId))
       orderDirector.create((error, order) => {
-        console.log('[passa aqui]', error)
-
         if (error) {
           let status = error.status ? error.status : 500
-          throw res.status(status).send(error)
+          return res.status(status).send(error)
         }
 
         return res.json(order.response.data)

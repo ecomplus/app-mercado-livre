@@ -98,6 +98,43 @@ class MlToEcomOrderBuilder extends OrderBuilder {
     ]
   }
 
+
+
+  buildStatus() {
+    switch (this.orderSchema.status) {
+      case 'cancelled':
+        this.order.status = 'cancelled'
+        break;
+      case 'invalid':
+        this.order.status = 'cancelled'
+        break;
+      default:
+        this.order.status = 'open'
+        break;
+    }
+  }
+
+  buildFinancialStatus() {
+    let status
+    switch (this.orderSchema.status) {
+      case 'paid':
+        status = 'paid'
+        break;
+      case 'cancelled':
+        status = 'refunded'
+        break;
+      case 'invalid':
+        status = 'unknown'
+        break;
+      default:
+        status = 'pending'
+        break;
+    }
+    this.order.financial_status = {
+      current: status
+    }
+  }
+
   create(callback) {
     const resource = '/orders.json'
     console.log(this.getOrder())

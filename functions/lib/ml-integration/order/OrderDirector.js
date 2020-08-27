@@ -13,6 +13,8 @@ class OrderDirector {
         // this.orderBuilder.buildTransactions()
         this.orderBuilder.buildAmount()
         this.orderBuilder.buildBuyer()
+        this.orderBuilder.buildStatus()
+        this.orderBuilder.buildFinancialStatus()
         this.orderBuilder.buildItems()
           .then(() => resolve()).catch(err => reject(err))
       } catch (error) {
