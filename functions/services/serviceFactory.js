@@ -6,7 +6,7 @@ class ServiceFactory {
   }
 
   _ml() {
-    return (storeId) => require('./mlService')(storeId, mlRepository)
+    return (storeId, mlUserId) => require('./mlService')(storeId, mlUserId, mlRepository)
   }
 
 }

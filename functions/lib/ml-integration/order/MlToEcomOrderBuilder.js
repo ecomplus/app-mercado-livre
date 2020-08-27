@@ -62,7 +62,7 @@ class MlToEcomOrderBuilder extends OrderBuilder {
             Promise.reject(error)
           });
       } catch (error) {
-        throw new Error(err)
+        throw new Error(error)
       }
     })
   }
@@ -86,12 +86,31 @@ class MlToEcomOrderBuilder extends OrderBuilder {
     ]
   }
 
+  buildBuyer() {
+    return this.order.buyers = [
+      {
+        _id: randomObjectId(),
+        main_email: this.orderSchema.buyer.email,
+        emails: [{ address: this.orderSchema.buyer.email }],
+        display_name: `${this.orderSchema.buyer.first_name} ${this.orderSchema.buyer.last_name}`,
+        doc_number: this.orderSchema.buyer.doc_number
+      }
+    ]
+  }
+
   create(callback) {
     const resource = '/orders.json'
+    console.log(this.getOrder())
     this.appSdk
       .apiRequest(this.storeId, resource, 'POST', this.getOrder())
-      .then(res => callback(null, res))
-      .catch(err => callback(err))
+      .then(({ response }) => {
+        callback(response.data)
+      })
+      .catch(err => {
+        if (err && err.response) {
+          callback(err.response.data)
+        }
+      })
   }
 }
 

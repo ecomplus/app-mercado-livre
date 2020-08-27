@@ -8,14 +8,14 @@ class MLRepository {
     return ml
   }
 
-  async getUserById(storeId) {
+  async getUserById(mlUserId) {
     const result = await admin.firestore()
       .collection('ml_app_auth')
-      .where('user_id', '=', storeId)
+      .where('user_id', '=', parseInt(mlUserId, 10))
       .get()
     if (!result.empty) {
       const doc = result.docs[0]
-      return doc.data()
+      return { storeId: doc.id, ...doc.data() }
     }
     return {}
   }
@@ -26,7 +26,7 @@ class MLRepository {
       .doc(storeId.toString())
       .get()
     if (result.exists) {
-      return result.data()
+      return { storeId: result.id, ...result.data() }
     }
     return {}
   }

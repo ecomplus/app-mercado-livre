@@ -1,23 +1,38 @@
 const meli = require('mercadolibre')
 
 class MLService {
-  constructor(client) {
+  constructor(user, client) {
+    this.user = user
     this.client = client
   }
 
   async findSuggestedCategories(term, callback) {
     this.client.get(`/sites/MLB/domain_discovery/search?limit=5&q=${term}`, callback)
   }
+
+  async findOrder(resource, callback) {
+    this.client.get(resource, callback)
+  }
 }
 
-module.exports = async (storeId, mlRepository) => {
-  const user = await mlRepository.getUserByStoreId(storeId)
+module.exports = async (storeId=false, mlUserId=false, mlRepository) => {
+  if (!storeId && !mlUserId) {
+    throw new Error('You must inform storeId or mlUserId')
+  }
+  let user
+  if (mlUserId) {
+   user = await mlRepository.getUserById(mlUserId)
+  } else {
+   user = await mlRepository.getUserByStoreId(storeId)
+  }
+
   const mlConfig = mlRepository.getConfig()
+  console.log(user)
   const client = new meli.Meli(
     mlConfig.client_id,
     mlConfig.secret_key,
     user.access_token,
     user.refresh_token
   )
-  return new MLService(client, mlRepository)
+  return new MLService(user, client, mlRepository)
 }
