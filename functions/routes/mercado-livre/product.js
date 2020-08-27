@@ -9,6 +9,7 @@ const ECHO_SUCCESS = 'SUCCESS'
 const ECHO_SKIP = 'SKIP'
 const ECHO_API_ERROR = 'STORE_API_ERR'
 
+
 exports.post = ({ admin, appSdk }, req, res) => {
   const storeId = parseInt(req.get('x-store-id'), 10) || req.query.storeId
   const { body } = req

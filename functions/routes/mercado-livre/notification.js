@@ -19,33 +19,44 @@ exports.post = ({ admin, appSdk }, req, res) => {
       .where('user_id', '=', body.user_id)
       .get()
       .then(users => {
-        users.forEach(user => {
-          const { access_token } = user.data()
-          const storeId = user.id
-          const meliObject = new meli.Meli(
-            ml.client_id,
-            ml.screte_key,
-            access_token
-          )
-          return meliObject.get(body.resource, (err, mlOrder) => {
-            if (err) {
-              throw err
-            }
-            appSdk.requestApi
-            const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(mlOrder, appSdk, storeId))
-            orderDirector.create((err, order) => {
+        try {
+          users.forEach(user => {
+            const { access_token } = user.data()
+            const storeId = user.id
+            const meliObject = new meli.Meli(
+              ml.client_id,
+              ml.screte_key,
+              access_token
+            )
+            return meliObject.get(body.resource, (err, mlOrder) => {
               if (err) {
-                console.log(err.response.data)
                 throw err
               }
-              return res.json(order.response.data)
-            })
-          })
+              try {
+                const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(mlOrder, appSdk, storeId))
+                orderDirector.create((err, order) => {
+                  console.log('[passa aqui]', err)
 
-        })
+                  if (err) {
+                    throw err
+                  }
+
+                  return res.json(order.response.data)
+                })
+              } catch (error) {
+                throw error
+              }
+
+            })
+
+          })
+        } catch (error) {
+          throw error
+        }
+
       })
       .catch(error => {
-        throw(error)
+        throw error
       })
   } catch (error) {
     if (err.name === SKIP_TRIGGER_NAME) {

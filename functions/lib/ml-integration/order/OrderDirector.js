@@ -13,7 +13,7 @@ class OrderDirector {
         this.orderBuilder.buildTransactions()
         this.orderBuilder.buildAmount()
         this.orderBuilder.buildItems()
-          .then(() => resolve())
+          .then(() => resolve()).catch(err => reject(err))
       } catch (error) {
         reject(error)
       }
@@ -23,7 +23,7 @@ class OrderDirector {
   create(callback) {
     this.builderOrderToCreate().then(() => {
       return this.orderBuilder.create(callback)
-    })
+    }).catch(error => callback(error) )
   }
 }
 

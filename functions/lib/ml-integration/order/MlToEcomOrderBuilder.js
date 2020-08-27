@@ -22,7 +22,7 @@ class MlToEcomOrderBuilder extends OrderBuilder {
       const resource = `/products.json?sku=${seller_custom_field}`
       return this.appSdk.apiRequest(this.storeId, resource)
         .then(({ response }) => {
-          if (response.data && response.data.result) {
+          if (response.data && response.data.result.length > 0) {
             const productId = response.data.result[0]._id
             return this.appSdk.apiRequest(this.storeId, `/products/${productId}.json`)
               .then(({ response }) => {
@@ -36,11 +36,12 @@ class MlToEcomOrderBuilder extends OrderBuilder {
                   price: unit_price
                 })
               })
+              .catch(err => reject(err))
           }
           reject('No product found with this sku')
         })
         .catch(err => {
-          reject(err)
+          throw new Error(err)
         })
     })
   }
@@ -57,10 +58,11 @@ class MlToEcomOrderBuilder extends OrderBuilder {
           .then(items => {
             this.order.items = items
             resolve()
-          })
-          .catch(err => reject(err))
+          }).catch(error => {
+            Promise.reject(error)
+          });
       } catch (error) {
-        reject(error)
+        throw new Error(err)
       }
     })
   }
