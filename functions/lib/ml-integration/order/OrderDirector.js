@@ -10,7 +10,7 @@ class OrderDirector {
   builderOrderToCreate() {
     return new Promise((resolve, reject) => {
       try {
-        // this.orderBuilder.buildTransactions()
+        this.orderBuilder.buildTransactions()
         this.orderBuilder.buildAmount()
         this.orderBuilder.buildBuyer()
         this.orderBuilder.buildStatus()

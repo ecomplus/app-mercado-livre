@@ -68,22 +68,38 @@ class MlToEcomOrderBuilder extends OrderBuilder {
   }
 
   buildTransactions() {
-    this.order.transactions = [
-      {
+    const paymentOptions = ['credit_card', 'banking_billet', 'online_debit',
+      'account_deposit', 'debit_card', 'balance_on_intermediary', 'loyalty_points', 'other']
+    const transactions = []
+    for (const payment of this.orderSchema.payments) {
+      const transaction = {
         _id: randomObjectId(),
+        payment_method: {
+          code: (paymentOptions.find(type => type === payment.payment_type) || 'other'),
+          name: payment.payment_method_id,
+        },
+        amount: payment.total_paid_amount,
+        installments: {
+          number: payment.installments,
+          value: payment.installment_amount
+        },
         intermediator: {
-          transaction_id: this.orderSchema.id
-        }
-
-      },
-      {
+          transaction_id: payment.id.toString(),
+          transaction_reference: payment.order_id.toString(),
+          buyer_id: payment.payer_id.toString()
+        },
         app: {
+          _id: randomObjectId(),
+          label: 'mlmp',
           intermediator: {
-            code: 'mlmp'
+            name: 'Mercado Livre',
+            code: payment.order_id.toString()
           }
         }
       }
-    ]
+      transactions.push(transaction)
+    }
+    this.order.transactions = transactions
   }
 
   buildBuyer() {
