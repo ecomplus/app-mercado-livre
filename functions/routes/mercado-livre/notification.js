@@ -18,13 +18,15 @@ exports.post = async ({ admin, appSdk }, req, res) => {
     }
     const mlService = await getMlService(false, body.user_id)
     mlService.findOrder(body.resource, (error, order) => {
+      if (error) {
+        return res.status(500).send(error)
+      }
       const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, mlService.user.storeId))
       orderDirector.create((error, order) => {
         if (error) {
           let status = error.status ? error.status : 500
           return res.status(status).send(error)
         }
-
         return res.json(order.response.data)
       })
     })
