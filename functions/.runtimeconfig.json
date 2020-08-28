@@ -1,0 +1,15 @@
+{
+  "pkg": {
+    "name": "@ecomplus/app-mercado-livre",
+    "version": "1.0.0-starter.13"
+  },
+  "ml": {
+    "client_id": "6653886911586901",
+    "secret_key": "7D1OvA7YYK35p5EcX9rz00HsAMACjdGL",
+    "authorize_uri": "http://auth.mercadolibre.com.ar/authorization?response_type=code&client_id=6653886911586901",
+    "redirect_uri": "https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/mercado-livre/auth"
+  },
+  "server": {
+    "operator_token": "iZiz3i8jupEszMhiuCCNZ2b9dwNUkFqR"
+  }
+}
