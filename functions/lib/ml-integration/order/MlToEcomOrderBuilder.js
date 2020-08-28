@@ -153,11 +153,10 @@ class MlToEcomOrderBuilder extends OrderBuilder {
 
   create(callback) {
     const resource = '/orders.json'
-    console.log(this.getOrder())
     this.appSdk
       .apiRequest(this.storeId, resource, 'POST', this.getOrder())
       .then(({ response }) => {
-        callback(response.data)
+        callback(null, response.data)
       })
       .catch(err => {
         if (err && err.response) {

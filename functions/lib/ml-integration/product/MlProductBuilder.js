@@ -1,9 +1,9 @@
 const ProductBuilder = require('./ProductBuilder')
 
 class MlProductBuilder extends ProductBuilder {
-  constructor(productSchema, mlInstance, options = {}) {
+  constructor(productSchema, mlService, options = {}) {
     super(productSchema)
-    this.mlInstance = mlInstance
+    this.mlService = mlService
     this.options = options
     this._attributes = []
     this._variations = []
@@ -216,8 +216,7 @@ class MlProductBuilder extends ProductBuilder {
 
   create(callback) {
     console.log(JSON.stringify(this.getProduct(), null, 2))
-    return this.mlInstance.post('/items', this.getProduct(), (err, res) => {
-      console.log('[ERROR]', err, res)
+    return this.mlService.createProduct(this.getProduct(), (err, res) => {
       return callback(err, res)
     })
   }

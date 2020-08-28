@@ -14,7 +14,7 @@ exports.post = async ({ admin, appSdk }, req, res) => {
   try {
     const { body } = req
     if (!body.topic === 'orders_v2') {
-      return res.send(ECHO_SKIP)
+      return res.send('ok')
     }
     const mlService = await getMlService(false, body.user_id)
     mlService.findOrder(body.resource, (error, order) => {
@@ -27,7 +27,7 @@ exports.post = async ({ admin, appSdk }, req, res) => {
           let status = error.status ? error.status : 500
           return res.status(status).send(error)
         }
-        return res.json(order.response.data)
+        return res.json(order)
       })
     })
   } catch (error) {

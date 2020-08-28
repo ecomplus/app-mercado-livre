@@ -6,13 +6,18 @@ class MLService {
     this.client = client
   }
 
-  async findSuggestedCategories(term, callback) {
+  findSuggestedCategories(term, callback) {
     this.client.get(`/sites/MLB/domain_discovery/search?limit=5&q=${term}`, callback)
   }
 
-  async findOrder(resource, callback) {
+  findOrder(resource, callback) {
     this.client.get(resource, callback)
   }
+
+  createProduct(data, callback) {
+    this.client.post('/items', data, callback)
+  }
+
 }
 
 module.exports = async (storeId=false, mlUserId=false, mlRepository) => {
