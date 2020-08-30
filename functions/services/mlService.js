@@ -1,9 +1,23 @@
 const meli = require('mercadolibre')
 
 class MLService {
-  constructor(user, client) {
+  constructor(user, client, mlRepository) {
     this.user = user
     this.client = client
+    this.mlRepository = mlRepository
+  }
+
+  saveNotification(notification) {
+    return this.mlRepository.saveNotification(notification)
+  }
+
+  async hasNotification(notification) {
+    const notifcations = await this.mlRepository.findNotificationsByResource(notification.resource)
+    return notifcations.length > 0
+  }
+
+  async removeNotification(notificationId) {
+    this.mlRepository.removeNotification(notificationId)
   }
 
   findSuggestedCategories(term, callback) {
@@ -32,7 +46,6 @@ module.exports = async (storeId=false, mlUserId=false, mlRepository) => {
   }
 
   const mlConfig = mlRepository.getConfig()
-  console.log(user)
   const client = new meli.Meli(
     mlConfig.client_id,
     mlConfig.secret_key,

@@ -9,22 +9,31 @@ const ECHO_SKIP = 'SKIP'
 const ECHO_API_ERROR = 'STORE_API_ERR'
 
 exports.post = async ({ appSdk }, req, res) => {
+  let mlService
+  let notification = req.body
   try {
-    const { body } = req
-    if (!body.topic === 'orders_v2') {
+    if (!notification.topic === 'orders_v2') {
       return res.send('ok')
     }
-    const mlService = await getMlService(false, body.user_id)
-    mlService.findOrder(body.resource, (error, order) => {
+    mlService = await getMlService(false, notification.user_id)
+    if (await mlService.hasNotification(notification)) {
+      return res.status(422).send('processing for this resource already exists')
+    }
+    const notificationId = mlService.saveNotification(notification)
+    mlService.findOrder(notification.resource, async (error, order) => {
       if (error) {
+        await mlService.removeNotification(notificationId)
+
         return res.status(500).send(error)
       }
       const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, mlService.user.storeId))
-      orderDirector.create((error) => {
+      orderDirector.create(async (error) => {
         if (error) {
           let status = error.status ? error.status : 500
+          await mlService.removeNotification(notificationId)
           return res.status(status).send(error)
         }
+        await mlService.removeNotification(notificationId)
         return res.send(ECHO_SUCCESS)
       })
     })

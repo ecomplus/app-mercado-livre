@@ -38,7 +38,7 @@ class MlToEcomOrderBuilder extends OrderBuilder {
               })
               .catch(err => reject(err))
           }
-          reject('No product found with this sku')
+          resolve()
         })
         .catch(err => {
           throw new Error(err)
