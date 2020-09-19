@@ -1,6 +1,6 @@
 const admin = require('firebase-admin')
 const { ml } = require('firebase-functions').config()
-const uuid = require('uuid/v4')
+const uuid = require('uuid')
 
 const NOTIFICATION_COLLECTION = 'ml_notifications'
 
@@ -37,7 +37,7 @@ class MLRepository {
   }
 
   saveNotification(notification) {
-    const guid = uuid().toString()
+    const guid = uuid.v4().toString()
     let docRef = this.db.collection('ml_notifications').doc(guid)
     docRef.set(notification)
     return guid
