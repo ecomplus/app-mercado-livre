@@ -32,6 +32,10 @@ class MLService {
     this.client.post('/items', data, callback)
   }
 
+  findShipping(shippingId, callback) {
+    this.client.get(`/shipments/${shippingId}`, callback)
+  }
+
 }
 
 module.exports = async (storeId=false, mlUserId=false, mlRepository) => {

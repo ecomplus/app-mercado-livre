@@ -141,6 +141,20 @@ const app = {
      * You can also set any other valid resource/subresource combination.
      * Ref.: https://developers.e-com.plus/docs/api/#/store/
      */
+  },
+  admin_settings: {
+    listing_type_id: {
+      schema: {
+        type: 'string',
+        enum: [
+          'listing1',
+          'listing2',
+          'listing3'
+        ],
+        title: 'Tipo de listagem',
+        description: 'Em qual tipo de listagem o produto será listado'
+      }
+    }
   }
 }
 

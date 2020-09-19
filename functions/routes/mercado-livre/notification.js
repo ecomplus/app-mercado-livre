@@ -27,13 +27,28 @@ exports.post = async ({ appSdk }, req, res) => {
         return res.status(500).send(error)
       }
       const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, mlService.user.storeId))
-      orderDirector.create(async (error) => {
+      orderDirector.create(async (error, ecomOrder) => {
         if (error) {
           let status = error.status ? error.status : 500
           await mlService.removeNotification(notificationId)
           return res.status(status).send(error)
         }
         await mlService.removeNotification(notificationId)
+        if (order.shipping) {
+          return mlService.findShipping(order.shipping.id, async (error, shipping) => {
+            if (error) {
+              let status = error.status ? error.status : 500
+              await mlService.removeNotification(notificationId)
+              return res.status(status).send(error)
+            }
+            const resource = `/orders/${ecomOrder._id}/shipping_lines.json`
+            return appSdk
+              .apiRequest(parseInt(mlService.user.storeId), resource, 'POST', shipping)
+              .then(({ response }) => {
+                return res.send(response)
+              }).catch( error => res.send(error))
+          })
+        }
         return res.send(ECHO_SUCCESS)
       })
     })
