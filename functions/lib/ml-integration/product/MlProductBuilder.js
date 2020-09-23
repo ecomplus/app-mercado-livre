@@ -10,6 +10,7 @@ class MlProductBuilder extends ProductBuilder {
   }
 
   getSpecByProps(specs, props) {
+    if (!specs) return {}
     for (let i = 0; i < props.length; i++) {
       if (specs[props[i]]) {
         return specs[props[i]][0]
@@ -58,7 +59,7 @@ class MlProductBuilder extends ProductBuilder {
         const urls = [small || [], normal || [], big || [], zoom || []].map(({ url }) => url)
         console.log(urls)
         urls.forEach(url => {
-          if (url) sources.push({ source: url})
+          if (url) sources.push({ source: url })
         })
       })
       this.product.pictures = sources
@@ -152,10 +153,24 @@ class MlProductBuilder extends ProductBuilder {
 
   buildGender(specifications) {
     const variations = ['gender', 'genero', 'gênero', 'genre', 'sexo']
-    this._attributes.push({
-      id: 'GENDER',
-      value_name: this.getSpecByProps(specifications, variations).text
-    })
+    const gender = this.getSpecByProps(specifications, variations).text
+    if (gender) {
+      this._attributes.push({
+        id: 'GENDER',
+        value_name: gender
+      })
+    }
+  }
+
+  buildLengthType(specifications) {
+    const variations = ['tipo_de_cumprimento', 'tipo_cumprimento', 'length_type']
+    const lengthType = this.getSpecByProps(specifications, variations).text
+    if (lengthType) {
+      this._attributes.push({
+        id: 'LENGTH_TYPE',
+        value_name: lengthType
+      })
+    }
   }
 
   buildUnitsPerPckage(specifications) {
@@ -171,6 +186,8 @@ class MlProductBuilder extends ProductBuilder {
       this.buildModel(specifications)
       this.buildMaterial(specifications)
       this.buildUnitsPerPckage(specifications)
+      this.buildGender(specifications)
+      this.buildLengthType(specifications)
     }
   }
 
