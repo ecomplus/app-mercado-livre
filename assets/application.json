@@ -43,6 +43,20 @@
     ],
     "products/variations/price": []
   },
+  "admin_settings": {
+    "listing_type_id": {
+      "schema": {
+        "type": "string",
+        "enum": [
+          "listing1",
+          "listing2",
+          "listing3"
+        ],
+        "title": "Tipo de listagem",
+        "description": "Em qual tipo de listagem o produto será listado"
+      }
+    }
+  },
   "auth_callback_uri": "https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/ecom/auth-callback",
   "version": "1.0.0"
 }
