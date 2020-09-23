@@ -150,6 +150,14 @@ class MlProductBuilder extends ProductBuilder {
     })
   }
 
+  buildGender(specifications) {
+    const variations = ['gender', 'genero', 'gênero', 'genre', 'sexo']
+    this._attributes.push({
+      id: 'GENDER',
+      value_name: this.getSpecByProps(specifications, variations).text
+    })
+  }
+
   buildUnitsPerPckage(specifications) {
     this._attributes.push({
       id: 'UNITS_PER_PACKAGE',
