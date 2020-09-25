@@ -37,6 +37,16 @@ exports.post = ({ admin, appSdk }, req, res) => {
       console.log('[method] ==> ', trigger.method)
       console.log('[action] ==> ', trigger.action)
       if (trigger.resource === 'products') {
+        if (trigger.action === 'change') {
+          const resource = `/products/${trigger.resource_id}/metafields.json`
+          appSdk
+            .apiRequest(parseInt(storeId), resource, 'GET')
+            .then(response => {
+              console.log('=====> Metafields', response)
+              return res.send(ECHO_SUCCESS)
+            }).catch( error => res.send(error))
+        }
+
         // try {
         //   getMlInstance(admin, storeId)
         //     .then(mlInstance => {

@@ -1,10 +1,24 @@
 class ProductDirector {
   constructor(productBuilder) {
     this.productBuilder = productBuilder
+    this.updatedBuilders = {
+      quantity: this.productBuilder.buildAvailableQuantity,
+      price: this.productBuilder.buildPrice,
+      pictures: this.productBuilder.pictures
+
+    }
   }
 
   getProduct() {
     return this.productBuilder.getProduct()
+  }
+
+  buildProductUpdate(fields) {
+    for (const field of fields) {
+      if (this.updatedBuilders.hasOwnProperty(field)) {
+        this.updatedBuilders[field]()
+      }
+    }
   }
 
   buildProductToCreate() {
@@ -30,6 +44,11 @@ class ProductDirector {
   create(callback) {
     this.buildProductToCreate()
     return this.productBuilder.create(callback)
+  }
+
+  update(callback) {
+    this.buildProductUpdate()
+    return this.productBuilder.update(callback)
   }
 }
 

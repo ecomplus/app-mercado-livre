@@ -228,9 +228,8 @@ class MlProductBuilder extends ProductBuilder {
     }
   }
 
-  update(callback) {
-    const { metafields } = this.productSchema
-    const mlId = (metafields || []).find(({ field }) => field === 'ml_id')
+  update(mlId, callback) {
+
     if (!mlId) {
       return callback(new Error('ml_id was not found in metafields'))
     }
