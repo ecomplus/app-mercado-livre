@@ -111,6 +111,11 @@ const app = {
       // 'DELETE',        // Delete payments history entry
     ],
 
+    "orders/shipping_lines": [
+      "GET",
+      "POST"
+    ],
+
     "products/metafields": [
       "GET",
       "POST"
