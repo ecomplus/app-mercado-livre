@@ -45,6 +45,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
               const mlId = data.result.find(metadata => metadata.field === 'ml_id')
               const productDirector = new ProductDirector(new MlProductBuilder(product, mlService, { id: mlId }))
               productDirector.update((err, productResponse) => {
+                console.log(productResponse)
                 if (err) {
                   return res.status(500).send(error)
                 }
@@ -94,7 +95,6 @@ exports.post = ({ admin, appSdk }, req, res) => {
       } else {
         return res.send(ECHO_SUCCESS)
       }
-      return res.send(ECHO_SUCCESS)
     })
     .catch(err => {
       if (err.name === SKIP_TRIGGER_NAME) {
