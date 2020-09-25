@@ -45,7 +45,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
               const mlId = data.result.find(metadata => metadata.field === 'ml_id')
               const productDirector = new ProductDirector(new MlProductBuilder(product, mlService, { id: mlId }))
               productDirector.update((err, productResponse) => {
-                console.log(productResponse)
+                console.log(productResponse, err)
                 if (err) {
                   return res.status(500).send(error)
                 }
