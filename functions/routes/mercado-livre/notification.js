@@ -1,5 +1,7 @@
 const OrderDirector = require('../../lib/ml-integration/order/OrderDirector.js')
+const ShippingDirector = require('../../lib/ml-integration/order/ShippingDirector.js')
 const MlToEcomOrderBuilder = require('../../lib/ml-integration/order/MlToEcomOrderBuilder')
+const MlToEcomShippingBuilder = require('../../lib/ml-integration/order/MlToEcomShippingBuilder')
 const serviceFactory = require('../../services/serviceFactory')
 const getMlService = serviceFactory('ml')
 
@@ -41,15 +43,17 @@ exports.post = async ({ appSdk }, req, res) => {
               await mlService.removeNotification(notificationId)
               return res.status(status).send(error)
             }
+            const shippingDirector = new ShippingDirector(new MlToEcomShippingBuilder(shipping, appSdk, mlService.user.storeId))
             const resource = `/orders/${ecomOrder._id}/shipping_lines.json`
             return appSdk
-              .apiRequest(parseInt(mlService.user.storeId), resource, 'POST', shipping)
-              .then(({ response }) => {
-                return res.send(response)
+              .apiRequest(parseInt(mlService.user.storeId), resource, 'POST', shippingDirector.getShipping())
+              .then(() => {
+                return res.send(ECHO_SUCCESS)
               }).catch( error => res.send(error))
           })
+        } else {
+          return res.send(ECHO_SUCCESS)
         }
-        return res.send(ECHO_SUCCESS)
       })
     })
   } catch (error) {

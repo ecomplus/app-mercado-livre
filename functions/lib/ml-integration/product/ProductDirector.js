@@ -24,7 +24,6 @@ class ProductDirector {
     this.productBuilder.buildSpecifications()
     this.productBuilder.buildAttributes()
     this.productBuilder.buildWeight()
-    this.productBuilder.buildGender()
     // this.productBuilder.buildVariations()
   }
 

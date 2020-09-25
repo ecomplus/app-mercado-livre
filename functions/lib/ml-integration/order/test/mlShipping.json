@@ -1,0 +1,187 @@
+{
+  "id": 40126053123,
+  "mode": "me2",
+  "created_by": "receiver",
+  "order_id": 4054522636,
+  "order_cost": 150,
+  "base_cost": 7.9,
+  "site_id": "MLB",
+  "status": "ready_to_ship",
+  "substatus": "ready_to_print",
+  "status_history": {
+    "date_cancelled": null,
+    "date_delivered": null,
+    "date_first_visit": null,
+    "date_handling": "2020-09-22T21:36:07.000-04:00",
+    "date_not_delivered": null,
+    "date_ready_to_ship": "2020-09-22T21:36:08.000-04:00",
+    "date_shipped": null,
+    "date_returned": null
+  },
+  "substatus_history": [
+    {
+      "status": "handling",
+      "substatus": "regenerating",
+      "date": "2020-09-22T22:38:20.000-04:00"
+    }
+  ],
+  "date_created": "2020-09-22T21:35:51.000-04:00",
+  "last_updated": "2020-09-22T22:38:32.000-04:00",
+  "tracking_number": "1010107825854",
+  "tracking_method": "Sedex",
+  "service_id": 22,
+  "carrier_info": null,
+  "sender_id": 593020850,
+  "sender_address": {
+    "id": 1122656948,
+    "address_line": "XXXXXXX",
+    "street_name": "XXXXXXX",
+    "street_number": "XXXXXXX",
+    "comment": null,
+    "zip_code": "XXXXXXX",
+    "city": {
+      "id": "TUxCQ1NFVDU1ZDg3",
+      "name": "Sete Lagoas"
+    },
+    "state": {
+      "id": "BR-MG",
+      "name": "Minas Gerais"
+    },
+    "country": {
+      "id": "BR",
+      "name": "Brasil"
+    },
+    "neighborhood": {
+      "id": null,
+      "name": "São Jorge"
+    },
+    "municipality": {
+      "id": null,
+      "name": null
+    },
+    "agency": null,
+    "types": [
+      "billing",
+      "default_selling_address",
+      "shipping"
+    ],
+    "latitude": 0,
+    "longitude": 0,
+    "geolocation_type": "ROOFTOP",
+    "geolocation_last_updated": "2020-08-05T02:13:10Z",
+    "geolocation_source": "google-maps"
+  },
+  "receiver_id": 621019154,
+  "receiver_address": {
+    "id": 1132458753,
+    "address_line": "Rua Zé Arigó 45",
+    "street_name": "Rua Zé Arigó",
+    "street_number": "45",
+    "comment": null,
+    "zip_code": "35700259",
+    "city": {
+      "id": "TUxCQ1NFVDU1ZDg3",
+      "name": "Sete Lagoas"
+    },
+    "state": {
+      "id": "BR-MG",
+      "name": "Minas Gerais"
+    },
+    "country": {
+      "id": "BR",
+      "name": "Brasil"
+    },
+    "neighborhood": {
+      "id": null,
+      "name": "São Jorge"
+    },
+    "municipality": {
+      "id": null,
+      "name": null
+    },
+    "agency": null,
+    "types": null,
+    "latitude": -19.471962,
+    "longitude": -44.253886,
+    "geolocation_type": "ROOFTOP",
+    "geolocation_last_updated": "2020-09-23T02:38:17Z",
+    "geolocation_source": "google-maps",
+    "delivery_preference": "residential",
+    "receiver_name": "Thiago",
+    "receiver_phone": "31991304223"
+  },
+  "shipping_items": [
+    {
+      "id": "MLB1664252490",
+      "description": "Vestido Longo De Renda Alterado",
+      "quantity": 1,
+      "dimensions": "8.0x23.0x28.0,465.0",
+      "dimensions_source": {
+        "id": "MLB1664252490",
+        "origin": "similarity"
+      }
+    }
+  ],
+  "shipping_option": {
+    "id": 318854539,
+    "shipping_method_id": 182,
+    "name": "Expresso",
+    "currency_id": "BRL",
+    "list_cost": 18.54,
+    "cost": 0,
+    "delivery_type": "estimated",
+    "estimated_schedule_limit": {
+      "date": null
+    },
+    "estimated_delivery_time": {
+      "type": "unknown",
+      "date": "2020-10-01T00:00:00.000-03:00",
+      "unit": "hour",
+      "offset": {
+        "date": "2020-10-05T00:00:00.000-03:00",
+        "shipping": 48
+      },
+      "time_frame": {
+        "from": null,
+        "to": null
+      },
+      "pay_before": "2020-09-23T11:00:00.000-03:00",
+      "shipping": 144,
+      "handling": 24,
+      "schedule": null
+    },
+    "estimated_delivery_limit": {
+      "date": "2020-10-20T00:00:00.000-03:00",
+      "offset": 240
+    },
+    "estimated_delivery_final": {
+      "date": "2020-11-18T00:00:00.000-03:00",
+      "offset": 720
+    },
+    "estimated_delivery_extended": {
+      "date": "2020-10-13T00:00:00.000-03:00",
+      "offset": 120
+    },
+    "estimated_handling_limit": {
+      "date": "2020-09-23T00:00:00.000-03:00"
+    }
+  },
+  "comments": null,
+  "date_first_printed": null,
+  "market_place": "MELI",
+  "return_details": null,
+  "tags": [
+    "test_shipment"
+  ],
+  "type": "forward",
+  "logistic_type": "drop_off",
+  "application_id": null,
+  "return_tracking_number": null,
+  "cost_components": {
+    "special_discount": 0,
+    "loyal_discount": 0,
+    "compensation": 0,
+    "gap_discount": 0,
+    "ratio": 26.44
+  }
+}
