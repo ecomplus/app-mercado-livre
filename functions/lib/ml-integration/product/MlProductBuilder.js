@@ -228,12 +228,11 @@ class MlProductBuilder extends ProductBuilder {
     }
   }
 
-  update(mlId, callback) {
-
-    if (!mlId) {
+  update(callback) {
+    if (!this.options.id) {
       return callback(new Error('ml_id was not found in metafields'))
     }
-    return this.mlInstance.put(`/items/${mlId.value}`, this.getProduct(), (err, res) => {
+    return this.mlInstance.put(`/items/${this.options.id}`, this.getProduct(), (err, res) => {
       return callback(err, res)
     })
   }

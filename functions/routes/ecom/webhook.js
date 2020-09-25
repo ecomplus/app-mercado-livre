@@ -41,10 +41,19 @@ exports.post = ({ admin, appSdk }, req, res) => {
           const resource = `/products/${trigger.resource_id}/metafields.json`
           appSdk
             .apiRequest(parseInt(storeId), resource, 'GET')
-            .then(response => {
-              console.log('=====> Metafields', response)
-              return res.send(ECHO_SUCCESS)
-            }).catch( error => res.send(error))
+            .then(({ data }) => {
+              const mlId = data.result.find(metadata => metadata.field === 'ml_id')
+              const productDirector = new ProductDirector(new MlProductBuilder(product, mlService, { id: mlId }))
+              productDirector.update((err, productResponse) => {
+                if (err) {
+                  return res.status(500).send(error)
+                }
+                if (productResponse.error) {
+                  return res.status(422).json(productResponse)
+                }
+                return res.send(ECHO_SUCCESS)
+              })
+            }).catch(error => res.send(error))
         }
 
         // try {
