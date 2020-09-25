@@ -43,7 +43,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
             .apiRequest(parseInt(storeId), resource, 'GET')
             .then(({ data }) => {
               const mlId = data.result.find(metadata => metadata.field === 'ml_id')
-              const productDirector = new ProductDirector(new MlProductBuilder(product, mlService, { id: mlId }))
+              const productDirector = new ProductDirector(new MlProductBuilder(trigger.body, mlService, { id: mlId }))
               productDirector.update(trigger.fields, (err, productResponse) => {
                 console.log(productResponse, err)
                 if (err) {
