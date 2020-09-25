@@ -47,6 +47,7 @@ class ProductDirector {
   }
 
   update(fields, callback) {
+    console.log('[ProductBuilder - update]', fields)
     this.buildProductUpdate(fields)
     return this.productBuilder.update(callback)
   }
