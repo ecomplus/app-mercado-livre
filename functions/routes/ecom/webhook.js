@@ -31,12 +31,12 @@ exports.post = ({ admin, appSdk }, req, res) => {
       }
 
       /* DO YOUR CUSTOM STUFF HERE */
+      console.log('[fields] ==> ', trigger.fields)
+      console.log('[body] ==> ', trigger.body)
+      console.log('[resource_id] ==> ', trigger.resource_id)
+      console.log('[method] ==> ', trigger.method)
+      console.log('[action] ==> ', trigger.action)
       if (trigger.resource === 'products') {
-        console.log('[fields] ==> ', trigger.fields)
-        console.log('[body] ==> ', trigger.body)
-        console.log('[resource_id] ==> ', trigger.resource_id)
-        console.log('[method] ==> ', trigger.method)
-        console.log('[action] ==> ', trigger.action)
         // try {
         //   getMlInstance(admin, storeId)
         //     .then(mlInstance => {
