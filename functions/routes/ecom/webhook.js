@@ -36,6 +36,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
       console.log('[resource_id] ==> ', trigger.resource_id)
       console.log('[method] ==> ', trigger.method)
       console.log('[action] ==> ', trigger.action)
+      console.log('[action] ==> ', trigger.resource)
       if (trigger.resource === 'products') {
         if (trigger.action === 'change') {
           const resource = `/products/${trigger.resource_id}/metafields.json`
