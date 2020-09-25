@@ -46,8 +46,8 @@ class ProductDirector {
     return this.productBuilder.create(callback)
   }
 
-  update(callback) {
-    this.buildProductUpdate()
+  update(fields, callback) {
+    this.buildProductUpdate(fields)
     return this.productBuilder.update(callback)
   }
 }
