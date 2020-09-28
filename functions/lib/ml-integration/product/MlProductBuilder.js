@@ -24,7 +24,7 @@ class MlProductBuilder extends ProductBuilder {
   }
 
   buildDescription() {
-    this.product.description = this.productSchema.body_html.replace(/<[^>]*>?/gm, '');
+    this.product.description = (this.productSchema.body_html || '').replace(/<[^>]*>?/gm, '');
   }
 
   buildCondition() {
