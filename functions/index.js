@@ -10,6 +10,10 @@ const admin = require('firebase-admin')
 const functions = require('firebase-functions')
 admin.initializeApp()
 
+//Tasks
+require('./services/tasks')
+
+
 // web server with Express
 const express = require('express')
 const bodyParser = require('body-parser')

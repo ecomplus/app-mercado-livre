@@ -38,8 +38,8 @@ class MLRepository {
 
   saveNotification(notification) {
     const guid = uuid.v4().toString()
-    let docRef = this.db.collection('ml_notifications').doc(guid)
-    docRef.set(notification)
+    let docRef = this.db.collection('ml_notifications').add(notification)
+    // docRef.add(notification)
     return guid
   }
 

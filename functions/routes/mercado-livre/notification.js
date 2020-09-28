@@ -24,7 +24,7 @@ exports.post = async ({ appSdk }, req, res) => {
     const notificationId = mlService.saveNotification(notification)
     mlService.findOrder(notification.resource, async (error, order) => {
       if (error) {
-        await mlService.removeNotification(notificationId)
+        // await mlService.removeNotification(notificationId)
 
         return res.status(500).send(error)
       }
@@ -32,15 +32,15 @@ exports.post = async ({ appSdk }, req, res) => {
       orderDirector.create(async (error, ecomOrder) => {
         if (error) {
           let status = error.status ? error.status : 500
-          await mlService.removeNotification(notificationId)
+          // await mlService.removeNotification(notificationId)
           return res.status(status).send(error)
         }
-        await mlService.removeNotification(notificationId)
+        // await mlService.removeNotification(notificationId)
         if (order.shipping) {
           return mlService.findShipping(order.shipping.id, async (error, shipping) => {
             if (error) {
               let status = error.status ? error.status : 500
-              await mlService.removeNotification(notificationId)
+              // await mlService.removeNotification(notificationId)
               return res.status(status).send(error)
             }
             const shippingDirector = new ShippingDirector(new MlToEcomShippingBuilder(shipping, appSdk, mlService.user.storeId))
