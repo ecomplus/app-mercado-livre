@@ -7,8 +7,12 @@ class MLService {
     this.mlRepository = mlRepository
   }
 
-  saveNotification(notification) {
-    return this.mlRepository.saveNotification(notification)
+  async createNotification(notification) {
+    return await this.mlRepository.createNotification(notification)
+  }
+
+  updateNotification(id, notification) {
+    return this.mlRepository.updateNotification(id, notification)
   }
 
   async hasNotification(notification) {

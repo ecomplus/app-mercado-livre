@@ -10,8 +10,8 @@ const admin = require('firebase-admin')
 const functions = require('firebase-functions')
 admin.initializeApp()
 
-//Tasks
-require('./services/tasks')
+//tasks
+const tasks = require('./services/tasks')
 
 
 // web server with Express
@@ -133,4 +133,6 @@ server.use(router)
 server.use(express.static('public'))
 
 exports[functionName] = functions.https.onRequest(server)
+exports.tasks = tasks
+
 console.log(`-- Starting '${app.title}' E-Com Plus app with Function '${functionName}'`)
