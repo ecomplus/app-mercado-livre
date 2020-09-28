@@ -24,7 +24,6 @@ exports.onNotification = functions.firestore.document('ml_notifications/{documen
       }
       const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, mlService.user.storeId))
       orderDirector.create(async (error, ecomOrder) => {
-        console.log(error, ecomOrder)
         if (error) {
           mlService.updateNotification(notificationId, {
             ...notification, hasError: true, error: { stack: error.stack, status: error.status}
