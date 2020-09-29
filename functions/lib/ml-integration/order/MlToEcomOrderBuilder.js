@@ -151,6 +151,10 @@ class MlToEcomOrderBuilder extends OrderBuilder {
     }
   }
 
+  buildNotes() {
+    this.order.notes = `Order: ${this.orderSchema.id}`
+  }
+
   create(callback) {
     const resource = '/orders.json'
     this.appSdk
