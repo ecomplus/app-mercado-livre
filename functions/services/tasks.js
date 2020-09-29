@@ -11,12 +11,14 @@ const admin = require('firebase-admin');
 
 exports.onNotification = functions.firestore.document('ml_notifications/{documentId}')
   .onCreate(async (snap) => {
+    console.log(snap.id)
     const appSdk = await setup(null, true, admin.firestore())
     const notification = snap.data()
     const notificationId = snap.id
     mlService = await getMlService(false, notification.user_id)
     mlService.findOrder(notification.resource, async (error, order) => {
       if (error) {
+        console.log(notificationId, 'notificationId')
         mlService.updateNotification(notificationId, {
           ...notification, hasError: true, error: error
         })
@@ -25,6 +27,7 @@ exports.onNotification = functions.firestore.document('ml_notifications/{documen
       const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, mlService.user.storeId))
       orderDirector.create(async (error, ecomOrder) => {
         if (error) {
+          console.log(notificationId, 'notificationId')
           mlService.updateNotification(notificationId, {
             ...notification, hasError: true, error: { stack: error.stack, status: error.status}
           })
