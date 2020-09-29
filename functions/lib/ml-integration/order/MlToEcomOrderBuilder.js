@@ -155,6 +155,30 @@ class MlToEcomOrderBuilder extends OrderBuilder {
     this.order.notes = `Order: ${this.orderSchema.id}`
   }
 
+  buildMetafields() {
+    this.order.metafields = [
+      {
+        _id: randomObjectId(),
+        field: 'ml_order_id',
+        value: this.orderSchema.id.toString()
+      }
+    ]
+  }
+
+  update(orderId, callback) {
+    const resource = `/orders/${orderId}.json`
+    this.appSdk
+      .apiRequest(this.storeId, resource, 'PATCH', this.getOrder())
+      .then(({ response }) => {
+        callback(null, response.data)
+      })
+      .catch(err => {
+        if (err && err.response) {
+          callback(err.response.data)
+        }
+      })
+  }
+
   create(callback) {
     const resource = '/orders.json'
     this.appSdk

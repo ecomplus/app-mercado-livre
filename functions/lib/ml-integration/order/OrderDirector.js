@@ -7,7 +7,7 @@ class OrderDirector {
     return this.orderBuilder.getOrder()
   }
 
-  builderOrderToCreate() {
+  builderOrder() {
     return new Promise((resolve, reject) => {
       try {
         this.orderBuilder.buildTransactions()
@@ -16,6 +16,7 @@ class OrderDirector {
         this.orderBuilder.buildStatus()
         this.orderBuilder.buildFinancialStatus()
         this.orderBuilder.buildNotes()
+        this.orderBuilder.buildMetafields()
         this.orderBuilder.buildItems()
           .then(() => resolve()).catch(err => reject(err))
       } catch (error) {
@@ -26,6 +27,15 @@ class OrderDirector {
 
   create(callback) {
     this.builderOrderToCreate().then(() => {
+      return this.orderBuilder.create(callback)
+    }).catch(error => callback(error) )
+  }
+
+  save(orderId, callback) {
+    return this.builderOrder().then(() => {
+      if (orderId) {
+        return this.orderBuilder.update(orderId, callback)
+      }
       return this.orderBuilder.create(callback)
     }).catch(error => callback(error) )
   }
