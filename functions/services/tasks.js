@@ -15,6 +15,9 @@ exports.onNotification = functions.firestore.document('ml_notifications/{documen
     const appSdk = await setup(null, true, admin.firestore())
     const notification = snap.data()
     const notificationId = snap.id
+    if (notification.topic !== 'orders_v2') {
+      return true
+    }
     mlService = await getMlService(false, notification.user_id)
     mlService.findOrder(notification.resource, async (error, order) => {
       if (error) {

@@ -1,6 +1,5 @@
 const admin = require('firebase-admin')
 const { ml } = require('firebase-functions').config()
-const uuid = require('uuid')
 
 const NOTIFICATION_COLLECTION = 'ml_notifications'
 
@@ -37,14 +36,13 @@ class MLRepository {
   }
 
   async createNotification(notification) {
-    const docRef = await this.db.collection('ml_notifications').add(notification)
+    const docRef = await this.db.collection(NOTIFICATION_COLLECTION).add(notification)
     return docRef.id
   }
 
   updateNotification(id, notification) {
-    const docRef = this.db.collection('ml_notifications').doc(id)
-    console.log(id, notification)
-    docRef.set(notification, { merge: true })
+    const docRef = this.db.collection(NOTIFICATION_COLLECTION).doc(id)
+    docRef.set(notification)
   }
 
   async findNotificationsByResource(resource) {

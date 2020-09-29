@@ -11,8 +11,8 @@ class MLService {
     return await this.mlRepository.createNotification(notification)
   }
 
-  updateNotification(id, notification) {
-    return this.mlRepository.updateNotification(id, notification)
+  async updateNotification(id, notification) {
+    return await this.mlRepository.updateNotification(id, notification)
   }
 
   async hasNotification(notification) {
