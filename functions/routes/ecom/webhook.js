@@ -40,9 +40,9 @@ exports.post = ({ admin, appSdk }, req, res) => {
       try {
         admin.firestore()
         .collection('ecom_notifications')
-        add(trigger)
-        .then(() => console.log('CREATED NOTIFICATION'))
-        .catch((error) => console.log('[ERROR]', error))
+        .add(trigger)
+          .then(() => console.log('CREATED NOTIFICATION'))
+          .catch((error) => console.log('[ERROR]', error))
       } catch (error) {
         console.log('[ERROR]', error)
       }
