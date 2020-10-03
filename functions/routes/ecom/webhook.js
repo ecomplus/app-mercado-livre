@@ -37,11 +37,15 @@ exports.post = ({ admin, appSdk }, req, res) => {
       console.log('[method] ==> ', trigger.method)
       console.log('[action] ==> ', trigger.action)
       console.log('[action] ==> ', trigger.resource)
-      admin.firestore()
+      try {
+        admin.firestore()
         .collection('ecom_notifications')
         add(trigger)
         .then(() => console.log('CREATED NOTIFICATION'))
-        .catch((error) => console.error(error))
+        .catch((error) => console.log('[ERROR]', error))
+      } catch (error) {
+        console.log('[ERROR]', error)
+      }
       if (trigger.resource === 'products') {
         if (trigger.action === 'change') {
           const resource = `/products/${trigger.resource_id}/metafields.json`
