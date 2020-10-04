@@ -269,8 +269,8 @@ class MLProductService {
         sort: '-created_at'
       })
       const resource = `/products.json?${query}`
-      const result = await this.appSdk.apiRequest(parseInt(this.storeId), resource, 'GET')
-      return Promise.resolve(result)
+      const { result }= await this.appSdk.apiRequest(parseInt(this.storeId), resource, 'GET')
+      return Promise.resolve(result.data)
     } catch (error) {
       Promise.reject(error)
     }
