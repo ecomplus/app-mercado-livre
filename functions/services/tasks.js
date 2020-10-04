@@ -7,6 +7,7 @@ const serviceFactory = require('../services/serviceFactory')
 const getMlService = serviceFactory('ml')
 const { setup } = require('@ecomplus/application-sdk')
 const admin = require('firebase-admin');
+const MLProductService = require('./ecom_to_ml/productService')
 
 const getEcomOrder = async (appSdk, storeId, mlOrderId) => {
   const resource = `/orders.json?metafields.field=ml_order_id&metafields.value=${mlOrderId}&fields=metafields&limit=1&sort=-created_at`
@@ -20,11 +21,26 @@ const getEcomOrder = async (appSdk, storeId, mlOrderId) => {
   }
 
 }
+const handleProduct = async (appSdk, notification) => {
+  const mlProductService = new MLProductService(admin, appSdk, notification.store_id, notification.body)
+  functions.logger.info('handleProduct', mlProductService.getProduct())
+  return true
+}
+
 
 exports.onEcomNotification = functions.firestore
   .document('ecom_notifications/{documentId}')
   .onCreate(async (snap) => {
+    const notification = snap.data()
     functions.logger.info('TRIGGOU ECOM NOTIFICATION', snap.data())
+    switch (notification.resource) {
+      case 'products':
+        handleProduct()
+        break;
+
+      default:
+        break;
+    }
     return true
   })
 
