@@ -21,6 +21,13 @@ const getEcomOrder = async (appSdk, storeId, mlOrderId) => {
 
 }
 
+exports.onEcomNotification = functions.firestore
+  .document('ecom_notifications/{documentId}')
+  .onCreate(async (snap) => {
+    functions.logger.info('TRIGGOU ECOM NOTIFICATION', snap.data())
+    return true
+  })
+
 
 exports.onNotification = functions.firestore.document('ml_notifications/{documentId}')
   .onCreate(async (snap) => {
