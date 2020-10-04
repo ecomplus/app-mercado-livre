@@ -31,9 +31,10 @@ const handleProduct = async (appSdk, notification) => {
 exports.onEcomNotification = functions.firestore
   .document('ecom_notifications/{documentId}')
   .onCreate(async (snap) => {
+    const appSdk = await setup(null, true, admin.firestore())
     const notification = snap.data()
     functions.logger.info('TRIGGOU ECOM NOTIFICATION', snap.data())
-    switch (notification.resource) {
+    switch (appSdk, notification.resource) {
       case 'products':
         handleProduct()
         break;
