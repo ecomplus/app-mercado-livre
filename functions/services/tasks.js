@@ -36,7 +36,7 @@ exports.onEcomNotification = functions.firestore
     functions.logger.info('TRIGGOU ECOM NOTIFICATION', snap.data())
     switch (appSdk, notification.resource) {
       case 'products':
-        handleProduct()
+        handleProduct(appSdk, notification)
         break;
 
       default:
