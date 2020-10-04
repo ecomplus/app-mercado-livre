@@ -22,9 +22,15 @@ const getEcomOrder = async (appSdk, storeId, mlOrderId) => {
 
 }
 const handleProduct = async (appSdk, notification) => {
-  const mlProductService = new MLProductService(admin, appSdk, notification.store_id, notification.body)
-  functions.logger.info('handleProduct', mlProductService.getProduct())
-  return true
+  try {
+    functions.logger.info('[handleProduct]')
+    const mlProductService = new MLProductService(admin, appSdk, notification.store_id, notification.body)
+    const mlProduct = await mlProductService.getProductOnMl()
+    functions.logger.info('[getProductOnMl]', mlProduct)
+    return true
+  } catch (error) {
+    functions.logger.error(error)
+  }
 }
 
 
