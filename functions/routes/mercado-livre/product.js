@@ -1,7 +1,7 @@
 const ProductDirector = require('../../lib/ml-integration/product/ProductDirector')
 const MlProductBuilder = require('../../lib/ml-integration/product/MlProductBuilder')
 const serviceFactory = require('../../services/serviceFactory')
-
+const functions = require('firebase-functions')
 const getMlService = serviceFactory('ml')
 
 
@@ -35,9 +35,11 @@ exports.post = async ({ admin, appSdk }, req, res) => {
     const productDirector = new ProductDirector(new MlProductBuilder(product, mlService, options))
     productDirector.create((err, productResponse) => {
       if (err) {
+        functions.logger.error(error)
         return res.status(500).send(error)
       }
       if (productResponse.error) {
+        functions.logger.error(productResponse.error)
         return res.status(422).json(productResponse)
       }
       const { id } = productResponse
@@ -48,12 +50,14 @@ exports.post = async ({ admin, appSdk }, req, res) => {
         .then(() => {
           return res.send(ECHO_SUCCESS)
         })
-        .catch(err => {
+        .catch(error => {
+          functions.logger.error(error)
           let status = error.status ? error.status : 500
           return res.status(status).send(error)
         })
     })
   } catch (error) {
+    functions.logger.error(error)
     if (error.name === SKIP_TRIGGER_NAME) {
       res.send(ECHO_SKIP)
     } else {
