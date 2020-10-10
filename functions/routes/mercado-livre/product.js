@@ -41,16 +41,16 @@ exports.post = async ({ admin, appSdk }, req, res) => {
       if (response.status !== 201) {
         return res.json(response.data)
       }
+      const resource = `products/${product._id}/metafields.json`
+      const metafields = { field: 'ml_id', value: response.data.id }
+      await appSdk.apiRequest(storeId, resource, 'POST', metafields)
+      return res.json(response.data)
     } catch (error) {
       if (error && error.status === 400) {
         return res.status(400).json(error)
       }
-      throw error
+      return res.status(500).send(error)
     }
-    const resource = `products/${product._id}/metafields.json`
-    const metafields = { field: 'ml_id', value: response.data.id }
-    await appSdk.apiRequest(storeId, resource, 'POST', metafields)
-    return res.json(response.data)
   } catch (error) {
     console.log(error)
     if (error.name === SKIP_TRIGGER_NAME) {
