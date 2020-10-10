@@ -28,7 +28,7 @@ const handleProduct = async (appSdk, notification) => {
     if (notification.resource_id) {
       functions.logger.info('[handleProduct]')
       const resource = `/products/${notification.resource_id}/metafields.json`
-      const { result } = await appSdk.apiRequest(
+      const { data } = await appSdk.apiRequest(
         parseInt(notification.store_id), resource, 'GET')
       const user = await admin
         .firestore()
@@ -36,13 +36,13 @@ const handleProduct = async (appSdk, notification) => {
         .doc(notification.store_id.toString())
         .get()
 
-      for (const metafields of result.filter(({ field }) => field === 'ml_id')) {
+      for (const metafields of data.result.filter(({ field }) => field === 'ml_id')) {
         const productService = new ProductService(user.data().access_token, product)
         const productData = productService.getProductByUpdate()
         await productService.update(metafields.value, productData)
       }
       functions.logger.info('[handleProduc]: UPDATED PRODUCTS:')
-      functions.logger.info(result)
+      functions.logger.info(data.result)
     }
     return true
   } catch (error) {
