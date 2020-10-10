@@ -272,21 +272,20 @@ class MLProductService {
     }
   }
 
-  async getProductOnMl() {
-    try {
-      const query = qs.stringify({
-        'metafields.fields': 'ml_id',
-        fields: 'metafields',
-        limit: 1,
-        sort: '-created_at'
-      })
-      const resource = `/products.json?${query}`
-      const { result } = await this.appSdk.apiRequest(parseInt(this.storeId), resource, 'GET')
-      return Promise.resolve(result.data)
-    } catch (error) {
-      Promise.reject(error)
-    }
 
+  findProduct(id) {
+    return new Promise((resolve, reject) => {
+      this.server
+        .get(`/items/${id}`)
+        .then((response) => resolve(response))
+        .catch(error => {
+          if (error.response) {
+            console.log(error.response.data.cause)
+            return reject(error.response.data)
+          }
+          reject(error)
+        })
+    })
   }
 
   create(data) {

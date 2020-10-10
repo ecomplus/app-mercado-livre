@@ -4,29 +4,44 @@ const ShippingDirector = require('../lib/ml-integration/order/ShippingDirector.j
 const MlToEcomOrderBuilder = require('../lib/ml-integration/order/MlToEcomOrderBuilder')
 const MlToEcomShippingBuilder = require('../lib/ml-integration/order/MlToEcomShippingBuilder')
 const serviceFactory = require('../services/serviceFactory')
+const qs = require('qs')
 const getMlService = serviceFactory('ml')
 const { setup } = require('@ecomplus/application-sdk')
 const admin = require('firebase-admin');
-const MLProductService = require('./ecom_to_ml/productService')
+const MLProductService = require('./ecom_to_ml/productService');
+const { app } = require('firebase-admin');
 
 const getEcomOrder = async (appSdk, storeId, mlOrderId) => {
   const resource = `/orders.json?metafields.field=ml_order_id&metafields.value=${mlOrderId}&fields=metafields&limit=1&sort=-created_at`
   console.log(mlOrderId)
-  const { response  }= await appSdk.apiRequest(parseInt(storeId), resource, 'GET')
+  const { response } = await appSdk.apiRequest(parseInt(storeId), resource, 'GET')
   if (response.statusText === 'OK') {
     const { data } = response
     if (data.result && data.result.length > 0) {
       return data.result[0]._id
     }
   }
-
 }
+
 const handleProduct = async (appSdk, notification) => {
   try {
     functions.logger.info('[handleProduct]')
-    const mlProductService = new MLProductService(admin, appSdk, notification.store_id, notification.body)
-    const mlProduct = await mlProductService.getProductOnMl()
-    functions.logger.info('[getProductOnMl]', mlProduct)
+    const resource = `/products/${notification.resource}/metafields.json`
+    const { result } = await appSdk.apiRequest(
+      parseInt(notification.store_id), resource, 'GET')
+    const user = await admin
+      .firestore()
+      .collection('ml_app_auth')
+      .doc(storeId.toString())
+      .get()
+
+    for (const metafields of result.filter(({ field }) => field === 'ml_id')) {
+      const productService = new ProductService(user.data().access_token, product, { listing_type_id, category_id })
+      const productData = productService.getProductByUpdate()
+      await productService.update(metafields.value, productData)
+    }
+    functions.logger.info('[handleProduc]: UPDATED PRODUCTS:')
+    functions.logger.info(result)
     return true
   } catch (error) {
     functions.logger.error(error)

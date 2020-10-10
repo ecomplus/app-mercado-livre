@@ -46,26 +46,26 @@ exports.post = ({ admin, appSdk }, req, res) => {
       } catch (error) {
         console.log('[ERROR]', error)
       }
-      if (trigger.resource === 'products') {
-        if (trigger.action === 'change') {
-          const resource = `/products/${trigger.resource_id}/metafields.json`
-          appSdk
-            .apiRequest(parseInt(storeId), resource, 'GET')
-            .then(({ data }) => {
-              const mlId = data.result.find(metadata => metadata.field === 'ml_id')
-              const productDirector = new ProductDirector(new MlProductBuilder(trigger.body, mlService, { id: mlId }))
-              productDirector.update(trigger.fields, (err, productResponse) => {
-                console.log(productResponse, err)
-                if (err) {
-                  return res.status(500).send(error)
-                }
-                if (productResponse.error) {
-                  return res.status(422).json(productResponse)
-                }
-                return res.send(ECHO_SUCCESS)
-              })
-            }).catch(error => res.send(error))
-        }
+      // if (trigger.resource === 'products') {
+      //   if (trigger.action === 'change') {
+      //     const resource = `/products/${trigger.resource_id}/metafields.json`
+      //     appSdk
+      //       .apiRequest(parseInt(storeId), resource, 'GET')
+      //       .then(({ data }) => {
+      //         const mlId = data.result.find(metadata => metadata.field === 'ml_id')
+      //         const productDirector = new ProductDirector(new MlProductBuilder(trigger.body, mlService, { id: mlId }))
+      //         productDirector.update(trigger.fields, (err, productResponse) => {
+      //           console.log(productResponse, err)
+      //           if (err) {
+      //             return res.status(500).send(error)
+      //           }
+      //           if (productResponse.error) {
+      //             return res.status(422).json(productResponse)
+      //           }
+      //           return res.send(ECHO_SUCCESS)
+      //         })
+      //       }).catch(error => res.send(error))
+      //   }
 
         // try {
         //   getMlInstance(admin, storeId)
@@ -102,9 +102,9 @@ exports.post = ({ admin, appSdk }, req, res) => {
         //   console.error('[ERROR PRODUCT INTEGRATE]', error)
         //   throw error
         // }
-      } else {
-        return res.send(ECHO_SUCCESS)
-      }
+      // } else {
+      //   return res.send(ECHO_SUCCESS)
+      // }
     })
     .catch(err => {
       if (err.name === SKIP_TRIGGER_NAME) {
