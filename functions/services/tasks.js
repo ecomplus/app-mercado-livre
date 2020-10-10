@@ -85,7 +85,7 @@ exports.onNotification = functions.firestore.document('ml_notifications/{documen
     const appSdk = await setup(null, true, admin.firestore())
     const notification = snap.data()
     const notificationId = snap.id
-    const topics = ['order', 'create_orders', 'orders_v2']
+    const topics = ['order', 'created_orders', 'orders_v2']
     if (!topics.includes(notification.topic)) {
       return true
     }
