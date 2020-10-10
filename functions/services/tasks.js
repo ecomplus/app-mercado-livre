@@ -1,4 +1,6 @@
 const functions = require('firebase-functions');
+const ProductService = require('./ecom_to_ml/productService')
+
 const OrderDirector = require('../lib/ml-integration/order/OrderDirector.js')
 const ShippingDirector = require('../lib/ml-integration/order/ShippingDirector.js')
 const MlToEcomOrderBuilder = require('../lib/ml-integration/order/MlToEcomOrderBuilder')
