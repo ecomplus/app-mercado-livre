@@ -1,16 +1,18 @@
-const { app } = require('firebase-admin')
-const meli = require('mercadolibre')
-const { ml } = require('firebase-functions').config()
+const axios = require('axios').default;
 const qs = require('qs')
 
 class MLProductService {
-  constructor(admin, appSdk, storeId, ecomSchema, options = {}) {
+  constructor(token, data, options = {}) {
+    this.server = axios.create({
+      baseURL: 'https://api.mercadolibre.com',
+      timeout: 60000,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     this.product = {}
-    this.ecomSchema = ecomSchema
+    this.data = data
     this.options = options
-    this.admin = admin
-    this.appSdk = appSdk
-    this.storeId = storeId
     this._attributes = []
     this._variations = []
   }
@@ -26,19 +28,19 @@ class MLProductService {
   }
 
   buildTitle() {
-    this.product.title = this.ecomSchema.name
+    this.product.title = this.data.name
   }
 
   buildDescription() {
-    this.product.description = (this.ecomSchema.body_html || '').replace(/<[^>]*>?/gm, '');
+    this.product.description = (this.data.body_html || '').replace(/<[^>]*>?/gm, '');
   }
 
   buildCondition() {
-    this.product.condition = this.ecomSchema.condition
+    this.product.condition = this.data.condition
   }
 
   buildAvailableQuantity() {
-    this.product.available_quantity = this.ecomSchema.quantity
+    this.product.available_quantity = this.data.quantity
   }
 
   buildListingTypes() {
@@ -50,20 +52,19 @@ class MLProductService {
   }
 
   buildCurrency() {
-    this.product.currency_id = this.ecomSchema.currency_id
+    this.product.currency_id = this.data.currency_id
   }
 
   buildPrice() {
-    this.product.price = this.ecomSchema.price
+    this.product.price = this.data.price
   }
 
   buildPictures() {
-    const { pictures } = this.ecomSchema
+    const { pictures } = this.data
     const sources = []
     if (pictures && pictures.length > 0) {
       pictures.map(({ small, normal, big, zoom }) => {
         const urls = [small || [], normal || [], big || [], zoom || []].map(({ url }) => url)
-        console.log(urls)
         urls.forEach(url => {
           if (url) sources.push({ source: url })
         })
@@ -76,17 +77,17 @@ class MLProductService {
     this.product.variations = [
       {
         id: 'SELLER_SKU',
-        value_name: this.ecomSchema.sku
+        value_name: this.data.sku
       }
     ]
   }
 
   buildSellerCustomField() {
-    this.product.seller_custom_field = this.ecomSchema.sku
+    this.product.seller_custom_field = this.data.sku
   }
 
   buildGtin() {
-    const { gtin } = this.ecomSchema
+    const { gtin } = this.data
     if (gtin && gtin.length > 0) {
       for (const item of gtin) {
         this._attributes.push({ id: 'GTIN', value_name: item })
@@ -95,7 +96,7 @@ class MLProductService {
   }
 
   buildBrand() {
-    const { brands } = this.ecomSchema
+    const { brands } = this.data
     if (brands && brands.length > 0) {
       for (const { name } of brands) {
         this._attributes.push({ id: 'BRAND', value_name: name })
@@ -104,7 +105,7 @@ class MLProductService {
   }
 
   buildDimensions() {
-    const { dimensions } = this.ecomSchema
+    const { dimensions } = this.data
     if (dimensions) {
       this.buildWidth(dimensions)
       this.buildHeight(dimensions)
@@ -187,7 +188,7 @@ class MLProductService {
   }
 
   buildSpecifications() {
-    const { specifications } = this.ecomSchema
+    const { specifications } = this.data
     if (specifications) {
       this.buildModel(specifications)
       this.buildMaterial(specifications)
@@ -214,7 +215,7 @@ class MLProductService {
   }
 
   buildWeight() {
-    const { weight } = this.ecomSchema
+    const { weight } = this.data
     if (weight) {
       const { value, unit } = weight
       this._attributes.push({
@@ -234,8 +235,9 @@ class MLProductService {
     }
   }
 
-  async getProduct() {
+  getProductByCreate() {
     try {
+      this.product = {}
       this.buildTitle()
       this.buildDescription()
       this.buildCondition()
@@ -253,14 +255,24 @@ class MLProductService {
       this.buildAttributes()
       this.buildWeight()
       // this.buildVariations()
-      return Promise.resolve(this.product)
+      return this.product
     } catch (error) {
-      return Promise.reject(error)
+      throw error
+    }
+  }
+
+  getProductByUpdate() {
+    try {
+      this.product = {}
+      this.buildAvailableQuantity()
+      this.buildPrice()
+      return this.product
+    } catch (error) {
+      throw error
     }
   }
 
   async getProductOnMl() {
-    // Vai la na ecom, vê nos metafields se tem ml_id
     try {
       const query = qs.stringify({
         'metafields.fields': 'ml_id',
@@ -269,7 +281,7 @@ class MLProductService {
         sort: '-created_at'
       })
       const resource = `/products.json?${query}`
-      const { result }= await this.appSdk.apiRequest(parseInt(this.storeId), resource, 'GET')
+      const { result } = await this.appSdk.apiRequest(parseInt(this.storeId), resource, 'GET')
       return Promise.resolve(result.data)
     } catch (error) {
       Promise.reject(error)
@@ -277,8 +289,34 @@ class MLProductService {
 
   }
 
-  async create() {
+  create(data) {
+    return new Promise((resolve, reject) => {
+      this.server
+        .post('/items', data)
+        .then((response) => resolve(response))
+        .catch(error => {
+          if (error.response) {
+            console.log(error.response.data.cause)
+            return reject(error.response.data)
+          }
+          reject(error)
+        })
+    })
+  }
 
+  update(id, data) {
+    return new Promise((resolve, reject) => {
+      this.server
+        .put(`items/${id}`, data)
+        .then((response) => resolve(response))
+        .catch(error => {
+          if (error.response) {
+            console.log(error.response.data.cause)
+            return reject(error.response.data)
+          }
+          reject(error)
+        })
+    })
   }
 
 }
