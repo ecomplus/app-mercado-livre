@@ -12,6 +12,7 @@ const { setup } = require('@ecomplus/application-sdk')
 const admin = require('firebase-admin');
 const MLProductService = require('./ecom_to_ml/productService');
 const { app } = require('firebase-admin');
+const { topic } = require('firebase-functions/lib/providers/pubsub');
 
 const getEcomOrder = async (appSdk, storeId, mlOrderId) => {
   const resource = `/orders.json?metafields.field=ml_order_id&metafields.value=${mlOrderId}&fields=metafields&limit=1&sort=-created_at`
@@ -84,7 +85,8 @@ exports.onNotification = functions.firestore.document('ml_notifications/{documen
     const appSdk = await setup(null, true, admin.firestore())
     const notification = snap.data()
     const notificationId = snap.id
-    if (notification.topic !== 'orders_v2') {
+    const topics = ['order', 'create_orders', 'orders_v2']
+    if (!topics.includes(notification.topic)) {
       return true
     }
     const mlService = await getMlService(false, notification.user_id)
