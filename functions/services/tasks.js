@@ -40,9 +40,14 @@ const handleProduct = async (appSdk, notification) => {
         .get()
 
       for (const metafields of response.data.result.filter(({ field }) => field === 'ml_id')) {
-        const productService = new ProductService(user.data().access_token, product)
-        const productData = productService.getProductByUpdate()
-        await productService.update(metafields.value, productData)
+        try {
+          const productService = new ProductService(user.data().access_token, notification.body)
+          const productData = productService.getProductByUpdate()
+          await productService.update(metafields.value, productData)
+        } catch (error) {
+          functions.logger.error(error)
+        }
+
       }
       functions.logger.info('[handleProduc]: UPDATED PRODUCTS:')
       functions.logger.info(response.data.result)
