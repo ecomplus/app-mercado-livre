@@ -81,66 +81,73 @@ exports.onEcomNotification = functions.firestore
 
 exports.onNotification = functions.firestore.document('ml_notifications/{documentId}')
   .onCreate(async (snap) => {
-    functions.logger.info(`ORDER ${JSON.stringify(snap.data())}`)
-    const appSdk = await setup(null, true, admin.firestore())
-    const notification = snap.data()
-    const notificationId = snap.id
-    const topics = ['order', 'created_orders', 'orders_v2']
-    if (!topics.includes(notification.topic)) {
-      return true
-    }
-    const mlService = await getMlService(false, notification.user_id)
-    mlService.findOrder(notification.resource, async (error, order) => {
-      if (error) {
-        functions.logger.error(error);
-        mlService.updateNotification(notificationId, {
-          ...notification, hasError: true, error: error
-        })
+    try {
+      functions.logger.info(`ORDER ${JSON.stringify(snap.data())}`)
+      const appSdk = await setup(null, true, admin.firestore())
+      const notification = snap.data()
+      const notificationId = snap.id
+      const topics = ['order', 'created_orders', 'orders_v2']
+      if (!topics.includes(notification.topic)) {
         return true
       }
-      const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, mlService.user.storeId))
-      const orderId = await getEcomOrder(appSdk, mlService.user.storeId, order.id)
-      functions.logger.info(`ORDER ${orderId}`)
-      orderDirector.save(orderId, async (error, ecomOrder) => {
+      const mlService = await getMlService(false, notification.user_id)
+      mlService.findOrder(notification.resource, async (error, order) => {
         if (error) {
-          error = (error || {})
           functions.logger.error(error);
           mlService.updateNotification(notificationId, {
-            ...notification, hasError: true, error: { stack: error.stack || error, status: error.status || '' }
+            ...notification, hasError: true, error: error
           })
           return true
         }
-        if (!orderId && order.shipping) {
-          return mlService.findShipping(order.shipping.id, async (error, shipping) => {
-            if (error) {
-              error = (error || {})
-              functions.logger.error(error);
-              mlService.updateNotification(notificationId, {
-                ...notification, hasError: true, error: { stack: error.stack || error, status: error.status || '' }
-              })
-              return true
-            }
-            const shippingDirector = new ShippingDirector(new MlToEcomShippingBuilder(shipping, appSdk, mlService.user.storeId))
-            const resource = `/orders/${ecomOrder._id}/shipping_lines.json`
-            return appSdk
-              .apiRequest(parseInt(mlService.user.storeId), resource, 'POST', shippingDirector.getShipping())
-              .then(() => {
-                mlService.removeNotification(notificationId)
-                return true
-              }).catch(error => {
+        const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, mlService.user.storeId))
+        const orderId = await getEcomOrder(appSdk, mlService.user.storeId, order.id)
+        functions.logger.info(`ORDER ${orderId}`)
+        orderDirector.save(orderId, async (error, ecomOrder) => {
+          if (error) {
+            error = (error || {})
+            functions.logger.error(error);
+            mlService.updateNotification(notificationId, {
+              ...notification, hasError: true, error: { stack: error.stack || error, status: error.status || '' }
+            })
+            return true
+          }
+          if (!orderId && order.shipping) {
+            return mlService.findShipping(order.shipping.id, async (error, shipping) => {
+              if (error) {
+                error = (error || {})
                 functions.logger.error(error);
                 mlService.updateNotification(notificationId, {
-                  ...notification, hasError: true, error: error.stack || error
+                  ...notification, hasError: true, error: { stack: error.stack || error, status: error.status || '' }
                 })
                 return true
-              })
-          })
-        } else {
-          mlService.removeNotification(notificationId)
-          return true
-        }
+              }
+              const shippingDirector = new ShippingDirector(new MlToEcomShippingBuilder(shipping, appSdk, mlService.user.storeId))
+              const resource = `/orders/${ecomOrder._id}/shipping_lines.json`
+              return appSdk
+                .apiRequest(parseInt(mlService.user.storeId), resource, 'POST', shippingDirector.getShipping())
+                .then(() => {
+                  mlService.removeNotification(notificationId)
+                  return true
+                }).catch(error => {
+                  functions.logger.error(error);
+                  mlService.updateNotification(notificationId, {
+                    ...notification, hasError: true, error: error.stack || error
+                  })
+                  return true
+                })
+            })
+          } else {
+            mlService.removeNotification(notificationId)
+            return true
+          }
+        })
       })
-    })
+
+    } catch (error) {
+      functions.logger.error('[ORDER ERROR]');
+      functions.logger.error(error);
+      return true
+    }
   })
 
 
