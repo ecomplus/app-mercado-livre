@@ -25,23 +25,25 @@ const getEcomOrder = async (appSdk, storeId, mlOrderId) => {
 
 const handleProduct = async (appSdk, notification) => {
   try {
-    functions.logger.info('[handleProduct]')
-    const resource = `/products/${notification.resource}/metafields.json`
-    const { result } = await appSdk.apiRequest(
-      parseInt(notification.store_id), resource, 'GET')
-    const user = await admin
-      .firestore()
-      .collection('ml_app_auth')
-      .doc(storeId.toString())
-      .get()
+    if (notification.resource_id) {
+      functions.logger.info('[handleProduct]')
+      const resource = `/products/${notification.resource_id}/metafields.json`
+      const { result } = await appSdk.apiRequest(
+        parseInt(notification.store_id), resource, 'GET')
+      const user = await admin
+        .firestore()
+        .collection('ml_app_auth')
+        .doc(storeId.toString())
+        .get()
 
-    for (const metafields of result.filter(({ field }) => field === 'ml_id')) {
-      const productService = new ProductService(user.data().access_token, product, { listing_type_id, category_id })
-      const productData = productService.getProductByUpdate()
-      await productService.update(metafields.value, productData)
+      for (const metafields of result.filter(({ field }) => field === 'ml_id')) {
+        const productService = new ProductService(user.data().access_token, product, { listing_type_id, category_id })
+        const productData = productService.getProductByUpdate()
+        await productService.update(metafields.value, productData)
+      }
+      functions.logger.info('[handleProduc]: UPDATED PRODUCTS:')
+      functions.logger.info(result)
     }
-    functions.logger.info('[handleProduc]: UPDATED PRODUCTS:')
-    functions.logger.info(result)
     return true
   } catch (error) {
     functions.logger.error(error)
