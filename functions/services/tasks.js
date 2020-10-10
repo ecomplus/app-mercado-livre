@@ -33,11 +33,11 @@ const handleProduct = async (appSdk, notification) => {
       const user = await admin
         .firestore()
         .collection('ml_app_auth')
-        .doc(storeId.toString())
+        .doc(notification.store_id.toString())
         .get()
 
       for (const metafields of result.filter(({ field }) => field === 'ml_id')) {
-        const productService = new ProductService(user.data().access_token, product, { listing_type_id, category_id })
+        const productService = new ProductService(user.data().access_token, product)
         const productData = productService.getProductByUpdate()
         await productService.update(metafields.value, productData)
       }
