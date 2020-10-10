@@ -14,11 +14,11 @@ exports.post = async ({ appSdk }, req, res) => {
     //   return res.send(ECHO_SUCCESS)
     // }
     mlService = await getMlService(false, notification.user_id)
-    if (await mlService.hasNotification(notification)) {
-      return res.status(422).send('processing for this resource already exists')
-    }
+    // if (await mlService.hasNotification(notification)) {
+    //   return res.status(422).send('processing for this resource already exists')
+    // }
     await mlService.createNotification(notification)
-    return res.send(ECHO_SUCCESS)
+    return res.status(200).send('OK')
     // mlService.findOrder(notification.resource, async (error, order) => {
     //   if (error) {
     //     await mlService.removeNotification(notificationId)
