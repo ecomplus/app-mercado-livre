@@ -86,12 +86,15 @@ exports.onNotification = functions.firestore.document('ml_notifications/{documen
       const appSdk = await setup(null, true, admin.firestore())
       const notification = snap.data()
       const notificationId = snap.id
-      const topics = ['order', 'created_orders', 'orders_v2']
+      const topics = ['orders', 'created_orders', 'orders_v2']
       if (!topics.includes(notification.topic)) {
         return true
       }
+
+      functions.logger.info(`ORDER ${notification.topic}`)
       const mlService = await getMlService(false, notification.user_id)
       mlService.findOrder(notification.resource, async (error, order) => {
+        functions.logger.info(`ORDER - APOS findOrder ${JSON.stringify(order)}`)
         if (error) {
           functions.logger.error(error);
           mlService.updateNotification(notificationId, {
