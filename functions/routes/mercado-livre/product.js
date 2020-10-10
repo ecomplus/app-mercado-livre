@@ -36,15 +36,23 @@ exports.post = async ({ admin, appSdk }, req, res) => {
 
     const productService = new ProductService(user.access_token, product, { listing_type_id, category_id })
     const productData = productService.getProductByCreate()
-    const response = await productService.create(productData)
-    if (response.status !== 201) {
-      return res.json(response.data)
+    try {
+      const response = await productService.create(productData)
+      if (response.status !== 201) {
+        return res.json(response.data)
+      }
+    } catch (error) {
+      if (error && error.status === 400) {
+        return res.status(400).json(error)
+      }
+      throw error
     }
     const resource = `products/${product._id}/metafields.json`
     const metafields = { field: 'ml_id', value: response.data.id }
     await appSdk.apiRequest(storeId, resource, 'POST', metafields)
     return res.json(response.data)
   } catch (error) {
+    console.log(error)
     if (error.name === SKIP_TRIGGER_NAME) {
       res.send(ECHO_SKIP)
     } else {
