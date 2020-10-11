@@ -83,9 +83,9 @@ const handleOrder = async (appSdk, snap) => {
               await orderService.update(orderOnEcomId, orderDataToUpdate)
               functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
             }
-            await snap.ref.delete()
-            return true
           }, 3000)
+          await snap.ref.delete()
+          return true
         }
         functions.logger.error(`${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}`);
         await snap.ref.delete()
