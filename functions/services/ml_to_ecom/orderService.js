@@ -111,7 +111,7 @@ class OrderService {
     }
     if (this.data.buyer.email) {
       buyer.main_email = this.data.buyer.email,
-      buyer.buyer.emails = [{ address: this.data.buyer.email }]
+      buyer.emails = [{ address: this.data.buyer.email }]
     }
     return this.order.buyers = [buyer]
   }
