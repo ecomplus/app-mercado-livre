@@ -72,28 +72,32 @@ const handleOrder = async (appSdk, snap) => {
           return true
         }
         functions.logger.error(`${ORDER_ALREADY_EXISTS} ML: ${mlOrder.id} ECOM: ${orderOnEcomId}`);
-        snap.ref.set({ error: ORDER_ALREADY_EXISTS }, { merge: true })
+        await snap.ref.delete()
         return false
       } else {
         if (orderOnEcomId) {
           setTimeout(async () => {
             await orderService.update(orderOnEcomId, orderData)
             functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
+            await snap.ref.delete()
             return true
           }, 3000)
         }
         functions.logger.error(`${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}`);
-        snap.ref.set({ error: `${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}` }, { merge: true })
+        await snap.ref.delete()
+        // snap.ref.set({ error: `${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}` }, { merge: true })
         return false
       }
     }
     functions.logger.error(` ${ORDER_ML_USER_NOT_FOUND} - ${notification}`);
-    snap.ref.set({ error: ` ${ORDER_ML_USER_NOT_FOUND} - ${notification}` }, { merge: true })
+    await snap.ref.delete()
+    // snap.ref.set({ error: ` ${ORDER_ML_USER_NOT_FOUND} - ${notification}` }, { merge: true })
     return false
   } catch (error) {
     functions.logger.error('[handleOrder]: FATAL ERROR');
     functions.logger.error(error);
-    snap.ref.set({ error: JSON.stringify(error) }, { merge: true })
+    await snap.ref.delete()
+    // snap.ref.set({ error: JSON.stringify(error) }, { merge: true })
     return false
   }
 }

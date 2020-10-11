@@ -36,6 +36,7 @@ class MLService {
     this.client.post('/items', data, callback)
   }
 
+  // Todo: Change to getResourceData in notificationService
   findShipping(shippingId, callback) {
     this.client.get(`/shipments/${shippingId}`, callback)
   }
