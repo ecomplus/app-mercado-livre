@@ -46,10 +46,10 @@ const handleProduct = async (appSdk, notification) => {
       functions.logger.info('[handleProduc]: UPDATED PRODUCTS:')
       functions.logger.info(response.data.result)
     }
-    return true
+    return Promise.resolve(true)
   } catch (error) {
     functions.logger.error(error)
-    return false
+    return Promise.reject(error)
   }
 }
 
@@ -59,12 +59,12 @@ const handleShipment = async (appSdk, storeId, mlNotificationService, ecomOrderI
     const shipmentService = new ShipmentService(appSdk, storeId, mlShipment)
     const shipmentData = shipmentService.getDataToCreate()
     await shipmentService.create(ecomOrderId, shipmentData)
-    functions.logger.info(SHIPMENT_CREATED_SUCCESS)
-    return true
+    functions.logger.info(`SHIPMENT_CREATED_SUCCESSP TO ORDER: ${ecomOrderId}` )
+    return Promise.resolve(true)
   } catch (error) {
     functions.logger.error(`${SHIPMENT_CREATED_ERROR} TO SHIPMENT ON ML: ${mlShipmentId}`)
     functions.logger.error(error)
-    return true
+    return Promise.reject(error)
   }
 }
 
@@ -93,11 +93,11 @@ const handleOrder = async (appSdk, snap) => {
           functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
           await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
           await snap.ref.delete()
-          return true
+          return Promise.resolve(true)
         }
         functions.logger.error(`${ORDER_ALREADY_EXISTS} ML: ${mlOrder.id} ECOM: ${orderOnEcomId}`);
         await snap.ref.delete()
-        return false
+        return Promise.resolve(true)
       } else {
         if (orderOnEcomId) {
           setTimeout(async () => {
@@ -112,21 +112,21 @@ const handleOrder = async (appSdk, snap) => {
             }
           }, 3000)
           await snap.ref.delete()
-          return true
+          return Promise.resolve(true)
         }
         functions.logger.error(`${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}`);
         await snap.ref.delete()
-        return false
+        return Promise.resolve(true)
       }
     }
     functions.logger.error(` ${ORDER_ML_USER_NOT_FOUND} - ${notification}`);
     await snap.ref.delete()
-    return false
+    return Promise.resolve(true)
   } catch (error) {
     functions.logger.error('[handleOrder]: FATAL ERROR');
     functions.logger.error(error);
     await snap.ref.delete()
-    return false
+    return Promise.reject(error)
   }
 }
 
