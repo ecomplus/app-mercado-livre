@@ -82,6 +82,8 @@ const handleOrder = async (appSdk, snap) => {
             if (mlOrderStatusOnEcom !== mlOrder.status) {
               await orderService.update(orderOnEcomId, orderDataToUpdate)
               functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
+            } else {
+              functions.logger.info(`[handleOrder] SKIPPED ORDER NOT HAS CHANGED: ${mlOrderStatusOnEcom}`);
             }
           }, 3000)
           await snap.ref.delete()
