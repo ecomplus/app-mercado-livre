@@ -2,12 +2,6 @@ const functions = require('firebase-functions');
 const MLNotificationService = require('./ml_to_ecom/notificationService')
 const ProductService = require('./ecom_to_ml/productService')
 const OrderService = require('./ml_to_ecom/orderService')
-const OrderDirector = require('../lib/ml-integration/order/OrderDirector.js')
-const ShippingDirector = require('../lib/ml-integration/order/ShippingDirector.js')
-const MlToEcomOrderBuilder = require('../lib/ml-integration/order/MlToEcomOrderBuilder')
-const MlToEcomShippingBuilder = require('../lib/ml-integration/order/MlToEcomShippingBuilder')
-const serviceFactory = require('../services/serviceFactory')
-const getMlService = serviceFactory('ml')
 const { setup } = require('@ecomplus/application-sdk')
 const admin = require('firebase-admin');
 
