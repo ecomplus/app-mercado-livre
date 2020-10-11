@@ -5,7 +5,14 @@ class ShipmentService {
     this.appSdk = appSdk
     this.storeId = parseInt(storeId, 10)
     this.data = data
-    this.shipment = {}
+    this.createSchema()
+  }
+
+  createSchema() {
+    this.shipping = {
+      from: {},
+      to: {}
+    }
   }
 
   buildFrom() {
@@ -56,12 +63,12 @@ class ShipmentService {
   }
 
   getDataToCreate() {
-    this.shipment = {}
+    this.createSchema()
     this.buildFrom()
     this.buildTo()
     this.buildTotalPrice()
     this.buildTrakingCodes()
-    return this.shipment
+    return this.shipping
   }
 
   create(orderId, data) {

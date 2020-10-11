@@ -53,16 +53,17 @@ const handleProduct = async (appSdk, notification) => {
   }
 }
 
-const handleShipment = async (appSdk, storeId, mlNotificationService, mlShipmentId) => {
+const handleShipment = async (appSdk, storeId, mlNotificationService, ecomOrderId, mlShipmentId) => {
   try {
     const mlShipment = await mlNotificationService.getResourceData(`/shipments/${mlShipmentId}`)
     const shipmentService = new ShipmentService(appSdk, storeId, mlShipment)
     const shipmentData = shipmentService.getDataToCreate()
-    await shipmentService.create(mlShipment.order_id, shipmentData)
+    await shipmentService.create(ecomOrderId, shipmentData)
     functions.logger.info(SHIPMENT_CREATED_SUCCESS)
     return true
   } catch (error) {
     functions.logger.error(`${SHIPMENT_CREATED_ERROR} TO SHIPMENT ON ML: ${mlShipmentId}`)
+    functions.logger.error(error)
     return true
   }
 }
@@ -88,9 +89,9 @@ const handleOrder = async (appSdk, snap) => {
       if (notification.topic === 'created_orders') {
         if (!orderOnEcomId) {
           const orderDataToCreate = await orderService.getOrderToCreate()
-          await orderService.create(orderDataToCreate)
+          const { response }  = await orderService.create(orderDataToCreate)
           functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
-          await handleShipment(appSdk, storeId, mlNotificationService, mlOrder.shipping.id)
+          await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
           await snap.ref.delete()
           return true
         }
@@ -105,7 +106,7 @@ const handleOrder = async (appSdk, snap) => {
             if (mlOrderStatusOnEcom !== mlOrder.status) {
               await orderService.update(orderOnEcomId, orderDataToUpdate)
               functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
-              await handleShipment(appSdk, storeId, mlNotificationService, mlOrder.shipping.id)
+              await handleShipment(appSdk, storeId, mlNotificationService, orderOnEcomId, mlOrder.shipping.id)
             } else {
               functions.logger.info(`[handleOrder] SKIPPED ORDER NOT HAS CHANGED: ${mlOrderStatusOnEcom}`);
             }
