@@ -73,7 +73,7 @@ class ShipmentService {
 
   create(orderId, data) {
     return new Promise((resolve, reject) => {
-      const resource = `/orders/${orderId}/shipping_lines`
+      const resource = `/orders/${orderId}/shipping_lines.json`
       this.appSdk
         .apiRequest(this.storeId, resource, 'POST', data)
         .then(response => resolve(response))

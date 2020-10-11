@@ -59,7 +59,7 @@ const handleShipment = async (appSdk, storeId, mlNotificationService, ecomOrderI
     const shipmentService = new ShipmentService(appSdk, storeId, mlShipment)
     const shipmentData = shipmentService.getDataToCreate()
     await shipmentService.create(ecomOrderId, shipmentData)
-    functions.logger.info(`SHIPMENT_CREATED_SUCCESSP TO ORDER: ${ecomOrderId}` )
+    functions.logger.info(`${SHIPMENT_CREATED_SUCCESS} TO ORDER: ${ecomOrderId}` )
     return Promise.resolve(true)
   } catch (error) {
     functions.logger.error(`${SHIPMENT_CREATED_ERROR} TO SHIPMENT ON ML: ${mlShipmentId}`)
