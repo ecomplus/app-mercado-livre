@@ -104,15 +104,16 @@ class OrderService {
   }
 
   buildBuyer() {
-    return this.order.buyers = [
-      {
-        _id: randomObjectId(),
-        main_email: this.data.buyer.email,
-        emails: [{ address: this.data.buyer.email }],
-        display_name: `${this.data.buyer.first_name} ${this.data.buyer.last_name}`,
-        doc_number: this.data.buyer.doc_number
-      }
-    ]
+    const buyer = {
+      _id: randomObjectId(),
+      display_name: `${this.data.buyer.first_name} ${this.data.buyer.last_name}`,
+      doc_number: this.data.buyer.doc_number
+    }
+    if (this.data.buyer.email) {
+      buyer.main_email = this.data.buyer.email,
+      buyer.buyer.emails = [{ address: this.data.buyer.email }]
+    }
+    return this.order.buyers = [buyer]
   }
 
   buildStatus() {
