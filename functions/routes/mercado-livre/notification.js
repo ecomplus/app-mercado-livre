@@ -6,6 +6,7 @@ const ECHO_SUCCESS = 'SUCCESS'
 const ECHO_SKIP = 'SKIP'
 const ECHO_API_ERROR = 'STORE_API_ERR'
 
+const { handleMLNotification } = require('../../services/tasks')
 
 exports.post = async ({ appSdk }, req, res) => {
   let mlService
@@ -15,7 +16,10 @@ exports.post = async ({ appSdk }, req, res) => {
     if (await mlService.hasNotification(notification)) {
       return res.status(422).send('processing for this resource already exists')
     }
-    await mlService.createNotification(notification)
+
+    const snap = await mlService.createNotification(notification)
+    handleMLNotification(snap)
+
     return res.status(200).send('Ok')
 
   } catch (error) {

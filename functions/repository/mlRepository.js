@@ -37,7 +37,7 @@ class MLRepository {
 
   async createNotification(notification) {
     const docRef = await this.db.collection(NOTIFICATION_COLLECTION).add(notification)
-    return docRef.id
+    return docRef
   }
 
   updateNotification(id, notification) {

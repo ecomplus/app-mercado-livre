@@ -91,19 +91,16 @@ const handleOrder = async (appSdk, snap) => {
         }
         functions.logger.error(`${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}`);
         await snap.ref.delete()
-        // snap.ref.set({ error: `${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}` }, { merge: true })
         return false
       }
     }
     functions.logger.error(` ${ORDER_ML_USER_NOT_FOUND} - ${notification}`);
     await snap.ref.delete()
-    // snap.ref.set({ error: ` ${ORDER_ML_USER_NOT_FOUND} - ${notification}` }, { merge: true })
     return false
   } catch (error) {
     functions.logger.error('[handleOrder]: FATAL ERROR');
     functions.logger.error(error);
     await snap.ref.delete()
-    // snap.ref.set({ error: JSON.stringify(error) }, { merge: true })
     return false
   }
 }
@@ -126,28 +123,54 @@ exports.onEcomNotification = functions.firestore
     return true
   })
 
-exports.onMlNotification = functions.firestore
-  .document('ml_notifications/{documentId}')
-  .onCreate(async (snap) => {
-    functions.logger.info('TRIGGER ML NOTIFICATION', snap.data())
-    const appSdk = await setup(null, true, admin.firestore())
-    const notification = snap.data()
-    switch (notification.topic) {
-      case 'created_orders':
-        handleOrder(appSdk, snap)
-        break;
-      case 'orders':
-        handleOrder(appSdk, snap)
-        break;
-      case 'orders_v2':
-        handleOrder(appSdk, snap)
-        break;
-      case 'shipments':
-        // handleShipments(appSdk, notification)
-        break;
-      default:
-        snap.ref.delete()
-        break;
-    }
-    return true
-  })
+// exports.onMlNotification = functions.firestore
+//   .document('ml_notifications/{documentId}')
+//   .onCreate(async (snap) => {
+//     functions.logger.info('TRIGGER ML NOTIFICATION', snap.data())
+//     const appSdk = await setup(null, true, admin.firestore())
+//     const notification = snap.data()
+//     switch (notification.topic) {
+//       case 'created_orders':
+//         handleOrder(appSdk, snap)
+//         break;
+//       case 'orders':
+//         handleOrder(appSdk, snap)
+//         break;
+//       case 'orders_v2':
+//         handleOrder(appSdk, snap)
+//         break;
+//       case 'shipments':
+//         // handleShipments(appSdk, notification)
+//         break;
+//       default:
+//         snap.ref.delete()
+//         break;
+//     }
+//     return true
+//   })
+
+const handleMLNotification = async (snap) => {
+  functions.logger.info('TRIGGER ML NOTIFICATION', snap.data())
+  const appSdk = await setup(null, true, admin.firestore())
+  const notification = snap.data()
+  switch (notification.topic) {
+    case 'created_orders':
+      handleOrder(appSdk, snap)
+      break;
+    case 'orders':
+      handleOrder(appSdk, snap)
+      break;
+    case 'orders_v2':
+      handleOrder(appSdk, snap)
+      break;
+    case 'shipments':
+      // handleShipments(appSdk, notification)
+      break;
+    default:
+      snap.ref.delete()
+      break;
+  }
+  return true
+}
+
+exports.handleMLNotification = handleMLNotification
