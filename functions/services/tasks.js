@@ -11,18 +11,13 @@ const getMlService = serviceFactory('ml')
 const { setup } = require('@ecomplus/application-sdk')
 const admin = require('firebase-admin');
 
+const ORDER_ML_USER_NOT_FOUND = '[handleOrder]: ERROR TO HANDLER ORDER, ML USER NOT FOUND'
+const ORDER_CREATED_SUCCESS = '[handleOrder]: CREATED ORDER ON ECOM BY ML ORLDER '
+const ORDER_UPDATED_SUCCESS = '[handleOrder]: UPDATED ORDER ON ECOM'
+const ORDER_ALREADY_EXISTS = '[handleOrder]: ERROR TO CREATE ORDER ON ECOM BY ML ORLDER, ORDER ALREADY EXISTS'
+const ORDER_NOT_FOUND = '[handleOrder]: ERROR TO UPDATED ECOM ORDER, ML ORDER NOT FOUND IN ECOM'
 
-const getEcomOrder = async (appSdk, storeId, mlOrderId) => {
-  const resource = `/orders.json?metafields.field=ml_order_id&metafields.value=${mlOrderId}&fields=metafields&limit=1&sort=-created_at`
-  console.log(mlOrderId)
-  const { response } = await appSdk.apiRequest(parseInt(storeId), resource, 'GET')
-  if (response.statusText === 'OK') {
-    const { data } = response
-    if (data.result && data.result.length > 0) {
-      return data.result[0]._id
-    }
-  }
-}
+
 
 const handleProduct = async (appSdk, notification) => {
   try {
@@ -58,16 +53,9 @@ const handleProduct = async (appSdk, notification) => {
   }
 }
 
-const handleOrder = async (appSdk, notification) => {
-  // Pegar os dados da ordem no mercado livre
-  // Verificar se a ordem existe na ecom
-  // Se existir atualizar a ordem
-  // Se não existir, criar a ordem
-
-  // Tem que verificar como vai ficar shipment
-
+const handleOrder = async (appSdk, snap) => {
   try {
-
+    const notification = snap.data()
     const result = await admin
       .firestore()
       .collection('ml_app_auth')
@@ -82,73 +70,35 @@ const handleOrder = async (appSdk, notification) => {
       const orderService = new OrderService(appSdk, storeId, mlOrder)
       const orderData = await orderService.getOrder()
       const orderOnEcomId = await orderService.findOrderOnEcom(mlOrder.id)
-      if (orderOnEcomId) {
-        functions.logger.info(`[handleOrder]: UPDATED ECOM ORDER ${orderOnEcomId}`);
-        return await orderService.update(orderOnEcomId, orderData)
+      if (notification.topic === 'created_orders') {
+        if (!orderOnEcomId) {
+          await orderService.create(orderData)
+          functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
+          await notification.ref.delete()
+          return true
+        }
+        functions.logger.error(ORDER_ALREADY_EXISTS);
+        snap.ref.set({ error: ORDER_ALREADY_EXISTS }, { merge: true })
+        return false
+      } else {
+        if (orderOnEcomId) {
+          await orderService.update(orderOnEcomId, orderData)
+          functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
+          return true
+        }
+        functions.logger.error(`${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}`);
+        snap.ref.set({ error: `${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}` }, { merge: true })
+        return false
       }
-      functions.logger.info(`[handleOrder]: CREATED ORDER ON ECOM BY ML ORLDER ID: ${mlOrder.id}`);
-      return await orderService.create(orderData)
     }
+    functions.logger.error(` ${ORDER_ML_USER_NOT_FOUND} - ${notification}`);
+    snap.ref.set({ error: ` ${ORDER_ML_USER_NOT_FOUND} - ${notification}` }, { merge: true })
     return false
-
-    // const mlService = await getMlService(false, notification.user_id)
-    // mlService.findOrder(notification.resource, async (error, order) => {
-    //   functions.logger.info(`ORDER - APOS findOrder ${JSON.stringify(order)}`)
-    //   if (error) {
-    //     functions.logger.error(error);
-    //     mlService.updateNotification(notificationId, {
-    //       ...notification, hasError: true, error: error
-    //     })
-    //     return true
-    //   }
-    //   const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, mlService.user.storeId))
-    //   const orderId = await getEcomOrder(appSdk, mlService.user.storeId, order.id)
-    //   functions.logger.info(`ORDER ${orderId}`)
-    //   orderDirector.save(orderId, async (error, ecomOrder) => {
-    //     if (error) {
-    //       error = (error || {})
-    //       functions.logger.error(error);
-    //       mlService.updateNotification(notificationId, {
-    //         ...notification, hasError: true, error: { stack: error.stack || error, status: error.status || '' }
-    //       })
-    //       return true
-    //     }
-    //     if (!orderId && order.shipping) {
-    //       return mlService.findShipping(order.shipping.id, async (error, shipping) => {
-    //         if (error) {
-    //           error = (error || {})
-    //           functions.logger.error(error);
-    //           mlService.updateNotification(notificationId, {
-    //             ...notification, hasError: true, error: { stack: error.stack || error, status: error.status || '' }
-    //           })
-    //           return true
-    //         }
-    //         const shippingDirector = new ShippingDirector(new MlToEcomShippingBuilder(shipping, appSdk, mlService.user.storeId))
-    //         const resource = `/orders/${ecomOrder._id}/shipping_lines.json`
-    //         return appSdk
-    //           .apiRequest(parseInt(mlService.user.storeId), resource, 'POST', shippingDirector.getShipping())
-    //           .then(() => {
-    //             mlService.removeNotification(notificationId)
-    //             return true
-    //           }).catch(error => {
-    //             functions.logger.error(error);
-    //             mlService.updateNotification(notificationId, {
-    //               ...notification, hasError: true, error: error.stack || error
-    //             })
-    //             return true
-    //           })
-    //       })
-    //     } else {
-    //       mlService.removeNotification(notificationId)
-    //       return true
-    //     }
-    //   })
-    // })
-
   } catch (error) {
-    functions.logger.error('[ORDER ERROR]');
+    functions.logger.error('[handleOrder]: FATAL ERROR');
     functions.logger.error(error);
-    return true
+    snap.ref.set({ error: error }, { merge: true })
+    return false
   }
 }
 
@@ -176,15 +126,15 @@ exports.onMlNotification = functions.firestore
     functions.logger.info('TRIGGER ML NOTIFICATION', snap.data())
     const appSdk = await setup(null, true, admin.firestore())
     const notification = snap.data()
-    switch (notification.topic) {
+    switch (notification.data().topic) {
       case 'created_orders':
-        handleOrder(appSdk, notification)
+        handleOrder(appSdk, snap)
         break;
       case 'orders':
-        handleOrder(appSdk, notification)
+        handleOrder(appSdk, snap)
         break;
       case 'orders_v2':
-        handleOrder(appSdk, notification)
+        handleOrder(appSdk, snap)
         break;
       case 'shipments':
         // handleShipments(appSdk, notification)

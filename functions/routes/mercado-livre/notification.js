@@ -20,41 +20,6 @@ exports.post = async ({ appSdk }, req, res) => {
     }
     await mlService.createNotification(notification)
     return res.status(200).send('Ok')
-    // mlService.findOrder(notification.resource, async (error, order) => {
-    //   if (error) {
-    //     await mlService.removeNotification(notificationId)
-
-    //     return res.status(500).send(error)
-    //   }
-    //   const orderDirector = new OrderDirector(new MlToEcomOrderBuilder(order, appSdk, mlService.user.storeId))
-    //   orderDirector.create(async (error, ecomOrder) => {
-    //     console.log(error, ecomOrder)
-    //     if (error) {
-    //       let status = error.status ? error.status : 500
-    //       await mlService.removeNotification(notificationId)
-    //       return res.status(status).send(error)
-    //     }
-    //     await mlService.removeNotification(notificationId)
-    //     if (order.shipping) {
-    //       return mlService.findShipping(order.shipping.id, async (error, shipping) => {
-    //         if (error) {
-    //           let status = error.status ? error.status : 500
-    //           await mlService.removeNotification(notificationId)
-    //           return res.status(status).send(error)
-    //         }
-    //         const shippingDirector = new ShippingDirector(new MlToEcomShippingBuilder(shipping, appSdk, mlService.user.storeId))
-    //         const resource = `/orders/${ecomOrder._id}/shipping_lines.json`
-    //         return appSdk
-    //           .apiRequest(parseInt(mlService.user.storeId), resource, 'POST', shippingDirector.getShipping())
-    //           .then(() => {
-    //             return res.send(ECHO_SUCCESS)
-    //           }).catch( error => res.send(error))
-    //       })
-    //     } else {
-    //       return res.send(ECHO_SUCCESS)
-    //     }
-    //   })
-    // })
 
   } catch (error) {
     if (error.name === SKIP_TRIGGER_NAME) {
