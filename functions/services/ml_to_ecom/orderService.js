@@ -80,10 +80,6 @@ class OrderService {
           name: payment.payment_method_id,
         },
         amount: payment.total_paid_amount,
-        installments: {
-          number: payment.installments,
-          value: payment.installment_amount
-        },
         intermediator: {
           transaction_id: payment.id.toString(),
           transaction_reference: payment.order_id.toString(),
@@ -96,6 +92,12 @@ class OrderService {
             name: 'Mercado Livre',
             code: payment.order_id.toString()
           }
+        }
+      }
+      if (payment.installment_amount) {
+        payment.installments = {
+          number: payment.installments,
+          value: payment.installment_amount
         }
       }
       transactions.push(transaction)
