@@ -126,7 +126,7 @@ exports.onMlNotification = functions.firestore
     functions.logger.info('TRIGGER ML NOTIFICATION', snap.data())
     const appSdk = await setup(null, true, admin.firestore())
     const notification = snap.data()
-    switch (notification.data().topic) {
+    switch (notification.topic) {
       case 'created_orders':
         handleOrder(appSdk, snap)
         break;
