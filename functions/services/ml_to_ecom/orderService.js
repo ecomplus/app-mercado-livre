@@ -160,6 +160,11 @@ class OrderService {
         _id: randomObjectId(),
         field: 'ml_order_id',
         value: this.data.id.toString()
+      },
+      {
+        _id: randomObjectId(),
+        field: 'ml_order_status',
+        value: this.data.status.toString()
       }
     ]
   }
@@ -188,7 +193,25 @@ class OrderService {
     })
   }
 
-  getOrder() {
+  findMLOrderStatus(orderId) {
+    return new Promise((resolve, reject) => {
+      const resource = `/orders/${orderId}/metafields.json`
+      this.appSdk.apiRequest(this.storeId, resource, 'GET')
+        .then(({ response }) => {
+          if (response.statusText === 'OK') {
+            const { data } = response
+            if (data.result && data.result.length > 0) {
+              const status = data.result.find(r => r.field === 'ml_order_status')
+              return resolve(status.value)
+            }
+          }
+          return resolve(false)
+        })
+        .catch(error => reject(error))
+    })
+  }
+
+  getOrderToCreate() {
     return new Promise((resolve, reject) => {
       this.order = {}
       try {
@@ -205,6 +228,15 @@ class OrderService {
         reject(error)
       }
     })
+  }
+
+  getOrderToUpdate() {
+    this.buildTransactions()
+    this.buildBuyer()
+    this.buildStatus()
+    this.buildFinancialStatus()
+    this.buildNotes()
+    this.buildMetafields()
   }
 
   update(orderId, data) {

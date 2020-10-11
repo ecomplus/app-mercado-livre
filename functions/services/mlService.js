@@ -28,15 +28,17 @@ class MLService {
     this.client.get(`/sites/MLB/domain_discovery/search?limit=5&q=${term}`, callback)
   }
 
+  // Todo: Deprecated. Change to getResourceData in notificationService
   findOrder(resource, callback) {
     this.client.get(resource, callback)
   }
 
+  // Todo: Deprecated, use create on productService
   createProduct(data, callback) {
     this.client.post('/items', data, callback)
   }
 
-  // Todo: Change to getResourceData in notificationService
+  // Todo: Deprecated. Change to getResourceData in notificationService
   findShipping(shippingId, callback) {
     this.client.get(`/shipments/${shippingId}`, callback)
   }

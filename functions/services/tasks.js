@@ -62,11 +62,11 @@ const handleOrder = async (appSdk, snap) => {
       const mlNotificationService = new MLNotificationService(user.access_token, notification)
       const mlOrder = await mlNotificationService.getResourceData(notification.resource)
       const orderService = new OrderService(appSdk, storeId, mlOrder)
-      const orderData = await orderService.getOrder()
       const orderOnEcomId = await orderService.findOrderOnEcom(mlOrder.id)
       if (notification.topic === 'created_orders') {
         if (!orderOnEcomId) {
-          await orderService.create(orderData)
+          const orderDataToCreate = await orderService.getOrderToCreate()
+          await orderService.create(orderDataToCreate)
           functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
           await snap.ref.delete()
           return true
@@ -77,8 +77,12 @@ const handleOrder = async (appSdk, snap) => {
       } else {
         if (orderOnEcomId) {
           setTimeout(async () => {
-            await orderService.update(orderOnEcomId, orderData)
-            functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
+            const orderDataToUpdate = orderService.getOrderToUpdate()
+            const mlOrderStatusOnEcom = await orderService.findMLOrderStatus(orderOnEcomId)
+            if (mlOrderStatusOnEcom !== mlOrder.status) {
+              await orderService.update(orderOnEcomId, orderDataToUpdate)
+              functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
+            }
             await snap.ref.delete()
             return true
           }, 3000)
