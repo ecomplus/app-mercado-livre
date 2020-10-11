@@ -116,6 +116,11 @@ const app = {
       "POST"
     ],
 
+    "orders/metafields": [
+      "GET",
+      "POST"
+    ],
+
     "products/metafields": [
       "GET",
       "POST"
