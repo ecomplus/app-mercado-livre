@@ -71,7 +71,7 @@ const handleOrder = async (appSdk, snap) => {
           await snap.ref.delete()
           return true
         }
-        functions.logger.error(ORDER_ALREADY_EXISTS);
+        functions.logger.error(`${ORDER_ALREADY_EXISTS} ML: ${mlOrder.id} ECOM: ${orderOnEcomId}`);
         snap.ref.set({ error: ORDER_ALREADY_EXISTS }, { merge: true })
         return false
       } else {
