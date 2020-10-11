@@ -16,7 +16,7 @@ class MLService {
   }
 
   async hasNotification(notification) {
-    const notifcations = await this.mlRepository.findNotificationsByResource(notification.resource)
+    const notifcations = await this.mlRepository.findNotificationsByResource(notification.resource, notification.topic)
     return notifcations.length > 0
   }
 

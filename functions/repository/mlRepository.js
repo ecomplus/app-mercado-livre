@@ -45,10 +45,11 @@ class MLRepository {
     docRef.set(notification)
   }
 
-  async findNotificationsByResource(resource) {
+  async findNotificationsByResource(resource, topic) {
     let result = await admin.firestore()
       .collection(NOTIFICATION_COLLECTION)
       .where('resource', '==', resource)
+      .where('topic', '==', topic)
       .get()
     result = result.docs.map(doc => doc.data())
     return Promise.resolve(result)

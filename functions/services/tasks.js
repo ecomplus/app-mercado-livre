@@ -76,9 +76,11 @@ const handleOrder = async (appSdk, snap) => {
         return false
       } else {
         if (orderOnEcomId) {
-          await orderService.update(orderOnEcomId, orderData)
-          functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
-          return true
+          setTimeout(async () => {
+            await orderService.update(orderOnEcomId, orderData)
+            functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
+            return true
+          }, 3000)
         }
         functions.logger.error(`${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}`);
         snap.ref.set({ error: `${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}` }, { merge: true })
