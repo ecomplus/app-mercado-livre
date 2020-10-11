@@ -1,7 +1,6 @@
-const axios = require('axios').default;
-const qs = require('qs')
+const axios = require('axios').default
 
-class MLProductService {
+class ProductService {
   constructor(token, data, options = {}) {
     this.server = axios.create({
       baseURL: 'https://api.mercadolibre.com',
@@ -320,4 +319,4 @@ class MLProductService {
 
 }
 
-module.exports = MLProductService
+module.exports = ProductService
