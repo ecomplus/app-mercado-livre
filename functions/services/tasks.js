@@ -74,7 +74,7 @@ const handleOrder = async (appSdk, snap) => {
         if (!orderOnEcomId) {
           await orderService.create(orderData)
           functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
-          await notification.ref.delete()
+          await snap.ref.delete()
           return true
         }
         functions.logger.error(ORDER_ALREADY_EXISTS);
@@ -97,7 +97,7 @@ const handleOrder = async (appSdk, snap) => {
   } catch (error) {
     functions.logger.error('[handleOrder]: FATAL ERROR');
     functions.logger.error(error);
-    snap.ref.set({ error: error }, { merge: true })
+    snap.ref.set({ error: JSON.stringify(error) }, { merge: true })
     return false
   }
 }
