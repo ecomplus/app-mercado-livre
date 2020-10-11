@@ -2,14 +2,20 @@ const functions = require('firebase-functions');
 const MLNotificationService = require('./ml_to_ecom/notificationService')
 const ProductService = require('./ecom_to_ml/productService')
 const OrderService = require('./ml_to_ecom/orderService')
+const ShipmentService = require('./ml_to_ecom/shipmentService')
+
 const { setup } = require('@ecomplus/application-sdk')
 const admin = require('firebase-admin');
+
 
 const ORDER_ML_USER_NOT_FOUND = '[handleOrder]: ERROR TO HANDLER ORDER, ML USER NOT FOUND'
 const ORDER_CREATED_SUCCESS = '[handleOrder]: CREATED ORDER ON ECOM BY ML ORLDER '
 const ORDER_UPDATED_SUCCESS = '[handleOrder]: UPDATED ORDER ON ECOM'
 const ORDER_ALREADY_EXISTS = '[handleOrder]: ERROR TO CREATE ORDER ON ECOM BY ML ORLDER, ORDER ALREADY EXISTS'
 const ORDER_NOT_FOUND = '[handleOrder]: ERROR TO UPDATED ECOM ORDER, ML ORDER NOT FOUND IN ECOM'
+
+const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
+const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
 
 
 
@@ -47,6 +53,22 @@ const handleProduct = async (appSdk, notification) => {
   }
 }
 
+const handleShipment = async (appSdk, storeId, mlNotificationService, mlShipmentId) => {
+  try {
+    const mlShipment = await mlNotificationService.getResourceData(`/shipments/${mlShipmentId}`)
+    const shipmentService = new ShipmentService(appSdk, storeId, mlShipment)
+    const shipmentData = shipmentService.getDataToCreate()
+    await shipmentService.create(mlShipment.order_id, shipmentData)
+    functions.logger.info(SHIPMENT_CREATED_SUCCESS)
+    return true
+  } catch (error) {
+    functions.logger.error(`${SHIPMENT_CREATED_ERROR} TO SHIPMENT ON ML: ${mlShipmentId}`)
+    return true
+  }
+}
+
+
+
 const handleOrder = async (appSdk, snap) => {
   try {
     const notification = snap.data()
@@ -68,6 +90,7 @@ const handleOrder = async (appSdk, snap) => {
           const orderDataToCreate = await orderService.getOrderToCreate()
           await orderService.create(orderDataToCreate)
           functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
+          await handleShipment(appSdk, storeId, mlNotificationService, mlOrder.shipping.id)
           await snap.ref.delete()
           return true
         }
@@ -82,6 +105,7 @@ const handleOrder = async (appSdk, snap) => {
             if (mlOrderStatusOnEcom !== mlOrder.status) {
               await orderService.update(orderOnEcomId, orderDataToUpdate)
               functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
+              await handleShipment(appSdk, storeId, mlNotificationService, mlOrder.shipping.id)
             } else {
               functions.logger.info(`[handleOrder] SKIPPED ORDER NOT HAS CHANGED: ${mlOrderStatusOnEcom}`);
             }
