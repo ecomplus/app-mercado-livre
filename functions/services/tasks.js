@@ -140,6 +140,7 @@ exports.onMlNotification = functions.firestore
         // handleShipments(appSdk, notification)
         break;
       default:
+        snap.ref.delete()
         break;
     }
     return true
