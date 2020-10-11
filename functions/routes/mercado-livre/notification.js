@@ -18,7 +18,7 @@ exports.post = async ({ appSdk }, req, res) => {
     }
 
     const snap = await mlService.createNotification(notification)
-    handleMLNotification(snap)
+    await handleMLNotification(snap)
 
     return res.status(200).send('Ok')
 
