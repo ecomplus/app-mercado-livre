@@ -6,14 +6,10 @@ const ShipmentService = require('./ml_to_ecom/shipmentService')
 
 const { setup } = require('@ecomplus/application-sdk')
 const admin = require('firebase-admin');
-const { json } = require('express');
-
 
 const ORDER_ML_USER_NOT_FOUND = '[handleOrder]: ERROR TO HANDLER ORDER, ML USER NOT FOUND'
 const ORDER_CREATED_SUCCESS = '[handleOrder]: CREATED ORDER ON ECOM BY ML ORLDER '
 const ORDER_UPDATED_SUCCESS = '[handleOrder]: UPDATED ORDER ON ECOM'
-const ORDER_ALREADY_EXISTS = '[handleOrder]: ERROR TO CREATE ORDER ON ECOM BY ML ORLDER, ORDER ALREADY EXISTS'
-const ORDER_NOT_FOUND = '[handleOrder]: ERROR TO UPDATED ECOM ORDER, ML ORDER NOT FOUND IN ECOM'
 
 const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
 const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
