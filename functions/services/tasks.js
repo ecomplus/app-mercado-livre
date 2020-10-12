@@ -6,6 +6,7 @@ const ShipmentService = require('./ml_to_ecom/shipmentService')
 
 const { setup } = require('@ecomplus/application-sdk')
 const admin = require('firebase-admin');
+const { json } = require('express');
 
 
 const ORDER_ML_USER_NOT_FOUND = '[handleOrder]: ERROR TO HANDLER ORDER, ML USER NOT FOUND'
@@ -94,7 +95,8 @@ const handleOrder = async (appSdk, snap) => {
             await snap.ref.delete()
             return Promise.resolve(true)
           } catch (error) {
-            functions.logger.error('ERROR TO CREATE ORDER', error)
+            console.log('===============>', error)
+            snap.ref.set({ error: JSON.stringify(error)}, { merge: true})
           }
 
         }
