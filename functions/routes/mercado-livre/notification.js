@@ -12,7 +12,7 @@ exports.post = async ({ admin }, req, res) => {
 
     const result = await admin.firestore()
       .collection(NOTIFICATION_COLLECTION)
-      .where('resource', '==', resource)
+      .where('resource', '==', notification.resource)
       .get()
 
     const notifications = result.docs.map(doc => doc.data())
@@ -21,11 +21,12 @@ exports.post = async ({ admin }, req, res) => {
       return res.status(422).send('processing for this resource already exists')
     }
 
-    const docRef = await admin.firestore
+    const docRef = await admin
+      .firestore()
       .collection(NOTIFICATION_COLLECTION)
       .add(notification)
 
-    const snap = docRef.get()
+    const snap = await docRef.get()
 
     await handleMLNotification(snap)
 
