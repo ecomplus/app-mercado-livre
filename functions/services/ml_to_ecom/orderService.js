@@ -254,6 +254,7 @@ class OrderService {
 
   getOrderToUpdate() {
     this.buildTransactions()
+    this.buildAmount()
     this.buildBuyer()
     this.buildStatus()
     this.buildFinancialStatus()
