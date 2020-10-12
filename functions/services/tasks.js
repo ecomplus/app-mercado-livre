@@ -18,7 +18,6 @@ const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
 const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
 
 
-
 const handleProduct = async (appSdk, notification) => {
   try {
     if (notification.resource_id) {
@@ -67,7 +66,6 @@ const handleShipment = async (appSdk, storeId, mlNotificationService, ecomOrderI
     return Promise.reject(error)
   }
 }
-
 
 
 const handleOrder = async (appSdk, snap) => {

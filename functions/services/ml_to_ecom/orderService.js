@@ -10,9 +10,28 @@ class OrderService {
   }
 
   buildAmount() {
+    let total = 0
+    let subtotal = 0
+    let freight = 0
+    let discount = 0
+    let tax = 0
+    let extra = 0
+
+    for (const payment of this.data.payments) {
+      total += payment.total_paid_amount
+      subtotal += payment.transaction_amount
+      freight += payment.shipping_cost
+      discount += payment.coupon_amount
+      tax += payment.taxes_amount
+      extra += payment.overpaid_amount
+    }
     this.order.amount = {
-      total: this.data.total_amount,
-      subtotal: this.data.paid_amount
+      total,
+      subtotal,
+      freight,
+      discount,
+      tax,
+      extra
     }
   }
 
@@ -113,7 +132,7 @@ class OrderService {
     }
     if (this.data.buyer.email) {
       buyer.main_email = this.data.buyer.email,
-      buyer.emails = [{ address: this.data.buyer.email }]
+        buyer.emails = [{ address: this.data.buyer.email }]
     }
     return this.order.buyers = [buyer]
   }
