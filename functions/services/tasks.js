@@ -86,12 +86,17 @@ const handleOrder = async (appSdk, snap) => {
       const orderOnEcomId = await orderService.findOrderOnEcom(mlOrder.id)
       if (notification.topic === 'created_orders') {
         if (!orderOnEcomId) {
-          const orderDataToCreate = await orderService.getOrderToCreate()
-          const { response }  = await orderService.create(orderDataToCreate)
-          functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
-          await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
-          await snap.ref.delete()
-          return Promise.resolve(true)
+          try {
+            const orderDataToCreate = await orderService.getOrderToCreate()
+            const { response }  = await orderService.create(orderDataToCreate)
+            functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
+            await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
+            await snap.ref.delete()
+            return Promise.resolve(true)
+          } catch (error) {
+            functions.logger.error('ERROR TO CREATE ORDER', error)
+          }
+
         }
         functions.logger.error(`${ORDER_ALREADY_EXISTS} ML: ${mlOrder.id} ECOM: ${orderOnEcomId}`);
         await snap.ref.delete()
