@@ -101,16 +101,15 @@ const handleOrder = async (appSdk, snap) => {
           functions.logger.info(`[handleOrder] SKIPPED ORDER NOT HAS CHANGED: ${mlOrderStatusOnEcom}`);
         }
       }
-      await snap.ref.delete()
       return Promise.resolve(true)
     }
     functions.logger.error(` ${ORDER_ML_USER_NOT_FOUND} - ${notification}`);
-    await snap.ref.delete()
     return Promise.resolve(true)
   } catch (error) {
-    functions.logger.error('[handleOrder]: FATAL ERROR');
-    functions.logger.error(error);
+    functions.logger.error(`[handleOrder]: FATAL ERROR ${JSON.stringify(error)}`);
     return Promise.reject(error)
+  } finally {
+    await snap.ref.delete()
   }
 }
 
