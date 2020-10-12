@@ -253,6 +253,7 @@ class OrderService {
   }
 
   getOrderToUpdate() {
+    this.order = {}
     this.buildTransactions()
     this.buildAmount()
     this.buildBuyer()
@@ -260,6 +261,7 @@ class OrderService {
     this.buildFinancialStatus()
     this.buildNotes()
     this.buildMetafields()
+    return this.order
   }
 
   update(orderId, data) {
