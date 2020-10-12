@@ -91,7 +91,6 @@ const handleOrder = async (appSdk, snap) => {
           const orderDataToCreate = await orderService.getOrderToCreate()
           const { response }  = await orderService.create(orderDataToCreate)
           functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
-          functions.logger.info(`[START TO CREATE SHIPING], ${response.data._id} `)
           await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
           await snap.ref.delete()
           return Promise.resolve(true)
@@ -107,6 +106,7 @@ const handleOrder = async (appSdk, snap) => {
             if (mlOrderStatusOnEcom !== mlOrder.status) {
               await orderService.update(orderOnEcomId, orderDataToUpdate)
               functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
+              await handleShipment(appSdk, storeId, mlNotificationService, orderOnEcomId, mlOrder.shipping.id)
             } else {
               functions.logger.info(`[handleOrder] SKIPPED ORDER NOT HAS CHANGED: ${mlOrderStatusOnEcom}`);
             }

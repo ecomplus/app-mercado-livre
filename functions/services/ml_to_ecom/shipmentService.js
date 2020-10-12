@@ -55,11 +55,13 @@ class ShipmentService {
   }
 
   buildTrakingCodes() {
-    this.shipping.tracking_codes = [
-      {
-        code: this.data.tracking_number
-      }
-    ]
+    if (this.data.tracking_number) {
+      this.shipping.tracking_codes = [
+        {
+          code: this.data.tracking_number
+        }
+      ]
+    }
   }
 
   getDataToCreate() {
