@@ -85,44 +85,24 @@ const handleOrder = async (appSdk, snap) => {
       const mlOrder = await mlNotificationService.getResourceData(notification.resource)
       const orderService = new OrderService(appSdk, storeId, mlOrder)
       const orderOnEcomId = await orderService.findOrderOnEcom(mlOrder.id)
-      if (notification.topic === 'created_orders') {
-        if (!orderOnEcomId) {
-          try {
-            const orderDataToCreate = await orderService.getOrderToCreate()
-            const { response }  = await orderService.create(orderDataToCreate)
-            functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
-            await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
-            await snap.ref.delete()
-            return Promise.resolve(true)
-          } catch (error) {
-            console.log('===============>', error)
-            snap.ref.set({ error: JSON.stringify(error)}, { merge: true})
-          }
-
-        }
-        functions.logger.error(`${ORDER_ALREADY_EXISTS} ML: ${mlOrder.id} ECOM: ${orderOnEcomId}`);
-        await snap.ref.delete()
-        return Promise.resolve(true)
+      if (!orderOnEcomId) {
+        const orderDataToCreate = await orderService.getOrderToCreate()
+        const { response }  = await orderService.create(orderDataToCreate)
+        functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
+        await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
       } else {
-        if (orderOnEcomId) {
-          setTimeout(async () => {
-            const orderDataToUpdate = orderService.getOrderToUpdate()
-            const mlOrderStatusOnEcom = await orderService.findMLOrderStatus(orderOnEcomId)
-            if (mlOrderStatusOnEcom !== mlOrder.status) {
-              await orderService.update(orderOnEcomId, orderDataToUpdate)
-              functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
-              await handleShipment(appSdk, storeId, mlNotificationService, orderOnEcomId, mlOrder.shipping.id)
-            } else {
-              functions.logger.info(`[handleOrder] SKIPPED ORDER NOT HAS CHANGED: ${mlOrderStatusOnEcom}`);
-            }
-          }, 3000)
-          await snap.ref.delete()
-          return Promise.resolve(true)
+        const orderDataToUpdate = orderService.getOrderToUpdate()
+        const mlOrderStatusOnEcom = await orderService.findMLOrderStatus(orderOnEcomId)
+        if (mlOrderStatusOnEcom !== mlOrder.status) {
+          await orderService.update(orderOnEcomId, orderDataToUpdate)
+          functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
+          await handleShipment(appSdk, storeId, mlNotificationService, orderOnEcomId, mlOrder.shipping.id)
+        } else {
+          functions.logger.info(`[handleOrder] SKIPPED ORDER NOT HAS CHANGED: ${mlOrderStatusOnEcom}`);
         }
-        functions.logger.error(`${ORDER_NOT_FOUND} ML ORDER ID: ${mlOrder.id}`);
-        await snap.ref.delete()
-        return Promise.resolve(true)
       }
+      await snap.ref.delete()
+      return Promise.resolve(true)
     }
     functions.logger.error(` ${ORDER_ML_USER_NOT_FOUND} - ${notification}`);
     await snap.ref.delete()
@@ -130,7 +110,6 @@ const handleOrder = async (appSdk, snap) => {
   } catch (error) {
     functions.logger.error('[handleOrder]: FATAL ERROR');
     functions.logger.error(error);
-    await snap.ref.delete()
     return Promise.reject(error)
   }
 }
