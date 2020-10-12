@@ -17,7 +17,7 @@ exports.get = async ({ admin }, req, res) => {
       .get()
 
     const user = result.data()
-    const utilsService = new UtilsService(user.access_token)
+    const utilsService = new UtilsService(user)
     const categories = await utilsService.findSuggestedCategories(req.query.term)
     return res.json(categories)
   } catch (error) {

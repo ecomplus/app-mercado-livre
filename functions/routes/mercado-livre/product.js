@@ -1,9 +1,40 @@
 const FromEcomProductService = require('../../services/ecom_to_ml/productService')
 const FromMLProductService = require('../../services/ml_to_ecom/productService')
+const UtilsService = require('../../services/utilsService')
 const SKIP_TRIGGER_NAME = 'SkipTrigger'
 const ECHO_SKIP = 'SKIP'
 const ECHO_API_ERROR = 'STORE_API_ERR'
 
+exports.get = async ({ admin }, req, res) => {
+  try {
+    const storeId = parseInt(req.get('x-store-id'), 10) || req.query.storeId
+    if (!storeId) {
+      res.status(401)
+      return res.send({
+        error: 'Unauthorized',
+        message: 'Missing store_id'
+      })
+    }
+
+    const result = await admin
+      .firestore()
+      .collection('ml_app_auth')
+      .doc(storeId.toString())
+      .get()
+
+    const user = result.data()
+
+    const utilsService = new UtilsService(user)
+    const products = await utilsService.getProducts()
+    return res.json(products)
+
+  } catch (error) {
+    if (error.response) {
+      return res.status(422).send(error.response)
+    }
+    return res.status(500).send(error.message)
+  }
+}
 
 exports.post = async ({ admin, appSdk }, req, res) => {
   try {

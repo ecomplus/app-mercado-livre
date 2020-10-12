@@ -1,12 +1,13 @@
 const axios = require('axios').default
 
 class UtilsService {
-  constructor(token) {
+  constructor(user) {
+    this.user = user
     this.server = axios.create({
       baseURL: 'https://api.mercadolibre.com',
       timeout: 60000,
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${user.access_token}`
       }
     })
   }
@@ -22,7 +23,16 @@ class UtilsService {
       }
       return Promise.reject(error)
     }
+  }
 
+  async getProducts() {
+    try {
+      const { data } = await this.server
+        .get(`/users/${this.user.user_id}/items/search`)
+      return Promise.resolve(data)
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 }
 
