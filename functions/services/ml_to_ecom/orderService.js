@@ -17,14 +17,17 @@ class OrderService {
     let tax = 0
     let extra = 0
 
-    for (const payment of this.data.payments) {
-      total += payment.total_paid_amount
-      subtotal += payment.transaction_amount
-      freight += payment.shipping_cost
-      discount += payment.coupon_amount
-      tax += payment.taxes_amount
-      extra += payment.overpaid_amount
+    if (this.data.payments) {
+      for (const payment of this.data.payments.filter(p => p.status !== 'cancelled')) {
+        total += payment.total_paid_amount
+        subtotal += payment.transaction_amount
+        freight += payment.shipping_cost
+        discount += payment.coupon_amount
+        tax += payment.taxes_amount
+        extra += payment.overpaid_amount
+      }
     }
+
     this.order.amount = {
       total,
       subtotal,
