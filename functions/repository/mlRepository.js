@@ -49,7 +49,7 @@ class MLRepository {
     let result = await admin.firestore()
       .collection(NOTIFICATION_COLLECTION)
       .where('resource', '==', resource)
-      .where('topic', '==', topic)
+      // .where('topic', '==', topic)
       .get()
     result = result.docs.map(doc => doc.data())
     return Promise.resolve(result)
