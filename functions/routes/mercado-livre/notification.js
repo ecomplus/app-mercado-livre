@@ -1,23 +1,32 @@
-const serviceFactory = require('../../services/serviceFactory')
-const getMlService = serviceFactory('ml')
-
 const SKIP_TRIGGER_NAME = 'SkipTrigger'
-const ECHO_SUCCESS = 'SUCCESS'
 const ECHO_SKIP = 'SKIP'
 const ECHO_API_ERROR = 'STORE_API_ERR'
 
+const NOTIFICATION_COLLECTION = 'ml_notifications'
+
 const { handleMLNotification } = require('../../services/tasks')
 
-exports.post = async ({ appSdk }, req, res) => {
-  let mlService
-  let notification = req.body
+exports.post = async ({ admin }, req, res) => {
+  const notification = req.body
   try {
-    mlService = await getMlService(false, notification.user_id)
-    if (await mlService.hasNotification(notification)) {
+
+    const result = await admin.firestore()
+      .collection(NOTIFICATION_COLLECTION)
+      .where('resource', '==', resource)
+      .get()
+
+    const notifications = result.docs.map(doc => doc.data())
+
+    if (notifications.length > 0) {
       return res.status(422).send('processing for this resource already exists')
     }
 
-    const snap = await mlService.createNotification(notification)
+    const docRef = await admin.firestore
+      .collection(NOTIFICATION_COLLECTION)
+      .add(notification)
+
+    const snap = docRef.get()
+
     await handleMLNotification(snap)
 
     return res.status(200).send('Ok')
