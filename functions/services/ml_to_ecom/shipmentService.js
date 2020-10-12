@@ -51,7 +51,7 @@ class ShipmentService {
 
   buildTotalPrice() {
     const shippingOption = this.data.shipping_option
-    this.shipping.total_price = shippingOption.list_cost
+    this.shipping.total_price = shippingOption.cost || 0
   }
 
   buildTrakingCodes() {
