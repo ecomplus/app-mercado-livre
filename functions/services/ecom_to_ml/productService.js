@@ -73,12 +73,21 @@ class ProductService {
   }
 
   buildVariations() {
-    this.product.variations = [
-      {
-        id: 'SELLER_SKU',
-        value_name: this.data.sku
+    this._variations = []
+    for (const variation of this.data.variations) {
+      const { quantity, price } = variation
+      const mlVariation = {
+        available_quantity: quantity ? quantity : this.data.quantity,
+        price: price ? price : this.data.price,
+        attribute_combinations: []
       }
-    ]
+      if (mlVariation.attribute_combinations.length > 0) {
+        this._variations.push(mlVariation)
+      }
+    }
+    if (this._variations.length > 0) {
+      this.product.variations = this._variations
+    }
   }
 
   buildSellerCustomField() {
@@ -253,7 +262,7 @@ class ProductService {
       this.buildSpecifications()
       this.buildAttributes()
       this.buildWeight()
-      // this.buildVariations()
+      this.buildVariations()
       return this.product
     } catch (error) {
       throw error
