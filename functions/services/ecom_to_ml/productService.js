@@ -1,5 +1,6 @@
 const axios = require('axios').default
 const _ = require('lodash')
+const VARIATION_CORRELATIONS = require('./variations_correlations.json')
 
 class ProductService {
   constructor(token, data, options = {}) {
@@ -129,7 +130,7 @@ class ProductService {
             }
 
             for (const attribute of allowedAttributes) {
-              const spec = this.getSpecByProps(specifications, [attribute.toLowerCase()])
+              const spec = this.getSpecByProps(specifications, VARIATION_CORRELATIONS[attribute] || [attribute.toLowerCase()])
               if (spec.text) {
                 mlVariation.attribute_combinations.push({ id: attribute, value_name: spec.text })
               }
@@ -140,7 +141,9 @@ class ProductService {
             }
           }
           if (this._variations.length > 0) {
-            this.product.variations = _.uniqWith(this._variations, _.isEqual)
+            this.product.variations = _.uniqWith(this._variations, (x, y) => {
+              return _.isEqual(x.attribute_combinations, y.attribute_combinations)
+            })
           }
           resolve()
         })

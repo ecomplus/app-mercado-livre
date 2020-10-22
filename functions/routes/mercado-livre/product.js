@@ -47,14 +47,14 @@ exports.post = async ({ admin, appSdk }, req, res) => {
         message: 'Missing store_id'
       })
     }
-    const { listing_type_id, category_id, product } = body
+    const { listing_type_id, category_id, product_id } = body
 
 
-    if (!listing_type_id || !category_id || !product) {
+    if (!listing_type_id || !category_id || !product_id) {
       res.status(400)
       return res.send({
         error: 'Bad Request',
-        message: 'The body does not contains some or none of the following properties [listing_type_id, category_id, product]'
+        message: 'The body does not contains some or none of the following properties [listing_type_id, category_id, product_id]'
       })
     }
 
@@ -65,17 +65,18 @@ exports.post = async ({ admin, appSdk }, req, res) => {
       .get()
 
     const user = result.data()
-
-    const productService = new FromEcomProductService(user.access_token, product, { listing_type_id, category_id })
+    const resource = `/products/${product_id}.json`
+    const { response } = await appSdk.apiRequest(parseInt(storeId), resource, 'GET')
+    const productService = new FromEcomProductService(user.access_token, response.data, { listing_type_id, category_id })
     const productData = await productService.getProductByCreate()
     try {
-      const response = await productService.create(productData)
-      if (response.status !== 201) {
+      const mlResponse = await productService.create(productData)
+      if (mlResponse.status !== 201) {
         return res.json(response.data)
       }
       const fromMLProductService = new FromMLProductService(appSdk, storeId)
-      await fromMLProductService.link(response.data.id, product._id)
-      return res.json(response.data)
+      await fromMLProductService.link(mlResponse.data.id, product_id)
+      return res.json(mlResponse.data)
     } catch (error) {
       if (error && error.status === 400) {
         return res.status(400).json(error)
