@@ -67,7 +67,7 @@ exports.post = async ({ admin, appSdk }, req, res) => {
     const user = result.data()
 
     const productService = new FromEcomProductService(user.access_token, product, { listing_type_id, category_id })
-    const productData = productService.getProductByCreate()
+    const productData = await productService.getProductByCreate()
     try {
       const response = await productService.create(productData)
       if (response.status !== 201) {

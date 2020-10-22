@@ -1,4 +1,5 @@
 const axios = require('axios').default
+const _ = require('lodash')
 
 class ProductService {
   constructor(token, data, options = {}) {
@@ -24,6 +25,24 @@ class ProductService {
       }
     }
     return {}
+  }
+
+  getAttributes(mlCategory) {
+    return new Promise((resolve, reject) => {
+      return this.server
+        .get(`/categories/${mlCategory}/attributes`)
+        .then(({ data }) => resolve(data))
+        .catch(error => reject(error))
+    })
+  }
+
+  getTechnicalSpecs(mlCategory) {
+    return new Promise((resolve, reject) => {
+      return this.server
+        .get(`/categories/${mlCategory}/technical_specs/input`)
+        .then(({ data }) => resolve(data))
+        .catch(error => reject(error))
+    })
   }
 
   buildTitle() {
@@ -68,26 +87,65 @@ class ProductService {
           if (url) sources.push({ source: url })
         })
       })
-      this.product.pictures = sources
+      this.product.pictures = _.uniqBy(sources, _.isEqual)
     }
   }
 
+  findAllowVariations() {
+    return new Promise((resolve, reject) => {
+      this.getAttributes(this.options.category_id)
+        .then(attributes => {
+          const allowedVariations = attributes
+            .filter(attribute => attribute.tags.allow_variations === true)
+            .map(({ id }) => id)
+          resolve(allowedVariations)
+        })
+        .catch(error => reject(error))
+    })
+  }
+
   buildVariations() {
-    this._variations = []
-    for (const variation of this.data.variations) {
-      const { quantity, price } = variation
-      const mlVariation = {
-        available_quantity: quantity ? quantity : this.data.quantity,
-        price: price ? price : this.data.price,
-        attribute_combinations: []
-      }
-      if (mlVariation.attribute_combinations.length > 0) {
-        this._variations.push(mlVariation)
-      }
-    }
-    if (this._variations.length > 0) {
-      this.product.variations = this._variations
-    }
+    return new Promise((resolve, reject) => {
+      this.findAllowVariations(this.options.category_id)
+        .then(allowedAttributes => {
+          this._variations = []
+          for (const variation of this.data.variations) {
+            const { quantity, price, specifications } = variation
+            const mlVariation = {
+              available_quantity: quantity ? quantity : this.data.quantity,
+              price: price ? price : this.data.price,
+              attribute_combinations: [],
+              picture_ids: []
+            }
+
+            if (variation.picture_id) {
+              const pictureUrl = this.data.pictures
+                .find(({ _id }) => _id === variation.picture_id).zoom.url
+              mlVariation.picture_ids.push(pictureUrl)
+            } else {
+              if (this.product.pictures) {
+                mlVariation.picture_ids.push(this.product.pictures[0].source)
+              }
+            }
+
+            for (const attribute of allowedAttributes) {
+              const spec = this.getSpecByProps(specifications, [attribute.toLowerCase()])
+              if (spec.text) {
+                mlVariation.attribute_combinations.push({ id: attribute, value_name: spec.text })
+              }
+            }
+
+            if (mlVariation.attribute_combinations.length > 0) {
+              this._variations.push(mlVariation)
+            }
+          }
+          if (this._variations.length > 0) {
+            this.product.variations = _.uniqWith(this._variations, _.isEqual)
+          }
+          resolve()
+        })
+        .catch(error => reject(error))
+    })
   }
 
   buildSellerCustomField() {
@@ -244,29 +302,35 @@ class ProductService {
   }
 
   getProductByCreate() {
-    try {
-      this.product = {}
-      this.buildTitle()
-      this.buildDescription()
-      this.buildCondition()
-      this.buildAvailableQuantity()
-      this.buildListingTypes()
-      this.buildCategory()
-      this.buildCurrency()
-      this.buildPrice()
-      this.buildPictures()
-      this.buildSellerCustomField()
-      this.buildGtin()
-      this.buildBrand()
-      this.buildDimensions()
-      this.buildSpecifications()
-      this.buildAttributes()
-      this.buildWeight()
-      this.buildVariations()
-      return this.product
-    } catch (error) {
-      throw error
-    }
+    return new Promise((resolve, reject) => {
+      try {
+        this.product = {}
+        this.buildTitle()
+        this.buildDescription()
+        this.buildCondition()
+        this.buildAvailableQuantity()
+        this.buildListingTypes()
+        this.buildCategory()
+        this.buildCurrency()
+        this.buildPrice()
+        this.buildPictures()
+        this.buildSellerCustomField()
+        this.buildGtin()
+        this.buildBrand()
+        this.buildDimensions()
+        this.buildSpecifications()
+        this.buildAttributes()
+        this.buildWeight()
+        this.buildVariations()
+          .then(() => {
+            resolve(this.product)
+          })
+          .catch(error => reject(error))
+      } catch (error) {
+        throw error
+      }
+
+    })
   }
 
   getProductByUpdate() {
@@ -297,6 +361,7 @@ class ProductService {
   }
 
   create(data) {
+    console.log(JSON.stringify(data, null, 4))
     return new Promise((resolve, reject) => {
       this.server
         .post('/items', data)
