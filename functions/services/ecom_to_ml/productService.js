@@ -110,7 +110,7 @@ class ProductService {
       this.findAllowVariations(this.options.category_id)
         .then(allowedAttributes => {
           this._variations = []
-          for (const variation of this.data.variations) {
+          for (const variation of (this.data.variations || [])) {
             const { quantity, price, specifications } = variation
             const mlVariation = {
               available_quantity: quantity ? quantity : this.data.quantity,
