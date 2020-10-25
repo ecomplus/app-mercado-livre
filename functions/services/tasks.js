@@ -43,11 +43,9 @@ const handleExportationProducts = async (appSdk, notification) => {
       const mlResponse = await productService.create(productData)
       if (mlResponse.status !== 201) {
         functions.logger.info(`[handleApplication]: SUCCESS TO CREATE PRODUCT ON ML: ${mlResponse.data}`)
-        return response.data
       }
       const fromMLProductService = new FromMLProductService(appSdk, notification.store_id)
       await fromMLProductService.link(mlResponse.data.id, product_id)
-      return mlResponse.data
     } catch (error) {
       if (error.response) {
         functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${json.stringify(error.response)}`)
@@ -55,6 +53,7 @@ const handleExportationProducts = async (appSdk, notification) => {
       functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
     }
   }
+  return true
 }
 
 const handleUpdateProduct = async (appSdk, notification) => {
@@ -168,7 +167,7 @@ exports.onEcomNotification = functions.firestore
       default:
         break;
     }
-    await snap.ref.delete()
+    setTimeout(() => await snap.ref.delete(), 20000)
     return true
   })
 
