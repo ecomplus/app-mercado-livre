@@ -61,7 +61,7 @@
         "title": "Exportação de Produtos",
         "description": "Exportação de produtos para o Mercado Livre",
         "type": "array",
-        "maxItems": 20,
+        "maxItems": 200,
         "items": {
           "type": "object",
           "properties": {
@@ -94,6 +94,36 @@
               "title": "Permite atualização de preço do anúncio",
               "type": "boolean"
             }
+          }
+        }
+      },
+      "hide": false
+    },
+    "link_products": {
+      "schema": {
+        "title": "Sincronizar anuncios existentes no Mercado Livre.",
+        "description": "Sincronizar anuncios já existentes no Mercado Livre aos produtos Ecom",
+        "type": "array",
+        "maxItems": 200,
+        "items": {
+          "type": "object",
+          "properties": {
+            "product_id": {
+              "title": "ID do produto",
+              "type": "string"
+            },
+            "ml_product_id": {
+              "title": "ID do produto no Mercado Livre",
+              "type": "string"
+            }
+          },
+          "allows_balance_update": {
+            "title": "Permite atualização de saldo do anúncio",
+            "type": "boolean"
+          },
+          "allows_price_update": {
+            "title": "Permite atualização de preço do anúncio",
+            "type": "boolean"
           }
         }
       },
