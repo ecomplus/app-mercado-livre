@@ -153,53 +153,47 @@ const app = {
      */
   },
   admin_settings: {
-    exportation: {
+    exportation_products: {
       schema: {
-        title: 'Exportação manual',
+        title: 'Exportação de Produtos',
         description: 'Exportação de produtos para o Mercado Livre',
-        type: 'object',
-        properties: {
-          title: 'Produtos a exportar',
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              product_id: {
-                title: 'ID do produto',
-                type: 'string'
-              },
-              ml_category_id: {
-                title: 'ID DA CATEGORIA Mercado Livre',
-                type: 'string',
-              },
-              ml_listing_type: {
-                title: 'Tipo de listagem no Mercado Livre',
-                enum: [
-                  'gold_pro',
-                  'gold_premium',
-                  'gold_special',
-                  'gold',
-                  'silver',
-                  'bronze',
-                  'free'
-                ]
-              },
-              allows_balance_update: {
-                title: 'Permite atualização de saldo do anúncio',
-                description: 'Permite atualização de saldo do anúncio de acordo com o saldo na ECOM',
-                default: false,
-                type: 'boolean'
-              },
-              allows_price_update: {
-                title: 'Permite atualização de preço do anúncio',
-                description: 'Permite atualização de preço do anúncio de acordo com o preço na ECOM',
-                default: false,
-                type: 'boolean'
-              }
+        type: 'array',
+        maxItems: 20,
+        items: {
+          type: 'object',
+          properties: {
+            product_id: {
+              title: 'ID do produto',
+              type: 'string'
+            },
+            ml_category_id: {
+              title: 'ID DA CATEGORIA Mercado Livre',
+              type: 'string',
+            },
+            ml_listing_type: {
+              title: 'Tipo de listagem no Mercado Livre',
+              enum: [
+                'gold_pro',
+                'gold_premium',
+                'gold_special',
+                'gold',
+                'silver',
+                'bronze',
+                'free'
+              ]
+            },
+            allows_balance_update: {
+              title: 'Permite atualização de saldo do anúncio',
+              type: 'boolean'
+            },
+            allows_price_update: {
+              title: 'Permite atualização de preço do anúncio',
+              type: 'boolean'
             }
           }
         }
-      }
+      },
+      hide: false
     }
   }
 }

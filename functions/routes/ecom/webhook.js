@@ -16,6 +16,8 @@ exports.post = ({ admin, appSdk }, req, res) => {
    */
   const trigger = req.body
 
+  console.log('[WEBHOOK TRIGGER]', trigger)
+
   // get app configured options
   getAppData({ appSdk, storeId })
 
