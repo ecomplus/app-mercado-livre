@@ -352,7 +352,7 @@ class ProductService {
             console.log('[getProductByUpdate]', this.product)
             this.buildVariations()
               .then(() => {
-                if (!this.product.variations) {
+                if (!data.variations) {
                   this.buildAvailableQuantity()
                   this.buildPrice()
                   return resolve(this.product)
