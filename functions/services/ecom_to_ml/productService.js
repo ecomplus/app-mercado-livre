@@ -89,7 +89,7 @@ class ProductService {
         })
       })
     }
-    return pictures
+    return sources
   }
 
   buildPictures() {
