@@ -303,8 +303,17 @@ procedures.push({
     },
     {
       resource: 'products',
+      field: 'price',
+    },
+    {
+      resource: 'products',
       subresource: 'variations',
       field: 'quantity'
+    },
+    {
+      resource: 'products',
+      subresource: 'variations',
+      field: 'price'
     },
     {
       resource: 'applications',
