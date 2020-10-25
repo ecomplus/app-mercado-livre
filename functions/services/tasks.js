@@ -63,9 +63,9 @@ const handleExportationProducts = async (appSdk, notification) => {
       }
 
     }
-    resolve(true)
+    Promise.resolve(true)
   } catch (error) {
-    reject(error)
+    Promise.reject(error)
   }
 }
 
