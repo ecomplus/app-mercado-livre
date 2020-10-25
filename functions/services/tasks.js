@@ -18,7 +18,7 @@ const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
 const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
 
 
-const handleApplication = async (appSdk, notification) => {
+const handleExportationProducts = async (appSdk, notification) => {
   functions.logger.info(`[handleApplication]: HANDLER APPLICATION`)
   const products = notification.body.exportation_products || []
   for (const product of products) {
@@ -49,12 +49,15 @@ const handleApplication = async (appSdk, notification) => {
       await fromMLProductService.link(mlResponse.data.id, product_id)
       return mlResponse.data
     } catch (error) {
+      if (error.response) {
+        functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${json.stringify(error.response)}`)
+      }
       functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
     }
   }
 }
 
-const handleProduct = async (appSdk, notification) => {
+const handleUpdateProduct = async (appSdk, notification) => {
   try {
     if (notification.resource_id) {
       functions.logger.info('[handleProduct]')
@@ -157,14 +160,15 @@ exports.onEcomNotification = functions.firestore
     const notification = snap.data()
     switch (notification.resource) {
       case 'products':
-        await handleProduct(appSdk, notification)
+        await handleUpdateProduct(appSdk, notification)
         break;
       case 'applications':
-        await handleApplication(appSdk, notification)
+        await handleExportationProducts(appSdk, notification)
         break;
       default:
         break;
     }
+    await snap.ref.delete()
     return true
   })
 
