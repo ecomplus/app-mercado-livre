@@ -119,11 +119,11 @@ const handleLinkProduct = async (appSdk, notification) => {
         functions.logger.error(error)
       }
     }
-    resolve(true)
+    Promise.resolve(true)
   }
   catch (error) {
     functions.logger.error(error)
-    reject(error)
+    Promise.reject(error)
   }
 }
 
