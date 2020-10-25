@@ -167,7 +167,7 @@ exports.onEcomNotification = functions.firestore
       default:
         break;
     }
-    setTimeout(() => await snap.ref.delete(), 20000)
+    setTimeout(async () => await snap.ref.delete(), 20000)
     return true
   })
 
