@@ -40,12 +40,12 @@ exports.post = ({ admin, appSdk }, req, res) => {
 
       /* DO YOUR CUSTOM STUFF HERE */
       try {
-        const { body, fields, resource } = trigger
+        const { fields, resource } = trigger
         switch (resource) {
           case 'applications':
-            if (fields.includes('data') && body.exportation_products.length > 0) {
+            if (fields.includes('data')) {
               addNotification(admin, trigger).then(() => {
-                const data = { exportation_products: [] }
+                const data = { exportation_products: [], link_products: [] }
                 appSdk.apiApp(storeId, 'data', 'PATCH', data, auth)
                   .catch(err => {
                     throw err
