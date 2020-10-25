@@ -1,12 +1,18 @@
+const getAppData = require('../lib/store-api/get-app-data')
+const updateAppData = require('../lib/store-api/update-app-data')
+
 const log = (appSdk, storeId, entity, payload) => {
   const isError = payload instanceof Error
   appSdk.getAuth(storeId)
     .then(auth => {
+      console.log(auth)
       return getAppData({ appSdk, storeId, auth })
         .then(appData => {
           let { logs } = appData
+          if (!Array.isArray(logs)) {
+            logs = []
+          }
           const logData = {
-            resource,
             entity,
             timestamp: new Date(),
             success: isError,
