@@ -343,6 +343,7 @@ class ProductService {
         this.findProduct(mlProductId)
           .then(({ data }) => {
             this.product = data
+            console.log('[getProductByUpdate]', this.product)
             this.buildVariations()
               .then(() => {
                 if (!this.product.variations) {
