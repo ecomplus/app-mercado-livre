@@ -16,6 +16,7 @@ const ORDER_UPDATED_SUCCESS = '[handleOrder]: UPDATED ORDER ON ECOM'
 
 const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
 const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
+const { log } = require('./logService')
 
 
 const handleExportationProducts = async (appSdk, notification) => {
@@ -43,14 +44,17 @@ const handleExportationProducts = async (appSdk, notification) => {
       const mlResponse = await productService.create(productData)
       if (mlResponse.status !== 201) {
         functions.logger.info(`[handleApplication]: SUCCESS TO CREATE PRODUCT ON ML: ${mlResponse.data}`)
+        log(appSdk, notification.store_id, '[handleApplication]', mlResponse.data)
       }
       const fromMLProductService = new FromMLProductService(appSdk, notification.store_id)
       await fromMLProductService.link(mlResponse.data.id, product_id)
     } catch (error) {
       if (error.response) {
         functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${json.stringify(error.response)}`)
+        log(appSdk, notification.store_id, '[handleApplication]', new Error(error.response))
       }
       functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
+      log(appSdk, notification.store_id, '[handleApplication]', new Error(error))
     }
   }
   return true
@@ -96,7 +100,7 @@ const handleShipment = async (appSdk, storeId, mlNotificationService, ecomOrderI
     const shipmentService = new ShipmentService(appSdk, storeId, mlShipment)
     const shipmentData = shipmentService.getDataToCreate()
     await shipmentService.create(ecomOrderId, shipmentData)
-    functions.logger.info(`${SHIPMENT_CREATED_SUCCESS} TO ORDER: ${ecomOrderId}` )
+    functions.logger.info(`${SHIPMENT_CREATED_SUCCESS} TO ORDER: ${ecomOrderId}`)
     return Promise.resolve(true)
   } catch (error) {
     functions.logger.error(`${SHIPMENT_CREATED_ERROR} TO SHIPMENT ON ML: ${mlShipmentId}`)
@@ -124,7 +128,7 @@ const handleOrder = async (appSdk, snap) => {
       const orderOnEcomId = await orderService.findOrderOnEcom(mlOrder.id)
       if (!orderOnEcomId) {
         const orderDataToCreate = await orderService.getOrderToCreate()
-        const { response }  = await orderService.create(orderDataToCreate)
+        const { response } = await orderService.create(orderDataToCreate)
         functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
         await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
       } else {

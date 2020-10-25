@@ -195,6 +195,40 @@ const app = {
         }
       },
       hide: false
+    },
+    logs: {
+      schema: {
+        title: 'Logs',
+        type: 'array',
+        maxItems: 300,
+        items: {
+          title: 'Registro de log',
+          type: 'object',
+          properties: {
+            resource: {
+              type: 'string',
+              maxLength: 255,
+              title: 'Recurso'
+            },
+            timestamp: {
+              type: 'string',
+              format: 'date-time',
+              title: 'Horário'
+            },
+            success: {
+              type: 'boolean',
+              default: true,
+              title: 'Sucesso'
+            },
+            notes: {
+              type: 'string',
+              maxLength: 5000,
+              title: 'Notas'
+            }
+          }
+        }
+      },
+      hide: true
     }
   }
 }
