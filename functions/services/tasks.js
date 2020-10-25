@@ -85,7 +85,7 @@ const handleUpdateProduct = async (appSdk, notification) => {
       for (const metafields of response.data.result.filter(({ field }) => field === 'ml_id')) {
         try {
           const productService = new ProductService(user.data().access_token, notification.body)
-          const productData = await productService.getProductByUpdate()
+          const productData = await productService.getProductByUpdate(metafields.value)
           await productService.update(metafields.value, productData)
         } catch (error) {
           functions.logger.error(error)
