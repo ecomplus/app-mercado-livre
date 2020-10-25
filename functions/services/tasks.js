@@ -16,8 +16,9 @@ const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
 
 
 const handleApplication = async (appSdk, notification) => {
-  for (const body of (notification.exportation_products || [])) {
-    const { listing_type_id, category_id, product_id } = body
+  const products = notification.body.exportation_products
+  for (const product of (products || [])) {
+    const { listing_type_id, category_id, product_id } = product
     if (!listing_type_id || !category_id || !product_id) {
       functions.logger.error('[handleApplication]: The body does not contains some or none of the following properties [listing_type_id, category_id, product_id]')
       return

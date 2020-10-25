@@ -16,8 +16,6 @@ exports.post = ({ admin, appSdk }, req, res) => {
    */
   const trigger = req.body
 
-  console.log('[WEBHOOK TRIGGER]', trigger)
-
   // get app configured options
   getAppData({ appSdk, storeId })
 
@@ -37,8 +35,14 @@ exports.post = ({ admin, appSdk }, req, res) => {
         admin.firestore()
         .collection('ecom_notifications')
         .add(trigger)
-          .then(() => console.log('CREATED NOTIFICATION'))
-          .catch((error) => console.log('[ERROR]', error))
+          .then(() => {
+            console.log('CREATED NOTIFICATION')
+            return res.status(204).send()
+          })
+          .catch((error) => {
+            console.log('[ERROR]', error)
+            throw error
+          })
       } catch (error) {
         console.log('[ERROR]', error)
         throw error

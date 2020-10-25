@@ -172,6 +172,7 @@ const app = {
             },
             listing_type_id: {
               title: 'Tipo de listagem no Mercado Livre',
+              type: 'string',
               enum: [
                 'gold_pro',
                 'gold_premium',
