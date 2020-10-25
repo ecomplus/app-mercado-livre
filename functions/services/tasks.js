@@ -16,8 +16,9 @@ const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
 
 
 const handleApplication = async (appSdk, notification) => {
-  const products = notification.body.exportation_products
-  for (const product of (products || [])) {
+  functions.logger.info(`[handleApplication]: HANDLER APPLICATION`)
+  const products = notification.body.exportation_products || []
+  for (const product of products) {
     const { listing_type_id, category_id, product_id } = product
     if (!listing_type_id || !category_id || !product_id) {
       functions.logger.error('[handleApplication]: The body does not contains some or none of the following properties [listing_type_id, category_id, product_id]')
@@ -153,10 +154,11 @@ exports.onEcomNotification = functions.firestore
     const notification = snap.data()
     switch (notification.resource) {
       case 'products':
-        handleProduct(appSdk, notification)
+        await handleProduct(appSdk, notification)
         break;
       case 'applications':
-        handleApplication(appSdk, notification)
+        await handleApplication(appSdk, notification)
+        break;
       default:
         break;
     }
