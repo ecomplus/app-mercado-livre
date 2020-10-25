@@ -241,6 +241,10 @@ procedures.push({
       subresource: 'variations',
       field: 'quantity'
     },
+    {
+      resource: 'applications',
+      field: 'data'
+    },
 
     // Receive notifications when cart is edited:
     // {
