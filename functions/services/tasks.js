@@ -16,48 +16,57 @@ const ORDER_UPDATED_SUCCESS = '[handleOrder]: UPDATED ORDER ON ECOM'
 
 const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
 const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
-const log = require('./logService')
+const log = require('./logService');
+const { app } = require('firebase-admin');
 
 
 const handleExportationProducts = async (appSdk, notification) => {
   functions.logger.info(`[handleApplication]: HANDLER APPLICATION`)
-  const products = notification.body.exportation_products || []
-  for (const product of products) {
-    const { listing_type_id, category_id, product_id } = product
-    if (!listing_type_id || !category_id || !product_id) {
-      functions.logger.error('[handleApplication]: The body does not contains some or none of the following properties [listing_type_id, category_id, product_id]')
-      return
-    }
+  try {
+    const products = notification.body.exportation_products || []
+    for (const product of products) {
+      try {
+        const { listing_type_id, category_id, product_id } = product
+        if (!listing_type_id || !category_id || !product_id) {
+          functions.logger.error('[handleApplication]: The body does not contains some or none of the following properties [listing_type_id, category_id, product_id]')
+          return
+        }
+        const result = await admin
+          .firestore()
+          .collection('ml_app_auth')
+          .doc(notification.store_id.toString())
+          .get()
 
-    const result = await admin
-      .firestore()
-      .collection('ml_app_auth')
-      .doc(notification.store_id.toString())
-      .get()
+        const user = result.data()
+        const resource = `/products/${product_id}.json`
+        const { response } = await appSdk.apiRequest(parseInt(notification.store_id), resource, 'GET')
+        const productService = new FromEcomProductService(user.access_token, response.data, { listing_type_id, category_id })
+        const productData = await productService.getProductByCreate()
+        try {
+          const mlResponse = await productService.create(productData)
+          if (mlResponse.status !== 201) {
+            functions.logger.info(`[handleApplication]: SUCCESS TO CREATE PRODUCT ON ML: ${mlResponse.data}`)
+            log(appSdk, notification.store_id, '[handleApplication]', mlResponse.data)
+          }
+          const fromMLProductService = new FromMLProductService(appSdk, notification.store_id)
+          await fromMLProductService.link(mlResponse.data.id, product_id)
+        } catch (error) {
+          if (error.response) {
+            functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${json.stringify(error.response)}`)
+            log(appSdk, notification.store_id, '[handleApplication]', new Error(error.response))
+          }
+          functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
+          log(appSdk, notification.store_id, '[handleApplication]', new Error(error))
+        }
+      } catch (error) {
+        functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
+      }
 
-    const user = result.data()
-    const resource = `/products/${product_id}.json`
-    const { response } = await appSdk.apiRequest(parseInt(notification.store_id), resource, 'GET')
-    const productService = new FromEcomProductService(user.access_token, response.data, { listing_type_id, category_id })
-    const productData = await productService.getProductByCreate()
-    try {
-      const mlResponse = await productService.create(productData)
-      if (mlResponse.status !== 201) {
-        functions.logger.info(`[handleApplication]: SUCCESS TO CREATE PRODUCT ON ML: ${mlResponse.data}`)
-        log(appSdk, notification.store_id, '[handleApplication]', mlResponse.data)
-      }
-      const fromMLProductService = new FromMLProductService(appSdk, notification.store_id)
-      await fromMLProductService.link(mlResponse.data.id, product_id)
-    } catch (error) {
-      if (error.response) {
-        functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${json.stringify(error.response)}`)
-        log(appSdk, notification.store_id, '[handleApplication]', new Error(error.response))
-      }
-      functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
-      log(appSdk, notification.store_id, '[handleApplication]', new Error(error))
     }
+    resolve(true)
+  } catch (error) {
+    reject(error)
   }
-  return true
 }
 
 const handleUpdateProduct = async (appSdk, notification) => {
@@ -91,6 +100,30 @@ const handleUpdateProduct = async (appSdk, notification) => {
   } catch (error) {
     functions.logger.error(error)
     return Promise.reject(error)
+  }
+}
+
+const handleLinkProduct = async (appSdk, notification) => {
+  try {
+    const { body, store_id } = notification
+    const products = body.link_products
+    for (const product of products) {
+      try {
+        const { product_id, ml_product_id } = product
+        if (!product_id || !ml_product_id) {
+          functions.logger.error('[linkProduct]: The body does not contains some or none of the following properties [ecom_product_id, ml_product_id]')
+        }
+        const fromMLProductService = new FromMLProductService(appSdk, store_id)
+        await fromMLProductService.link(ml_product_id, product_id)
+      } catch (error) {
+        functions.logger.error(error)
+      }
+    }
+    resolve(true)
+  }
+  catch (error) {
+    functions.logger.error(error)
+    reject(error)
   }
 }
 
@@ -167,6 +200,7 @@ exports.onEcomNotification = functions.firestore
         break;
       case 'applications':
         await handleExportationProducts(appSdk, notification)
+        await handleLinkProduct(appSdk, notification)
         break;
       default:
         break;
