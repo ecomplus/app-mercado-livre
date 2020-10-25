@@ -1,6 +1,7 @@
 // read configured E-Com Plus app data
 const { auth } = require('firebase-admin')
 const getAppData = require('./../../lib/store-api/get-app-data')
+const updateAppData = require('./../../lib/store-api/update-app-data')
 
 const SKIP_TRIGGER_NAME = 'SkipTrigger'
 const ECHO_SUCCESS = 'SUCCESS'
@@ -12,6 +13,8 @@ const addNotification = (admin, trigger) => {
     .collection('ecom_notifications')
     .add(trigger)
 }
+
+const JOBS = ['exportation_products', 'link_products']
 
 
 exports.post = ({ admin, appSdk }, req, res) => {
@@ -40,16 +43,22 @@ exports.post = ({ admin, appSdk }, req, res) => {
 
       /* DO YOUR CUSTOM STUFF HERE */
       try {
-        const { fields, resource } = trigger
+        const { body, fields, resource } = trigger
         switch (resource) {
           case 'applications':
             if (fields.includes('data')) {
+              const data = {}
               addNotification(admin, trigger).then(() => {
-                const data = { exportation_products: [], link_products: [] }
-                appSdk.apiApp(storeId, 'data', 'PATCH', data, auth)
-                  .catch(err => {
-                    throw err
-                  })
+                let hasJobs = false
+                for (const job of JOBS) {
+                  if (Array.isArray(body[job]) && body[job].length > 0) {
+                    hasJobs = true
+                    data[job] = []
+                  }
+                }
+                if (hasJobs) {
+                  updateAppData({ appSdk, storeId, auth }, data)
+                }
               })
             }
             break;
