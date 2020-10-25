@@ -107,7 +107,7 @@ class ProductService {
 
   buildVariations() {
     return new Promise((resolve, reject) => {
-      this.findAllowVariations(this.options.category_id)
+      this.findAllowVariations(this.options.category_id || this.product.category_id)
         .then(allowedAttributes => {
           this._variations = []
           for (const variation of (this.data.variations || [])) {
