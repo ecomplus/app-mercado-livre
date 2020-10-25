@@ -166,11 +166,11 @@ const app = {
               title: 'ID do produto',
               type: 'string'
             },
-            ml_category_id: {
+            category_id: {
               title: 'ID DA CATEGORIA Mercado Livre',
               type: 'string',
             },
-            ml_listing_type: {
+            listing_type_id: {
               title: 'Tipo de listagem no Mercado Livre',
               enum: [
                 'gold_pro',

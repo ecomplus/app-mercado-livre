@@ -15,6 +15,40 @@ const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
 const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
 
 
+const handleApplication = async (appSdk, notification) => {
+  for (const body of (notification.exportation_products || [])) {
+    const { listing_type_id, category_id, product_id } = body
+    if (!listing_type_id || !category_id || !product_id) {
+      functions.logger.error('[handleApplication]: The body does not contains some or none of the following properties [listing_type_id, category_id, product_id]')
+      return
+    }
+
+    const result = await admin
+      .firestore()
+      .collection('ml_app_auth')
+      .doc(notification.store_id.toString())
+      .get()
+
+    const user = result.data()
+    const resource = `/products/${product_id}.json`
+    const { response } = await appSdk.apiRequest(parseInt(notification.store_id), resource, 'GET')
+    const productService = new FromEcomProductService(user.access_token, response.data, { listing_type_id, category_id })
+    const productData = await productService.getProductByCreate()
+    try {
+      const mlResponse = await productService.create(productData)
+      if (mlResponse.status !== 201) {
+        functions.logger.info(`[handleApplication]: SUCCESS TO CREATE PRODUCT ON ML: ${mlResponse.data}`)
+        return response.data
+      }
+      const fromMLProductService = new FromMLProductService(appSdk, notification.store_id)
+      await fromMLProductService.link(mlResponse.data.id, product_id)
+      return mlResponse.data
+    } catch (error) {
+      functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
+    }
+  }
+}
+
 const handleProduct = async (appSdk, notification) => {
   try {
     if (notification.resource_id) {
@@ -120,7 +154,8 @@ exports.onEcomNotification = functions.firestore
       case 'products':
         handleProduct(appSdk, notification)
         break;
-
+      case 'applications':
+        handleApplication(appSdk, notification)
       default:
         break;
     }
