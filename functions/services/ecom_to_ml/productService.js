@@ -130,7 +130,7 @@ class ProductService {
             } else {
               const pictures = this.getUniqPictures()
               if (Array.isArray(pictures) && pictures.length > 0) {
-                mlVariation.picture_ids.push(this.product.pictures[0].source)
+                mlVariation.picture_ids.push(pictures[0].source)
               }
             }
 
