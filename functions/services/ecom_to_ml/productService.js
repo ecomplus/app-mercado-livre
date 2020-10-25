@@ -142,6 +142,13 @@ class ProductService {
               }
             }
 
+            if (variation.sku) {
+              mlVariation.attributes = [{
+                id: "SELLER_SKU",
+                value_name: variation.sku
+              }]
+            }
+
             if (mlVariation.attribute_combinations.length > 0) {
               this._variations.push(mlVariation)
             }
