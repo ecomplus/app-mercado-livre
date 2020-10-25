@@ -92,9 +92,9 @@ class ProductService {
     }
   }
 
-  findAllowVariations() {
+  findAllowVariations(category_id) {
     return new Promise((resolve, reject) => {
-      this.getAttributes(this.options.category_id)
+      this.getAttributes(category_id)
         .then(attributes => {
           const allowedVariations = attributes
             .filter(attribute => attribute.tags.allow_variations === true)
@@ -107,7 +107,8 @@ class ProductService {
 
   buildVariations() {
     return new Promise((resolve, reject) => {
-      this.findAllowVariations(this.options.category_id || this.product.category_id)
+      const category_id  = this.product.category_id ? this.product.category_id : this.options.category_id
+      this.findAllowVariations(category_id)
         .then(allowedAttributes => {
           this._variations = []
           for (const variation of (this.data.variations || [])) {
