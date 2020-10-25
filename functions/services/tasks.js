@@ -105,7 +105,7 @@ const handleUpdateProduct = async (appSdk, notification) => {
 const handleLinkProduct = async (appSdk, notification) => {
   try {
     const { body, store_id } = notification
-    const products = body.link_products
+    const products = body.link_products || []
     for (const product of products) {
       try {
         const { product_id, ml_product_id } = product
