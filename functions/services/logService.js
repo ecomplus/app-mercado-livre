@@ -1,4 +1,4 @@
-const log = ({ appSdk, storeId }, entity, payload) => {
+const log = (appSdk, storeId, entity, payload) => {
   const isError = payload instanceof Error
   appSdk.getAuth(storeId)
     .then(auth => {
