@@ -1,4 +1,7 @@
 const functions = require('firebase-functions');
+const FromEcomProductService = require('./ecom_to_ml/productService')
+const FromMLProductService = require('./ml_to_ecom/productService')
+// const UtilsService = require('./utilsService')
 const MLNotificationService = require('./ml_to_ecom/notificationService')
 const ProductService = require('./ecom_to_ml/productService')
 const OrderService = require('./ml_to_ecom/orderService')
