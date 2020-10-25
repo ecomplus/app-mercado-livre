@@ -89,6 +89,7 @@ class ProductService {
         })
       })
     }
+    return pictures
   }
 
   buildPictures() {
