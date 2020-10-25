@@ -17,7 +17,6 @@ const ORDER_UPDATED_SUCCESS = '[handleOrder]: UPDATED ORDER ON ECOM'
 const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
 const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
 const log = require('./logService');
-const { app } = require('firebase-admin');
 
 
 const handleExportationProducts = async (appSdk, notification) => {
