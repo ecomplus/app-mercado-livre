@@ -1,10 +1,18 @@
 // read configured E-Com Plus app data
+const { auth } = require('firebase-admin')
 const getAppData = require('./../../lib/store-api/get-app-data')
 
 const SKIP_TRIGGER_NAME = 'SkipTrigger'
 const ECHO_SUCCESS = 'SUCCESS'
 const ECHO_SKIP = 'SKIP'
 const ECHO_API_ERROR = 'STORE_API_ERR'
+
+const addNotification = (admin, trigger) => {
+  return admin.firestore()
+    .collection('ecom_notifications')
+    .add(trigger)
+}
+
 
 exports.post = ({ admin, appSdk }, req, res) => {
   // receiving notification from Store API
@@ -17,7 +25,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
   const trigger = req.body
 
   // get app configured options
-  getAppData({ appSdk, storeId })
+  getAppData({ appSdk, storeId, auth })
 
     .then(appData => {
       if (
@@ -32,17 +40,25 @@ exports.post = ({ admin, appSdk }, req, res) => {
 
       /* DO YOUR CUSTOM STUFF HERE */
       try {
-        admin.firestore()
-        .collection('ecom_notifications')
-        .add(trigger)
-          .then(() => {
-            console.log('CREATED NOTIFICATION')
-            return res.status(204).send()
-          })
-          .catch((error) => {
-            console.log('[ERROR]', error)
-            throw error
-          })
+        const { body, fields, resource } = trigger
+        switch (resource) {
+          case 'applications':
+            if (fields.includes('data') && body.exportation_products.length > 0) {
+              addNotification(admin, trigger).then(() => {
+                const data = { exportation_products: [] }
+                appSdk.apiApp(storeId, 'data', 'PATCH', data, auth)
+                  .catch(err => {
+                    throw err
+                  })
+              })
+            }
+            break;
+          default:
+            addNotification(admin, trigger).catch(err => { throw err })
+            break;
+        }
+        return res.status(204).send()
+
       } catch (error) {
         console.log('[ERROR]', error)
         throw error
