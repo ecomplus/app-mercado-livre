@@ -337,14 +337,23 @@ class ProductService {
   }
 
   getProductByUpdate() {
-    try {
-      this.product = {}
-      this.buildAvailableQuantity()
-      this.buildPrice()
-      return this.product
-    } catch (error) {
-      throw error
-    }
+    return new Promise((resolve, reject) => {
+      try {
+        this.product = {}
+        this.buildVariations()
+          .then(() => {
+            if (!this.product.variations) {
+              this.buildAvailableQuantity()
+              this.buildPrice()
+              return resolve(this.product)
+            }
+            resolve(this.product)
+          })
+          .catch(error => reject(error))
+      } catch (error) {
+        throw error
+      }
+    })
   }
 
 
