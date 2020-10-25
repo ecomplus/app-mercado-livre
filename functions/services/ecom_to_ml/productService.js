@@ -78,7 +78,7 @@ class ProductService {
     this.product.price = this.data.price
   }
 
-  buildPictures() {
+  getUniqPictures() {
     const { pictures } = this.data
     const sources = []
     if (pictures && pictures.length > 0) {
@@ -88,8 +88,11 @@ class ProductService {
           if (url) sources.push({ source: url })
         })
       })
-      this.product.pictures = _.uniqBy(sources, _.isEqual)
     }
+  }
+
+  buildPictures() {
+    this.product.pictures = this.getUniqPictures
   }
 
   findAllowVariations(category_id) {
@@ -107,7 +110,7 @@ class ProductService {
 
   buildVariations() {
     return new Promise((resolve, reject) => {
-      const category_id  = this.product.category_id ? this.product.category_id : this.options.category_id
+      const category_id = this.product.category_id ? this.product.category_id : this.options.category_id
       this.findAllowVariations(category_id)
         .then(allowedAttributes => {
           this._variations = []
@@ -125,7 +128,8 @@ class ProductService {
                 .find(({ _id }) => _id === variation.picture_id).zoom.url
               mlVariation.picture_ids.push(pictureUrl)
             } else {
-              if (this.product.pictures) {
+              const pictures = this.getUniqPictures()
+              if (Array.isArray(pictures) && pictures.length > 0) {
                 mlVariation.picture_ids.push(this.product.pictures[0].source)
               }
             }
