@@ -356,7 +356,6 @@ class ProductService {
         return this.findProduct(mlProductId)
           .then(({ data }) => {
             this.product.category_id = data.category_id
-            console.log('[getProductByUpdate]', this.product)
             this.buildVariations()
               .then(() => {
                 if (!data.variations) {
@@ -408,6 +407,7 @@ class ProductService {
   }
 
   update(id, data) {
+    console.log(JSON.stringify(data, null, 4))
     return new Promise((resolve, reject) => {
       this.server
         .put(`items/${id}`, data)

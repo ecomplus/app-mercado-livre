@@ -72,19 +72,17 @@ const handleUpdateProduct = async (appSdk, notification) => {
   try {
     if (notification.resource_id) {
       functions.logger.info('[handleProduct]')
-      const resource = `/products/${notification.resource_id}/metafields.json`
-      const { response } = await appSdk.apiRequest(
-        parseInt(notification.store_id), resource, 'GET')
-
       const user = await admin
         .firestore()
         .collection('ml_app_auth')
         .doc(notification.store_id.toString())
         .get()
-
-      for (const metafields of response.data.result.filter(({ field }) => field === 'ml_id')) {
+      const resource = `/products/${notification.resource_id}.json`
+      const { response } = await appSdk.apiRequest(parseInt(notification.store_id), resource, 'GET')
+      const { data } = response
+      for (const metafields of (data.metafields || []).filter(({ field }) => field === 'ml_id')) {
         try {
-          const productService = new ProductService(user.data().access_token, notification.body)
+          const productService = new ProductService(user.data().access_token, { ...data, ...notification.body })
           const productData = await productService.getProductByUpdate(metafields.value)
           await productService.update(metafields.value, productData)
         } catch (error) {
@@ -101,6 +99,7 @@ const handleUpdateProduct = async (appSdk, notification) => {
     return Promise.reject(error)
   }
 }
+exports.handleUpdateProduct = handleUpdateProduct
 
 const handleLinkProduct = async (appSdk, notification) => {
   try {
