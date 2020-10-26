@@ -59,7 +59,7 @@ class ProductService {
   }
 
   buildAvailableQuantity() {
-    this.product.available_quantity = this.data.quantity
+    this.product.available_quantity = this.data.quantity || 0
   }
 
   buildListingTypes() {
@@ -118,7 +118,7 @@ class ProductService {
           for (const variation of (this.data.variations || [])) {
             const { quantity, price, specifications } = variation
             const mlVariation = {
-              available_quantity: quantity ? quantity : this.data.quantity,
+              available_quantity: quantity || 0,
               price: price ? price : this.data.price,
               attribute_combinations: [],
               picture_ids: []
