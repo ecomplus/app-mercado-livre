@@ -115,11 +115,12 @@ class ProductService {
       this.findAllowVariations(category_id)
         .then(allowedAttributes => {
           this._variations = []
+          const highestPrice = _.maxBy(this.data.variations, 'price') || this.data.price
           for (const variation of (this.data.variations || [])) {
-            const { quantity, price, specifications } = variation
+            const { quantity, specifications } = variation
             const mlVariation = {
               available_quantity: quantity || 0,
-              price: price ? price : this.data.price,
+              price: highestPrice,
               attribute_combinations: [],
               picture_ids: []
             }
