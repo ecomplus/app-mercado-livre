@@ -25,6 +25,19 @@ class UtilsService {
     }
   }
 
+  async getCategory(categoryId) {
+    try {
+      const { data } = await this.server
+        .get(`/categories/${categoryId}`)
+      return Promise.resolve(data)
+    } catch (error) {
+      if (error.response) {
+        return Promise.reject(error.response)
+      }
+      return Promise.reject(error)
+    }
+  }
+
   async getProducts() {
     try {
       const { data } = await this.server

@@ -1,7 +1,6 @@
 const functions = require('firebase-functions');
-const FromEcomProductService = require('./ecom_to_ml/productService')
 const FromMLProductService = require('./ml_to_ecom/productService')
-// const UtilsService = require('./utilsService')
+const UtilsService = require('./utilsService')
 const MLNotificationService = require('./ml_to_ecom/notificationService')
 const ProductService = require('./ecom_to_ml/productService')
 const OrderService = require('./ml_to_ecom/orderService')
@@ -39,7 +38,9 @@ const handleExportationProducts = async (appSdk, notification) => {
         const user = result.data()
         const resource = `/products/${product_id}.json`
         const { response } = await appSdk.apiRequest(parseInt(notification.store_id), resource, 'GET')
-        const productService = new FromEcomProductService(user.access_token, response.data, { listing_type_id, category_id })
+        const utilsService = new UtilsService(user)
+        const category = utilsService.getCategory(category_id)
+        const productService = new ProductService(user.access_token, response.data, category.data, { listing_type_id, category_id })
         const productData = await productService.getProductByCreate()
         try {
           const mlResponse = await productService.create(productData)

@@ -3,7 +3,7 @@ const _ = require('lodash')
 const VARIATION_CORRELATIONS = require('./variations_correlations.json')
 
 class ProductService {
-  constructor(token, data, options = {}) {
+  constructor(token, data, category = {}, options = {}) {
     this.server = axios.create({
       baseURL: 'https://api.mercadolibre.com',
       timeout: 60000,
@@ -47,7 +47,8 @@ class ProductService {
   }
 
   buildTitle() {
-    this.product.title = this.data.name
+    const maxLength = this.category.settings.max_title_length || this.data.name.length
+    this.product.title = this.data.name.splice(0, maxLength)
   }
 
   buildDescription() {
