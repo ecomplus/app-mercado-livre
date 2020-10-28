@@ -39,7 +39,7 @@ const handleExportationProducts = async (appSdk, notification) => {
         const resource = `/products/${product_id}.json`
         const { response } = await appSdk.apiRequest(parseInt(notification.store_id), resource, 'GET')
         const utilsService = new UtilsService(user)
-        const category = utilsService.getCategory(category_id)
+        const category = await utilsService.getCategory(category_id)
         const productService = new ProductService(user.access_token, response.data, category, { listing_type_id, category_id })
         const productData = await productService.getProductByCreate()
         try {
