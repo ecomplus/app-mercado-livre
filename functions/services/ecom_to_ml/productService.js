@@ -89,11 +89,11 @@ class ProductService {
         })
       })
     }
-    return sources
+    return _.unionBy(sources, 'source')
   }
 
   buildPictures() {
-    this.product.pictures = this.getUniqPictures
+    this.product.pictures = this.getUniqPictures()
   }
 
   findAllowVariations(category_id) {
