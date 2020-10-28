@@ -82,11 +82,9 @@ class ProductService {
     const { pictures } = this.data
     const sources = []
     if (pictures && pictures.length > 0) {
-      pictures.map(({ small, normal, big, zoom }) => {
-        const urls = [small || [], normal || [], big || [], zoom || []].map(({ url }) => url)
-        urls.forEach(url => {
-          if (url) sources.push({ source: url })
-        })
+      pictures.map((picture) => {
+        const { url }= picture.zoom || picture.big || picture.normal || picture.small
+        sources.push({ source: url })
       })
     }
     return _.unionBy(sources, 'source')
