@@ -49,7 +49,7 @@ class ProductService {
 
   buildTitle() {
     const maxLength = this.category.settings.max_title_length || this.data.name.length
-    this.product.title = this.data.name.splice(0, maxLength)
+    this.product.title = this.data.name.slice(0, maxLength)
   }
 
   buildDescription() {
