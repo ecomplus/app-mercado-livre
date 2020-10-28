@@ -11,6 +11,7 @@ class ProductService {
         Authorization: `Bearer ${token}`
       }
     })
+    this.category = category
     this.product = {}
     this.data = data
     this.options = options
