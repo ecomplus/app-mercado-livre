@@ -101,7 +101,6 @@ const handleUpdateProduct = async (appSdk, notification) => {
     return Promise.reject(error)
   }
 }
-exports.handleUpdateProduct = handleUpdateProduct
 
 const handleLinkProduct = async (appSdk, notification) => {
   try {
@@ -159,8 +158,8 @@ const handleBalanceReserve = (mlOrder, ecomStatus = false) => {
     }
     if (operation) {
       for (const product of order_items) {
-        const { quantity, sku } = product
-        let sku = product.seller_custom_field
+        let { quantity, sku } = product
+        sku = product.seller_custom_field
         if (product.variation_id) {
           const attribute = product.variation_attributes.find(attr => attr.id === 'SELLER_SKU')
           if (attribute && attribute.value) {
