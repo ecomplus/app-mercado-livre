@@ -9,19 +9,19 @@ class BalanceReserve {
       .doc(sku)
   }
 
-  increase(quantity) {
+  increase(value) {
     this.productRef.get()
-      .then(result => {
-        newQuantity = result.quantity + quantity
-        this.productRef.set({ quantity: newQuantity })
+      .then(snap => {
+        const quantity = (snap.data() || {}).quantity || 0
+        this.productRef.set({ quantity: quantity + value })
       })
   }
 
-  decrease(quantity) {
+  decrease(value) {
     this.productRef.get()
-      .then(result => {
-        newQuantity = result.quantity - quantity
-        this.productRef.set({ quantity: newQuantity })
+      .then(snap => {
+        const quantity = (snap.data() || {}).quantity || 0
+        this.productRef.set({ quantity: quantity - value })
       })
   }
 }

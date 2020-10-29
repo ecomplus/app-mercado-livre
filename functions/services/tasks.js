@@ -144,7 +144,7 @@ const handleShipment = async (appSdk, storeId, mlNotificationService, ecomOrderI
 
 
 const handleBalanceReserve = (mlOrder, ecomStatus = false) => {
-  const { status, order_items } = { mlOrder }
+  let { status, order_items } = mlOrder
   if (status !== ecomStatus) {
     let operation
     if (status === 'payment_required') {
@@ -158,8 +158,8 @@ const handleBalanceReserve = (mlOrder, ecomStatus = false) => {
     }
     if (operation) {
       for (const product of order_items) {
-        let { quantity, sku } = product
-        sku = product.seller_custom_field
+        const { quantity, item } = product
+        let sku = item.seller_custom_field
         if (product.variation_id) {
           const attribute = product.variation_attributes.find(attr => attr.id === 'SELLER_SKU')
           if (attribute && attribute.value) {
@@ -168,9 +168,10 @@ const handleBalanceReserve = (mlOrder, ecomStatus = false) => {
         }
         if (sku) {
           const balanceReserve = new BalanceReserve(sku)
-          return add ? balanceReserve[operation](quantity) : balanceReserve.decrease(quantity)
+          balanceReserve[operation](quantity)
+        } else {
+          functions.logger.error(`[handleBalanceReserve] - ML ORDER: ${mlOrder.id} SKU NOT FOUND $${JSON.stringify(product)}`)
         }
-        functions.logger.error(`[handleBalanceReserve] - ML ORDER: ${mlOrder.id} SKU NOT FOUND $${JSON.stringify(product)}`)
       }
     }
   }
