@@ -16,6 +16,7 @@ const ORDER_UPDATED_SUCCESS = '[handleOrder]: UPDATED ORDER ON ECOM'
 const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
 const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
 const log = require('./logService');
+const BalanceReserve = require('./balanceReserveService');
 
 
 const handleExportationProducts = async (appSdk, notification) => {
@@ -142,6 +143,41 @@ const handleShipment = async (appSdk, storeId, mlNotificationService, ecomOrderI
 }
 
 
+
+const handleBalanceReserve = (mlOrder, ecomStatus = false) => {
+  const { status, order_items } = { mlOrder }
+  if (status !== ecomStatus) {
+    let operation
+    if (status === 'payment_required') {
+      operation = 'increase'
+    }
+    if (status === 'paid' && ecomStatus !== status) {
+      operation = 'decrease'
+    }
+    if (ecomStatus === 'payment_required' && ecomStatus !== status) {
+      operation = 'decrease'
+    }
+    if (operation) {
+      for (const product of order_items) {
+        const { quantity, sku } = product
+        let sku = product.seller_custom_field
+        if (product.variation_id) {
+          const attribute = product.variation_attributes.find(attr => attr.id === 'SELLER_SKU')
+          if (attribute && attribute.value) {
+            sku = attribute.value
+          }
+        }
+        if (sku) {
+          const balanceReserve = new BalanceReserve(sku)
+          return add ? balanceReserve[operation](quantity) : balanceReserve.decrease(quantity)
+        }
+        functions.logger.error(`[handleBalanceReserve] - ML ORDER: ${mlOrder.id} SKU NOT FOUND $${JSON.stringify(product)}`)
+      }
+    }
+  }
+}
+
+
 const handleOrder = async (appSdk, snap) => {
   try {
     const notification = snap.data()
@@ -163,12 +199,14 @@ const handleOrder = async (appSdk, snap) => {
         const { response } = await orderService.create(orderDataToCreate)
         functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
         await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
+        handleBalanceReserve(mlOrder, false)
       } else {
         const orderDataToUpdate = orderService.getOrderToUpdate()
         const mlOrderStatusOnEcom = await orderService.findMLOrderStatus(orderOnEcomId)
         if (mlOrderStatusOnEcom !== mlOrder.status) {
           await orderService.update(orderOnEcomId, orderDataToUpdate)
           functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
+          handleBalanceReserve(mlOrder, mlOrderStatusOnEcom)
           await handleShipment(appSdk, storeId, mlNotificationService, orderOnEcomId, mlOrder.shipping.id)
         } else {
           functions.logger.info(`[handleOrder] SKIPPED ORDER NOT HAS CHANGED: ${mlOrderStatusOnEcom}`);
