@@ -1,6 +1,7 @@
 const axios = require('axios').default
 const _ = require('lodash')
 const VARIATION_CORRELATIONS = require('./variations_correlations.json')
+const BalanceReserveService = require('../balanceReserveService')
 
 class ProductService {
   constructor(token, data, category = {}, options = {}) {
@@ -61,7 +62,17 @@ class ProductService {
   }
 
   buildAvailableQuantity() {
-    this.product.available_quantity = this.data.quantity || 0
+    return new Promise((resolve, reject) => {
+      this.product.available_quantity = this.data.quantity || 0
+      const { sku } = this.data
+      if (!sku) return resolve()
+      const balanceReserveService = new BalanceReserveService(sku)
+      balanceReserveService.getQuantity()
+        .then(reservedQuantity => {
+          this.product.available_quantity = this.data.quantity || 0 + reservedQuantity
+          resolve()
+        }).catch(error => reject(error))
+    })
   }
 
   buildListingTypes() {
@@ -85,7 +96,7 @@ class ProductService {
     const sources = []
     if (pictures && pictures.length > 0) {
       pictures.map((picture) => {
-        const { url }= picture.zoom || picture.big || picture.normal || picture.small
+        const { url } = picture.zoom || picture.big || picture.normal || picture.small
         sources.push({ source: url })
       })
     }
@@ -340,10 +351,8 @@ class ProductService {
         this.buildSpecifications()
         this.buildAttributes()
         this.buildWeight()
-        this.buildVariations()
-          .then(() => {
-            resolve(this.product)
-          })
+        Promise.all([this.buildAvailableQuantity(), this.buildVariations()])
+          .then(() => resolve(this.product))
           .catch(error => reject(error))
       } catch (error) {
         throw error

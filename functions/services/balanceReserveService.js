@@ -9,6 +9,16 @@ class BalanceReserve {
       .doc(sku)
   }
 
+  getQuantity() {
+    return new Promise((resolve, reject) => {
+      this.productRef.get()
+        .then(snap => {
+          const quantity = (snap.data() || {}).quantity || 0
+          return resolve(quantity)
+        }).catch(error => reject(error))
+    })
+  }
+
   increase(value) {
     this.productRef.get()
       .then(snap => {
