@@ -65,7 +65,7 @@ class ProductService {
   buildAvailableQuantity() {
     functions.logger.info('[buildAvailableQuantity] ' + JSON.stringify(this.product))
     return new Promise((resolve, reject) => {
-      if(this.product.variations) return resolve()
+      if (this.product.variations) return resolve()
 
       this.product.available_quantity = this.data.quantity || 0
       const { sku } = this.data
@@ -366,10 +366,10 @@ class ProductService {
   }
 
   getProductByUpdate(mlProductId) {
-    return new Promise((resolve, reject)=> {
+    return new Promise((resolve, reject) => {
       this.product = {}
       this.findProduct(mlProductId)
-        .then((data) => this.buildVariations(data.category_id))
+        .then(({ data }) => this.buildVariations(data.category_id))
         .then(this.buildAvailableQuantity.bind(this))
         .then(this.buildPrice.bind(this))
         .then(() => resolve(this.product))
