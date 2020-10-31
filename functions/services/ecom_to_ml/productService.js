@@ -152,8 +152,8 @@ class ProductService {
   buildVariations(category_id) {
     return new Promise((resolve, reject) => {
       this.findAllowVariations(category_id)
-        .then(this.filterValidVariations.bind())
-        .then(this.buildUniqueVariations.bind())
+        .then(this.filterValidVariations.bind(this))
+        .then(this.buildUniqueVariations.bind(this))
         .then(() => resolve(this.product))
         .catch(error => reject(error))
     })
@@ -165,11 +165,11 @@ class ProductService {
       picture_ids: []
     }
     return Promise.resolve(variation, mlVariation, allowedAttributes)
-      .then(this.buildVariationsSpecs.bind())
-      .then(this.buildVariationPictures.bind())
-      .then(this.buildVariationSKU.bind())
-      .then(this.buildVariationAvailableQuantity.bind())
-      .then(this.buildVariationPrice.bind())
+      .then(this.buildVariationsSpecs.bind(this))
+      .then(this.buildVariationPictures.bind(this))
+      .then(this.buildVariationSKU.bind(this))
+      .then(this.buildVariationAvailableQuantity.bind(this))
+      .then(this.buildVariationPrice.bind(this))
       .catch(error => reject(error))
   }
 
