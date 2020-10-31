@@ -371,9 +371,10 @@ class ProductService {
             this.buildVariations()
               .then(() => {
                 if (!data.variations) {
-                  this.buildAvailableQuantity()
                   this.buildPrice()
-                  return resolve(this.product)
+                  this.buildAvailableQuantity()
+                    .then(() => resolve(this.product))
+                    .catch(() => reject())
                 }
                 return resolve(this.product)
               })
