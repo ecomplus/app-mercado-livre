@@ -215,6 +215,7 @@ class ProductService {
   }
 
   buildVariationsSpecs(options) {
+    functions.logger.info('[buildVariationsSpecs] ' + JSON.stringify(options, null, 4))
     const { ecomVariation, mlVariation, allowedAttributes } = options
     const { specifications } = ecomVariation
     for (const attribute of allowedAttributes) {
