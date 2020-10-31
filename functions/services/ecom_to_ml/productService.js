@@ -127,6 +127,7 @@ class ProductService {
   }
 
   filterValidVariations(allowedAttributes) {
+    functions.logger.info('[filterValidVariations] ' + JSON.stringify(allowedAttributes) + ' ' + JSON.stringify(this))
     const variations = []
     for (const variation of (this.data.variations || [])) {
       variations.push(this.buildVariation(variation, allowedAttributes))
@@ -140,6 +141,7 @@ class ProductService {
   }
 
   buildUniqueVariations(variations) {
+    functions.logger.info('[buildUniqueVariations] ' + JSON.stringify(variations))
     if (variations.length > 0) {
       this.product.variations = _.uniqWith(this._variations, (x, y) => {
         return _.isEqual(x.attribute_combinations, y.attribute_combinations)
