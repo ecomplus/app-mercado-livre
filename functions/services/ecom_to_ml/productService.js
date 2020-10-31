@@ -160,7 +160,7 @@ class ProductService {
     })
   }
 
-  buildVariation(variation, allowedAttributes) {
+  buildVariation(ecomVariation, allowedAttributes) {
     const mlVariation = {
       attribute_combinations: [],
       picture_ids: []
