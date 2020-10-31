@@ -455,27 +455,26 @@ class ProductService {
 
   getProductByCreate() {
     this.product = {}
-    return Promise
-      .resolve()
-      .then(this.buildTitle.bind(this))
-      .then(this.buildDescription.bind(this))
-      .then(this.buildCondition.bind(this))
-      .then(this.buildListingTypes.bind(this))
-      .then(this.buildCategory.bind(this))
-      .then(this.buildCurrency.bind(this))
-      .then(this.buildPrice.bind(this))
-      .then(this.buildPictures.bind(this))
-      .then(this.buildSellerCustomField.bind(this))
-      .then(this.buildGtin.bind(this))
-      .then(this.buildBrand.bind(this))
-      .then(this.buildDimensions.bind(this))
-      .then(this.buildSpecifications.bind(this))
-      .then(this.buildAttributes.bind(this))
-      .then(this.buildWeight.bind(this))
-      .then(() => this.buildVariations(this.options.category_id))
+
+    this.buildTitle()
+    this.buildDescriptionbuildTitle()
+    this.buildConditionbuildTitle()
+    this.buildListingTypesbuildTitle()
+    this.buildCategorybuildTitle()
+    this.buildCurrencybuildTitle()
+    this.buildPricebuildTitle()
+    this.buildPicturesbuildTitle()
+    this.buildSellerCustomFieldbuildTitle()
+    this.buildGtinbuildTitle()
+    this.buildBrandbuildTitle()
+    this.buildDimensionsbuildTitle()
+    this.buildSpecificationsbuildTitle()
+    this.buildAttributesbuildTitle()
+    this.buildWeightbuildTitle()
+    return this.buildVariations(this.options.category_id)
       .then(this.buildAvailableQuantity.bind(this))
-      .then(() => this.product)
-      .catch(error => reject(error))
+      .then(() => Promise.resolve(this.product))
+      .catch(error => Promise.reject(error))
   }
 
   getProductByUpdate(mlProductId) {
