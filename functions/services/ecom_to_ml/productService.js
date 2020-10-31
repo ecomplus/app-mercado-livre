@@ -363,27 +363,20 @@ class ProductService {
 
   getProductByUpdate(mlProductId) {
     return new Promise((resolve, reject) => {
-      try {
-        this.product = {}
-        return this.findProduct(mlProductId)
-          .then(({ data }) => {
-            this.options.category_id = data.category_id
-            this.buildVariations()
-              .then(() => {
-                if (!data.variations) {
-                  this.buildPrice()
-                  this.buildAvailableQuantity()
-                    .then(() => resolve(this.product))
-                    .catch(() => reject())
-                }
-                return resolve(this.product)
-              })
-              .catch(error => reject(error))
-          }).catch(error => reject(error))
-
-      } catch (error) {
-        throw error
-      }
+      this.product = {}
+      this.findProduct(mlProductId)
+        .then(({ data }) => {
+          this.options.category_id = data.category_id
+          this.product.sku = data.sku
+          this.buildVariations()
+            .then(() => {
+              if (data.variations) return resolve(this.product)
+              this.buildPrice()
+              this.buildAvailableQuantity()
+                .then(() => resolve(this.product))
+                .catch(() => reject())
+            }).catch(error => reject(error))
+        }).catch(error => reject(error))
     })
   }
 
