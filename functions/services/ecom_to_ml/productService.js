@@ -455,30 +455,27 @@ class ProductService {
 
   getProductByCreate() {
     return new Promise((resolve, reject) => {
-      try {
-        this.product = {}
-        this.buildTitle()
-        this.buildDescription()
-        this.buildCondition()
-        this.buildListingTypes()
-        this.buildCategory()
-        this.buildCurrency()
-        this.buildPrice()
-        this.buildPictures()
-        this.buildSellerCustomField()
-        this.buildGtin()
-        this.buildBrand()
-        this.buildDimensions()
-        this.buildSpecifications()
-        this.buildAttributes()
-        this.buildWeight()
-        Promise.all([this.buildAvailableQuantity(), this.buildVariations(this.options.category_id)])
-          .then(() => resolve(this.product))
-          .catch(error => reject(error))
-      } catch (error) {
-        throw error
-      }
-
+      this.product = {}
+      resolve()
+        .then(this.buildTitle.bind(this))
+        .then(this.buildDescription.bind(this))
+        .then(this.buildCondition.bind(this))
+        .then(this.buildListingTypes.bind(this))
+        .then(this.buildCategory.bind(this))
+        .then(this.buildCurrency.bind(this))
+        .then(this.buildPrice.bind(this))
+        .then(this.buildPictures.bind(this))
+        .then(this.buildSellerCustomField.bind(this))
+        .then(this.buildGtin.bind(this))
+        .then(this.buildBrand.bind(this))
+        .then(this.buildDimensions.bind(this))
+        .then(this.buildSpecifications.bind(this))
+        .then(this.buildAttributes.bind(this))
+        .then(this.buildWeight.bind(this))
+        .then(() => this.buildVariations(this.options.category_id))
+        .then(this.buildAvailableQuantity.bind(this))
+        .then(() => this.product)
+        .catch(error => reject(error))
     })
   }
 
