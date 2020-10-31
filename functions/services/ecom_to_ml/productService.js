@@ -160,7 +160,10 @@ class ProductService {
       this.findAllowVariations(category_id)
         .then(this.filterValidVariations.bind(this))
         .then(this.buildUniqueVariations.bind(this))
-        .then(() => resolve(this.product))
+        .then((variations) => {
+          this.product.variations = variations
+          resolve()
+        })
         .catch(error => reject(error))
     })
   }
