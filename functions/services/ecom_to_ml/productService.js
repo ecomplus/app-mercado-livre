@@ -369,9 +369,9 @@ class ProductService {
     return new Promise((resolve, reject)=> {
       this.product = {}
       this.findProduct(mlProductId)
-        .then(this.buildPrice)
         .then((data) => this.buildVariations(data.category_id))
-        .then(this.buildAvailableQuantity)
+        .then(this.buildAvailableQuantity.bind(this))
+        .then(this.buildPrice.bind(this))
         .then(() => resolve(this.product))
         .catch(error => reject(error))
     })
