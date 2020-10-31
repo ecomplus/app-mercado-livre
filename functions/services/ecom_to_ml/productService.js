@@ -208,7 +208,7 @@ class ProductService {
     if (ecomVariation.sku) {
       mlVariation.attributes = [{
         id: "SELLER_SKU",
-        value_name: variation.sku
+        value_name: ecomVariation.sku
       }]
     }
     return { ecomVariation, mlVariation, allowedAttributes }
