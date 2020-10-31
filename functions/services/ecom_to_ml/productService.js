@@ -63,6 +63,8 @@ class ProductService {
 
   buildAvailableQuantity() {
     return new Promise((resolve, reject) => {
+      if(this.product.variations) return resolve()
+
       this.product.available_quantity = this.data.quantity || 0
       const { sku } = this.data
       if (!sku) return resolve()
@@ -338,7 +340,6 @@ class ProductService {
         this.buildTitle()
         this.buildDescription()
         this.buildCondition()
-        this.buildAvailableQuantity()
         this.buildListingTypes()
         this.buildCategory()
         this.buildCurrency()
@@ -361,24 +362,48 @@ class ProductService {
     })
   }
 
+  setUpdateOptions(data) {
+    this.options.category_id = data.category_id
+    return
+  }
+
   getProductByUpdate(mlProductId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject)=> {
       this.product = {}
       this.findProduct(mlProductId)
-        .then(({ data }) => {
-          this.options.category_id = data.category_id
-          this.product.sku = data.sku
-          this.buildVariations()
-            .then(() => {
-              if (data.variations) return resolve(this.product)
-              this.buildPrice()
-              this.buildAvailableQuantity()
-                .then(() => resolve(this.product))
-                .catch(() => reject())
-            }).catch(error => reject(error))
-        }).catch(error => reject(error))
+        .then(this.setUpdateOptions)
+        .then(this.buildPrice)
+        .then(this.buildVariations)
+        .then(this.buildAvailableQuantity)
+        .then(() => resolve(this.product))
+        .catch(error => reject(error))
     })
   }
+
+  // getProductByUpdate(mlProductId) {
+  //   //findProduct
+  //   //setUpdateOptions
+  //   //buildVariations
+  //   //hasVariations
+  //   //buildPrice
+  //   //buildAvailableQuantity
+
+  //   return new Promise((resolve, reject) => {
+  //     this.product = {}
+  //     this.findProduct(mlProductId)
+  //       .then(({ data }) => {
+  //         this.options.category_id = data.category_id
+  //         this.buildVariations()
+  //           .then(() => {
+  //             if (data.variations) return resolve(this.product)
+  //             this.buildPrice()
+  //             this.buildAvailableQuantity()
+  //               .then(() => resolve(this.product))
+  //               .catch(() => reject())
+  //           }).catch(error => reject(error))
+  //       }).catch(error => reject(error))
+  //   })
+  // }
 
 
   findProduct(id) {
