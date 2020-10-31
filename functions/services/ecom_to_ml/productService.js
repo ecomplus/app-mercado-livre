@@ -454,27 +454,28 @@ class ProductService {
   }
 
   getProductByCreate() {
-    this.product = {}
-
-    this.buildTitle()
-    this.buildDescriptionbuildTitle()
-    this.buildConditionbuildTitle()
-    this.buildListingTypesbuildTitle()
-    this.buildCategorybuildTitle()
-    this.buildCurrencybuildTitle()
-    this.buildPricebuildTitle()
-    this.buildPicturesbuildTitle()
-    this.buildSellerCustomFieldbuildTitle()
-    this.buildGtinbuildTitle()
-    this.buildBrandbuildTitle()
-    this.buildDimensionsbuildTitle()
-    this.buildSpecificationsbuildTitle()
-    this.buildAttributesbuildTitle()
-    this.buildWeightbuildTitle()
-    return this.buildVariations(this.options.category_id)
-      .then(this.buildAvailableQuantity.bind(this))
-      .then(() => Promise.resolve(this.product))
-      .catch(error => Promise.reject(error))
+    return new Promise((resolve, reject) => {
+      this.product = {}
+      this.buildTitle()
+      this.buildDescriptionbuildTitle()
+      this.buildConditionbuildTitle()
+      this.buildListingTypesbuildTitle()
+      this.buildCategorybuildTitle()
+      this.buildCurrencybuildTitle()
+      this.buildPricebuildTitle()
+      this.buildPicturesbuildTitle()
+      this.buildSellerCustomFieldbuildTitle()
+      this.buildGtinbuildTitle()
+      this.buildBrandbuildTitle()
+      this.buildDimensionsbuildTitle()
+      this.buildSpecificationsbuildTitle()
+      this.buildAttributesbuildTitle()
+      this.buildWeightbuildTitle()
+      this.buildVariations(this.options.category_id)
+        .then(this.buildAvailableQuantity.bind(this))
+        .then(() => resolve(this.product))
+        .catch(error => reject(error))
+    })
   }
 
   getProductByUpdate(mlProductId) {
