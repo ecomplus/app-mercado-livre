@@ -165,8 +165,8 @@ class ProductService {
       attribute_combinations: [],
       picture_ids: []
     }
-    return Promise.resolve({ variation, mlVariation, allowedAttributes })
-      .then(this.buildVariationsSpecs.bind(this))
+    return Promise
+      .resolve(this.buildVariationsSpecs({ variation, mlVariation, allowedAttributes }))
       .then(this.buildVariationPictures.bind(this))
       .then(this.buildVariationSKU.bind(this))
       .then(this.buildVariationAvailableQuantity.bind(this))
