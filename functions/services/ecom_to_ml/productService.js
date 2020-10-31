@@ -2,6 +2,7 @@ const axios = require('axios').default
 const _ = require('lodash')
 const VARIATION_CORRELATIONS = require('./variations_correlations.json')
 const BalanceReserveService = require('../balanceReserveService')
+const functions = require('firebase-functions');
 
 class ProductService {
   constructor(token, data, category = {}, options = {}) {
@@ -62,6 +63,7 @@ class ProductService {
   }
 
   buildAvailableQuantity() {
+    functions.logger.info('[buildAvailableQuantity] ' + JSON.stringify(this.product))
     return new Promise((resolve, reject) => {
       if(this.product.variations) return resolve()
 
@@ -90,6 +92,7 @@ class ProductService {
   }
 
   buildPrice() {
+    functions.logger.info('[buildPrice] ' + this.data.price)
     this.product.price = this.data.price
   }
 
@@ -122,9 +125,9 @@ class ProductService {
     })
   }
 
-  buildVariations() {
+  buildVariations(category_id) {
+    functions.logger.info('[buildVariations] ' + category_id)
     return new Promise((resolve, reject) => {
-      const category_id = this.product.category_id ? this.product.category_id : this.options.category_id
       this.findAllowVariations(category_id)
         .then(allowedAttributes => {
           this._variations = []
@@ -352,7 +355,7 @@ class ProductService {
         this.buildSpecifications()
         this.buildAttributes()
         this.buildWeight()
-        Promise.all([this.buildAvailableQuantity(), this.buildVariations()])
+        Promise.all([this.buildAvailableQuantity(), this.buildVariations(this.options.category_id)])
           .then(() => resolve(this.product))
           .catch(error => reject(error))
       } catch (error) {
@@ -362,18 +365,12 @@ class ProductService {
     })
   }
 
-  setUpdateOptions(data) {
-    this.options.category_id = data.category_id
-    return
-  }
-
   getProductByUpdate(mlProductId) {
     return new Promise((resolve, reject)=> {
       this.product = {}
       this.findProduct(mlProductId)
-        .then(this.setUpdateOptions.bind(this))
         .then(this.buildPrice.bind(this))
-        .then(this.buildVariations.bind(this))
+        .then((data) => this.buildVariations(data.category_id))
         .then(this.buildAvailableQuantity.bind(this))
         .then(() => resolve(this.product))
         .catch(error => reject(error))
@@ -408,6 +405,7 @@ class ProductService {
 
   findProduct(id) {
     return new Promise((resolve, reject) => {
+      functions.logger.info('[findProduct] ' + id)
       this.server
         .get(`/items/${id}`)
         .then((response) => resolve(response))
