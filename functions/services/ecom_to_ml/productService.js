@@ -165,7 +165,7 @@ class ProductService {
       attribute_combinations: [],
       picture_ids: []
     }
-    return Promise.resolve(variation, mlVariation, allowedAttributes)
+    return Promise.resolve({ variation, mlVariation, allowedAttributes })
       .then(this.buildVariationsSpecs.bind(this))
       .then(this.buildVariationPictures.bind(this))
       .then(this.buildVariationSKU.bind(this))
@@ -174,44 +174,48 @@ class ProductService {
       .catch(error => Promise.reject(error))
   }
 
-  buildVariationPrice(ecomVariation, mlVariation, allowedAttributes) {
+  buildVariationPrice(options) {
+    const { ecomVariation, mlVariation, allowedAttributes } = options
     const highestPrice = this.data.variations
       ? _.maxBy(this.data.variations, 'price').price
       : this.data.price
     mlVariation.price = highestPrice
-    return ecomVariation, mlVariation, allowedAttributes
+    return { ecomVariation, mlVariation, allowedAttributes }
   }
 
-  buildVariationAvailableQuantity(ecomVariation, mlVariation, allowedAttributes) {
+  buildVariationAvailableQuantity(options) {
     return new Promise((resolve, reject) => {
+      const { ecomVariation, mlVariation, allowedAttributes } = options
       const { quantity } = ecomVariation
       mlVariation.available_quantity = quantity || 0
 
       if (!ecomVariation.sku) {
-        resolve(ecomVariation, mlVariation, allowedAttributes)
+        resolve({ ecomVariation, mlVariation, allowedAttributes })
       }
 
       const balanceReserveService = new BalanceReserveService(ecomVariation.sku)
       balanceReserveService.getQuantity()
         .then(reservedQuantity => {
           mlVariation.available_quantity += reservedQuantity
-          resolve(ecomVariation, mlVariation, allowedAttributes)
+          resolve({ ecomVariation, mlVariation, allowedAttributes })
         })
         .catch(error => reject(error))
     })
   }
 
-  buildVariationSKU(ecomVariation, mlVariation, allowedAttributes) {
+  buildVariationSKU(options) {
+    const { ecomVariation, mlVariation, allowedAttributes } = options
     if (ecomVariation.sku) {
       mlVariation.attributes = [{
         id: "SELLER_SKU",
         value_name: variation.sku
       }]
     }
-    return ecomVariation, mlVariation, allowedAttributes
+    return { ecomVariation, mlVariation, allowedAttributes }
   }
 
-  buildVariationsSpecs(ecomVariation, mlVariation, allowedAttributes) {
+  buildVariationsSpecs(options) {
+    const { ecomVariation, mlVariation, allowedAttributes } = options
     const { specifications } = ecomVariation
     for (const attribute of allowedAttributes) {
       const spec = this.getSpecByProps(specifications, VARIATION_CORRELATIONS[attribute] || [attribute.toLowerCase()])
@@ -219,10 +223,11 @@ class ProductService {
         mlVariation.attribute_combinations.push({ id: attribute, value_name: spec.text })
       }
     }
-    return ecomVariation, mlVariation, allowedAttributes
+    return { ecomVariation, mlVariation, allowedAttributes }
   }
 
-  buildVariationPictures(ecomVariation, mlVariation, allowedAttributes) {
+  buildVariationPictures(options) {
+    const { ecomVariation, mlVariation, allowedAttributes } = options
     if (ecomVariation.picture_id) {
       const pictureUrl = this.data.pictures
         .find(({ _id }) => _id === ecomVariation.picture_id).zoom.url
@@ -233,7 +238,7 @@ class ProductService {
         mlVariation.picture_ids.push(pictures[0].source)
       }
     }
-    return ecomVariation, mlVariation, allowedAttributes
+    return { ecomVariation, mlVariation, allowedAttributes }
   }
 
   // buildVariations(category_id) {
