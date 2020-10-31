@@ -134,6 +134,7 @@ class ProductService {
     }
     Promise.all(variations)
       .then(values => {
+        functions.logger.info('[filterValidVariations-Promise.all] ' + JSON.stringify(values))
         const validVariations = values.filter(value => value.attribute_combinations.length > 0)
         resolve(validVariations)
       })
@@ -142,7 +143,7 @@ class ProductService {
 
   buildUniqueVariations(variations) {
     functions.logger.info('[buildUniqueVariations] ' + JSON.stringify(variations))
-    if (variations.length > 0) {
+    if (variations && variations.length > 0) {
       this.product.variations = _.uniqWith(this._variations, (x, y) => {
         return _.isEqual(x.attribute_combinations, y.attribute_combinations)
       })
@@ -170,7 +171,7 @@ class ProductService {
       .then(this.buildVariationSKU.bind(this))
       .then(this.buildVariationAvailableQuantity.bind(this))
       .then(this.buildVariationPrice.bind(this))
-      .catch(error => reject(error))
+      .catch(error => Promise.reject(error))
   }
 
   buildVariationPrice(ecomVariation, mlVariation, allowedAttributes) {
