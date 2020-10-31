@@ -367,7 +367,7 @@ class ProductService {
         this.product = {}
         return this.findProduct(mlProductId)
           .then(({ data }) => {
-            this.product.category_id = data.category_id
+            this.options.category_id = data.category_id
             this.buildVariations()
               .then(() => {
                 if (!data.variations) {
