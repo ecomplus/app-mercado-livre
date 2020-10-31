@@ -126,63 +126,170 @@ class ProductService {
     })
   }
 
+  filterValidVariations(allowedAttributes) {
+    const variations = []
+    for (const variation of (this.data.variations || [])) {
+      variations.push(this.buildVariation(variation, allowedAttributes))
+    }
+    Promise.all(variations)
+      .then(values => {
+        const validVariations = values.filter(value => value.attribute_combinations.length > 0)
+        resolve(validVariations)
+      })
+      .catch(error => Promise.reject(error))
+  }
+
+  buildUniqueVariations(variations) {
+    if (variations.length > 0) {
+      this.product.variations = _.uniqWith(this._variations, (x, y) => {
+        return _.isEqual(x.attribute_combinations, y.attribute_combinations)
+      })
+    }
+  }
+
   buildVariations(category_id) {
-    functions.logger.info('[buildVariations] ' + category_id)
     return new Promise((resolve, reject) => {
       this.findAllowVariations(category_id)
-        .then(allowedAttributes => {
-          this._variations = []
-          const highestPrice = this.data.variations
-            ? _.maxBy(this.data.variations, 'price').price
-            : this.data.price
-          for (const variation of (this.data.variations || [])) {
-            const { quantity, specifications } = variation
-            const mlVariation = {
-              available_quantity: quantity || 0,
-              price: highestPrice,
-              attribute_combinations: [],
-              picture_ids: []
-            }
+        .then(this.filterValidVariations.bind())
+        .then(this.buildUniqueVariations.bind())
+        .then(() => resolve(this.product))
+        .catch(error => reject(error))
+    })
+  }
 
-            if (variation.picture_id) {
-              const pictureUrl = this.data.pictures
-                .find(({ _id }) => _id === variation.picture_id).zoom.url
-              mlVariation.picture_ids.push(pictureUrl)
-            } else {
-              const pictures = this.getUniqPictures()
-              if (Array.isArray(pictures) && pictures.length > 0) {
-                mlVariation.picture_ids.push(pictures[0].source)
-              }
-            }
+  buildVariation(variation, allowedAttributes) {
+    const mlVariation = {
+      attribute_combinations: [],
+      picture_ids: []
+    }
+    return Promise.resolve(variation, mlVariation, allowedAttributes)
+      .then(this.buildVariationsSpecs.bind())
+      .then(this.buildVariationPictures.bind())
+      .then(this.buildVariationSKU.bind())
+      .then(this.buildVariationAvailableQuantity.bind())
+      .then(this.buildVariationPrice.bind())
+      .catch(error => reject(error))
+  }
 
-            for (const attribute of allowedAttributes) {
-              const spec = this.getSpecByProps(specifications, VARIATION_CORRELATIONS[attribute] || [attribute.toLowerCase()])
-              if (spec.text) {
-                mlVariation.attribute_combinations.push({ id: attribute, value_name: spec.text })
-              }
-            }
+  buildVariationPrice(ecomVariation, mlVariation, allowedAttributes) {
+    const highestPrice = this.data.variations
+      ? _.maxBy(this.data.variations, 'price').price
+      : this.data.price
+    mlVariation.price = highestPrice
+    return ecomVariation, mlVariation, allowedAttributes
+  }
 
-            if (variation.sku) {
-              mlVariation.attributes = [{
-                id: "SELLER_SKU",
-                value_name: variation.sku
-              }]
-            }
+  buildVariationAvailableQuantity(ecomVariation, mlVariation, allowedAttributes) {
+    return new Promise((resolve, reject) => {
+      const { quantity } = ecomVariation
+      mlVariation.available_quantity = quantity || 0
 
-            if (mlVariation.attribute_combinations.length > 0) {
-              this._variations.push(mlVariation)
-            }
-          }
-          if (this._variations.length > 0) {
-            this.product.variations = _.uniqWith(this._variations, (x, y) => {
-              return _.isEqual(x.attribute_combinations, y.attribute_combinations)
-            })
-          }
-          resolve()
+      if (!ecomVariation.sku) {
+        resolve(ecomVariation, mlVariation, allowedAttributes)
+      }
+
+      const balanceReserveService = new BalanceReserveService(ecomVariation.sku)
+      balanceReserveService.getQuantity()
+        .then(reservedQuantity => {
+          mlVariation.available_quantity += reservedQuantity
+          resolve(ecomVariation, mlVariation, allowedAttributes)
         })
         .catch(error => reject(error))
     })
   }
+
+  buildVariationSKU(ecomVariation, mlVariation, allowedAttributes) {
+    if (ecomVariation.sku) {
+      mlVariation.attributes = [{
+        id: "SELLER_SKU",
+        value_name: variation.sku
+      }]
+    }
+    return ecomVariation, mlVariation, allowedAttributes
+  }
+
+  buildVariationsSpecs(ecomVariation, mlVariation, allowedAttributes) {
+    const { specifications } = ecomVariation
+    for (const attribute of allowedAttributes) {
+      const spec = this.getSpecByProps(specifications, VARIATION_CORRELATIONS[attribute] || [attribute.toLowerCase()])
+      if (spec.text) {
+        mlVariation.attribute_combinations.push({ id: attribute, value_name: spec.text })
+      }
+    }
+    return ecomVariation, mlVariation, allowedAttributes
+  }
+
+  buildVariationPictures(ecomVariation, mlVariation, allowedAttributes) {
+    if (ecomVariation.picture_id) {
+      const pictureUrl = this.data.pictures
+        .find(({ _id }) => _id === ecomVariation.picture_id).zoom.url
+      mlVariation.picture_ids.push(pictureUrl)
+    } else {
+      const pictures = this.getUniqPictures()
+      if (Array.isArray(pictures) && pictures.length > 0) {
+        mlVariation.picture_ids.push(pictures[0].source)
+      }
+    }
+    return ecomVariation, mlVariation, allowedAttributes
+  }
+
+  // buildVariations(category_id) {
+  //   functions.logger.info('[buildVariations] ' + category_id)
+  //   return new Promise((resolve, reject) => {
+  //     this.findAllowVariations(category_id)
+  //       .then(allowedAttributes => {
+  //         this._variations = []
+  //         const highestPrice = this.data.variations
+  //           ? _.maxBy(this.data.variations, 'price').price
+  //           : this.data.price
+  //         for (const variation of (this.data.variations || [])) {
+  //           const { quantity, specifications } = variation
+  //           const mlVariation = {
+  //             available_quantity: quantity || 0,
+  //             price: highestPrice,
+  //             attribute_combinations: [],
+  //             picture_ids: []
+  //           }
+
+  //           if (variation.picture_id) {
+  //             const pictureUrl = this.data.pictures
+  //               .find(({ _id }) => _id === variation.picture_id).zoom.url
+  //             mlVariation.picture_ids.push(pictureUrl)
+  //           } else {
+  //             const pictures = this.getUniqPictures()
+  //             if (Array.isArray(pictures) && pictures.length > 0) {
+  //               mlVariation.picture_ids.push(pictures[0].source)
+  //             }
+  //           }
+
+  //           for (const attribute of allowedAttributes) {
+  //             const spec = this.getSpecByProps(specifications, VARIATION_CORRELATIONS[attribute] || [attribute.toLowerCase()])
+  //             if (spec.text) {
+  //               mlVariation.attribute_combinations.push({ id: attribute, value_name: spec.text })
+  //             }
+  //           }
+
+  //           if (variation.sku) {
+  //             mlVariation.attributes = [{
+  //               id: "SELLER_SKU",
+  //               value_name: variation.sku
+  //             }]
+  //           }
+
+  //           if (mlVariation.attribute_combinations.length > 0) {
+  //             this._variations.push(mlVariation)
+  //           }
+  //         }
+  //         if (this._variations.length > 0) {
+  //           this.product.variations = _.uniqWith(this._variations, (x, y) => {
+  //             return _.isEqual(x.attribute_combinations, y.attribute_combinations)
+  //           })
+  //         }
+  //         resolve()
+  //       })
+  //       .catch(error => reject(error))
+  //   })
+  // }
 
   buildSellerCustomField() {
     this.product.seller_custom_field = this.data.sku
