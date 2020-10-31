@@ -135,8 +135,8 @@ class ProductService {
     Promise.all(variations)
       .then(values => {
         functions.logger.info('[filterValidVariations-Promise.all] ' + JSON.stringify(values))
-        const validVariations = values.filter(value => value.attribute_combinations.length > 0)
-        resolve(validVariations)
+        const validVariations = values.filter(({ mlVariation }) => mlVariation.attribute_combinations.length > 0)
+        resolve(validVariations.map(variation => variation.mlVariation))
       })
       .catch(error => Promise.reject(error))
   }
