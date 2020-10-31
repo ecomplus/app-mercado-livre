@@ -166,7 +166,7 @@ class ProductService {
       picture_ids: []
     }
     return Promise
-      .resolve(this.buildVariationsSpecs({ variation, mlVariation, allowedAttributes }))
+      .resolve(this.buildVariationsSpecs({ ecomVariation, mlVariation, allowedAttributes }))
       .then(this.buildVariationPictures.bind(this))
       .then(this.buildVariationSKU.bind(this))
       .then(this.buildVariationAvailableQuantity.bind(this))
