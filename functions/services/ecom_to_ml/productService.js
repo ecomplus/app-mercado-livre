@@ -132,7 +132,7 @@ class ProductService {
     for (const variation of (this.data.variations || [])) {
       variations.push(this.buildVariation(variation, allowedAttributes))
     }
-    Promise.all(variations)
+    return Promise.all(variations)
       .then(values => {
         functions.logger.info('[filterValidVariations-Promise.all] ' + JSON.stringify(values))
         const validVariations = values.filter(({ mlVariation }) => mlVariation.attribute_combinations.length > 0)
