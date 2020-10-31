@@ -65,13 +65,7 @@ class ProductService {
   buildAvailableQuantity() {
     functions.logger.info('[buildAvailableQuantity] ' + JSON.stringify(this.product))
     return new Promise((resolve, reject) => {
-      const { variations } = this.product
-      if (variations) {
-        this.product.available_quantity = variations
-          .reduce((x, y) => x.available_quantity + y.available_quantity, 0)
-        return resolve()
-      }
-
+      if (this.product.variations) return resolve()
       this.product.available_quantity = this.data.quantity || 0
       const { sku } = this.data
       if (!sku) return resolve()
