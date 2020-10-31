@@ -74,7 +74,7 @@ class ProductService {
       balanceReserveService.getQuantity()
         .then(reservedQuantity => {
           functions.logger.info('[balanceReserveService] ' + JSON.stringify(this.product) + ' ', reservedQuantity)
-          this.product.available_quantity = this.data.quantity || 0 + reservedQuantity
+          this.product.available_quantity = (this.data.quantity || 0) + reservedQuantity
           resolve()
         }).catch(error => reject(error))
     })
