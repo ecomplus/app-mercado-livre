@@ -143,7 +143,7 @@ class ProductService {
   buildUniqueVariations(variations) {
     functions.logger.info('[buildUniqueVariations] ' + JSON.stringify(variations))
     if (variations && variations.length > 0) {
-      this.product.variations = _.uniqWith(this._variations, (x, y) => {
+      this.product.variations = _.uniqWith(variations, (x, y) => {
         return _.isEqual(x.attribute_combinations, y.attribute_combinations)
       })
     }
@@ -154,12 +154,6 @@ class ProductService {
       this.findAllowVariations(category_id)
         .then(this.filterValidVariations.bind(this))
         .then(this.buildUniqueVariations.bind(this))
-        .then((variations) => {
-          functions.logger.info('[buildVariations - variations] ' + JSON.stringify(variations, null, 4))
-          functions.logger.info('[buildVariations - product] ' + JSON.stringify(this.product, null, 4))
-          this.product.variations = variations
-          resolve()
-        })
         .catch(error => reject(error))
     })
   }
