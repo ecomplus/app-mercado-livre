@@ -155,6 +155,8 @@ class ProductService {
         .then(this.filterValidVariations.bind(this))
         .then(this.buildUniqueVariations.bind(this))
         .then((variations) => {
+          functions.logger.info('[buildVariations - variations] ' + JSON.stringify(variations, null, 4))
+          functions.logger.info('[buildVariations - product] ' + JSON.stringify(this.product, null, 4))
           this.product.variations = variations
           resolve()
         })
