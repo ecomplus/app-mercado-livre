@@ -154,6 +154,7 @@ class ProductService {
       this.findAllowVariations(category_id)
         .then(this.filterValidVariations.bind(this))
         .then(this.buildUniqueVariations.bind(this))
+        .then(() => resolve(this.product))
         .catch(error => reject(error))
     })
   }
