@@ -147,6 +147,8 @@ class ProductService {
         return _.isEqual(x.attribute_combinations, y.attribute_combinations)
       })
     }
+    functions.logger.info('[buildUniqueVariations] ' + JSON.stringify(this.product.variations))
+    return
   }
 
   buildVariations(category_id) {
