@@ -17,7 +17,8 @@
     "products": [
       "GET",
       "POST",
-      "PATCH"
+      "PATCH",
+      "DELETE"
     ],
     "brands": [],
     "categories": [],
