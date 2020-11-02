@@ -59,7 +59,7 @@ const app = {
       'POST',          // Create products
       'PATCH',         // Edit products
       // 'PUT',           // Overwrite products
-      // 'DELETE',        // Delete products
+      'DELETE',        // Delete products
     ],
     brands: [
       // 'GET',           // List/read brands with public and private fields

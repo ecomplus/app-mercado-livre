@@ -23,6 +23,7 @@ const handleExportationProducts = async (appSdk, notification) => {
   functions.logger.info(`[handleApplication]: HANDLER APPLICATION`)
   try {
     const products = notification.body.exportation_products || []
+    const productsExported = []
     for (const product of products) {
       try {
         const { listing_type_id, category_id, product_id } = product
@@ -51,20 +52,24 @@ const handleExportationProducts = async (appSdk, notification) => {
           }
           const fromMLProductService = new FromMLProductService(appSdk, notification.store_id)
           await fromMLProductService.link(mlResponse.data.id, product_id)
+          productsExported.push({ data: mlResponse.data, product_id})
         } catch (error) {
           if (error.response) {
             functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${json.stringify(error.response)}`)
+            productsExported.push({ error: error.response, product_id})
             log(appSdk, notification.store_id, '[handleApplication]', new Error(error.response))
           }
           functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
+          productsExported.push({ error: error, product_id})
           log(appSdk, notification.store_id, '[handleApplication]', new Error(error))
         }
       } catch (error) {
         functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
+        productsExported.push({ error: error, product_id: product.id})
       }
 
     }
-    Promise.resolve(true)
+    return Promise.resolve(productsExported)
   } catch (error) {
     Promise.reject(error)
   }

@@ -1,0 +1,371 @@
+{
+  "visible": true,
+  "available": true,
+  "manage_stock": true,
+  "name": "Vestido Floral com variação",
+  "sku": "IVO4131",
+  "quantity": 238,
+  "price": 98.91,
+  "cost_price": 30,
+  "pictures": [
+    {
+      "zoom": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/@v2-1603394388197-womenrecurrent_dashcard_379x304._sy304_cb410112290_.jpg",
+        "size": "379x304",
+        "alt": "WomenRecurrent_dashcard_379x304._SY304_CB410112290_"
+      },
+      "big": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/imgs/big/@v2-1603394388197-womenrecurrent_dashcard_379x304._sy304_cb410112290_.jpg.webp",
+        "size": "379x304",
+        "alt": "WomenRecurrent_dashcard_379x304._SY304_CB410112290_"
+      },
+      "normal": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/imgs/normal/@v2-1603394388197-womenrecurrent_dashcard_379x304._sy304_cb410112290_.jpg.webp",
+        "size": "350x281",
+        "alt": "WomenRecurrent_dashcard_379x304._SY304_CB410112290_"
+      },
+      "_id": "799020160339439994400000"
+    },
+    {
+      "zoom": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/@v2-1603394366181-young-woman-1745173_640.jpg",
+        "size": "640x426",
+        "alt": "young-woman-1745173_640"
+      },
+      "big": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/imgs/big/@v2-1603394366181-young-woman-1745173_640.jpg.webp",
+        "size": "640x426",
+        "alt": "young-woman-1745173_640"
+      },
+      "normal": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/imgs/normal/@v2-1603394366181-young-woman-1745173_640.jpg.webp",
+        "size": "350x233",
+        "alt": "young-woman-1745173_640"
+      },
+      "_id": "277060160339437748300000"
+    },
+    {
+      "zoom": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/@v2-1592947792375-capturadetelade2020-06-2318-28-46.png",
+        "size": "824x789",
+        "alt": "Captura de tela de 2020-06-23 18-28-46"
+      },
+      "big": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/imgs/big/@v2-1592947792375-capturadetelade2020-06-2318-28-46.png.webp",
+        "size": "700x670",
+        "alt": "Captura de tela de 2020-06-23 18-28-46"
+      },
+      "normal": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/imgs/normal/@v2-1592947792375-capturadetelade2020-06-2318-28-46.png.webp",
+        "size": "350x335",
+        "alt": "Captura de tela de 2020-06-23 18-28-46"
+      },
+      "_id": "502680159294781069200000"
+    },
+    {
+      "zoom": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/@v2-1592947792873-capturadetelade2020-06-2318-29-21.png",
+        "size": "797x796",
+        "alt": "Captura de tela de 2020-06-23 18-29-21"
+      },
+      "big": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/imgs/big/@v2-1592947792873-capturadetelade2020-06-2318-29-21.png.webp",
+        "size": "700x699",
+        "alt": "Captura de tela de 2020-06-23 18-29-21"
+      },
+      "normal": {
+        "url": "https://ecom-rpxwfxwj.sfo2.digitaloceanspaces.com/imgs/normal/@v2-1592947792873-capturadetelade2020-06-2318-29-21.png.webp",
+        "size": "350x350",
+        "alt": "Captura de tela de 2020-06-23 18-29-21"
+      },
+      "_id": "502680159294781069200001"
+    }
+  ],
+  "categories": [
+    {
+      "_id": "5ef270aa14ff772fde7adb4f",
+      "name": "Vestido",
+      "slug": "vestido"
+    },
+    {
+      "_id": "5f356a91f023684cdbda16f8",
+      "name": "Vestido com manga cuta",
+      "slug": "vestido/manga-cuta"
+    },
+    {
+      "_id": "5ef26c6214ff772fde7ada74",
+      "name": "Bebês",
+      "slug": "bebes"
+    }
+  ],
+  "slug": "vestido-floral-2",
+  "commodity_type": "physical",
+  "ad_relevance": 0,
+  "currency_id": "BRL",
+  "currency_symbol": "R$",
+  "condition": "new",
+  "adult": false,
+  "auto_fill_related_products": true,
+  "views": 0,
+  "sales": 23,
+  "body_html": "<div><br></div><ul><li><span style=\"color: rgb(119, 119, 119); font-family: Roboto, sans-serif; font-size: 14px;\">Vestido infantil feminino,</span></li><li>Confeccionado em tecido viscose com estampa floral</li><li>Possui forro,</li><li>Decote redondo,</li><li>Manga curta,</li><li>Elástico na cintura,</li><li>Acabamento e costura no tom.</li></ul>",
+  "weight": {
+    "value": 100,
+    "unit": "g"
+  },
+  "dimensions": {
+    "width": {
+      "value": 30,
+      "unit": "cm"
+    },
+    "height": {
+      "value": 15,
+      "unit": "cm"
+    },
+    "length": {
+      "value": 60,
+      "unit": "cm"
+    }
+  },
+  "base_price": 109.9,
+  "price_change_records": [
+    {
+      "date_of_change": "2020-10-11T01:33:21.698Z",
+      "price": 109.9,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f8260e1b2161709fa3db672"
+    },
+    {
+      "date_of_change": "2020-10-26T00:05:23.890Z",
+      "variation_id": "184890160339416113600000",
+      "price": 45,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f9612c4b2161709fa438fca"
+    },
+    {
+      "date_of_change": "2020-10-26T00:12:09.461Z",
+      "variation_id": "184890160339416113600000",
+      "price": 50,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f961459b2161709fa439060"
+    },
+    {
+      "date_of_change": "2020-10-26T00:17:24.376Z",
+      "variation_id": "184890160339416113600000",
+      "price": 20,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f961595b2161709fa4390c3"
+    },
+    {
+      "date_of_change": "2020-10-26T00:23:24.700Z",
+      "variation_id": "184890160339416113600000",
+      "price": 201,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f9616fcb2161709fa439135"
+    },
+    {
+      "date_of_change": "2020-10-26T00:26:24.808Z",
+      "variation_id": "184890160339416113600000",
+      "price": 20122,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f9617b0b2161709fa43916f"
+    },
+    {
+      "date_of_change": "2020-10-26T00:52:37.789Z",
+      "variation_id": "184890160339416113600000",
+      "price": 15,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f961dd6b2161709fa439373"
+    },
+    {
+      "date_of_change": "2020-10-26T01:33:39.818Z",
+      "variation_id": "184890160339416113600000",
+      "price": 16,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f962773b2161709fa439621"
+    },
+    {
+      "date_of_change": "2020-10-28T17:47:38.393Z",
+      "variation_id": "957090160375051881100009",
+      "price": 14.4,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f99aebab2161709fa457128"
+    },
+    {
+      "date_of_change": "2020-10-28T17:47:39.770Z",
+      "variation_id": "957090160375051881100008",
+      "price": 14.4,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f99aebbb2161709fa45712f"
+    },
+    {
+      "date_of_change": "2020-10-28T17:47:42.422Z",
+      "variation_id": "957090160375051881100003",
+      "price": 14.4,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f99aebeb2161709fa457134"
+    },
+    {
+      "date_of_change": "2020-10-28T17:47:51.806Z",
+      "price": 98.91,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f99aec7b2161709fa457149"
+    },
+    {
+      "date_of_change": "2020-10-28T17:50:39.906Z",
+      "variation_id": "957090160375051881100008",
+      "price": 14.4,
+      "currency_id": "BRL",
+      "currency_symbol": "R$",
+      "_id": "5f99af6fb2161709fa45728d"
+    }
+  ],
+  "total_sold": 3736.6,
+  "variations": [
+    {
+      "name": "Vestido Floral com variação / M / Azul",
+      "picture_id": "277060160339437748300000",
+      "price": 14.4,
+      "quantity": 78,
+      "_id": "957090160375051881100003",
+      "specifications": {
+        "size": [
+          {
+            "text": "M",
+            "value": "m"
+          }
+        ],
+        "colors": [
+          {
+            "text": "Azul",
+            "value": "#0000ff"
+          }
+        ]
+      },
+      "sku": "IVO4131-801-1",
+      "base_price": 45
+    },
+    {
+      "name": "Vestido Floral com variação / M / Branco",
+      "picture_id": "799020160339439994400000",
+      "quantity": 20,
+      "sku": "IVO4131-297-2",
+      "_id": "957090160375051881100006",
+      "specifications": {
+        "size": [
+          {
+            "text": "M",
+            "value": "m"
+          }
+        ],
+        "colors": [
+          {
+            "text": "Branco",
+            "value": "#ffffff"
+          }
+        ]
+      },
+      "base_price": 45,
+      "price": 14.4
+    },
+    {
+      "name": "Vestido Floral com variação / G / Azul",
+      "sku": "IVO4131-584-3",
+      "_id": "957090160375051881100007",
+      "specifications": {
+        "size": [
+          {
+            "text": "G",
+            "value": "l"
+          }
+        ],
+        "colors": [
+          {
+            "text": "Azul",
+            "value": "#0000ff"
+          }
+        ]
+      },
+      "quantity": 50,
+      "base_price": 45,
+      "price": 14.4
+    },
+    {
+      "_id": "957090160375051881100008",
+      "specifications": {
+        "size": [
+          {
+            "text": "G",
+            "value": "l"
+          }
+        ],
+        "colors": [
+          {
+            "text": "Branco",
+            "value": "#ffffff"
+          }
+        ]
+      },
+      "name": "Vestido Floral com variação / G / Branco",
+      "sku": "IVO4131-995-4",
+      "quantity": 40,
+      "base_price": 45,
+      "price": 14.4
+    },
+    {
+      "_id": "957090160375051881100009",
+      "specifications": {
+        "size": [
+          {
+            "text": "p",
+            "value": "s"
+          }
+        ],
+        "colors": [
+          {
+            "text": "Azul",
+            "value": "#0000ff"
+          }
+        ]
+      },
+      "name": "Vestido Floral com variação / p / Azul",
+      "sku": "IVO4131-455-5",
+      "quantity": 50,
+      "base_price": 45,
+      "price": 14.4
+    },
+    {
+      "_id": "957090160375051881100010",
+      "specifications": {
+        "size": [
+          {
+            "text": "p",
+            "value": "s"
+          }
+        ],
+        "colors": [
+          {
+            "text": "Branco",
+            "value": "#ffffff"
+          }
+        ]
+      },
+      "name": "Vestido Floral com variação / p / Branco",
+      "sku": "IVO4131-948-6",
+      "base_price": 45,
+      "price": 14.4
+    }
+  ]
+}
