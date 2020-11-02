@@ -70,8 +70,11 @@ const handleExportationProducts = async (appSdk, notification) => {
   }
 }
 
+exports.handleExportationProducts = handleExportationProducts
+
 const handleUpdateProduct = async (appSdk, notification) => {
   try {
+    functions.logger.info('inicio...')
     if (notification.resource_id) {
       functions.logger.info('[handleProduct]')
       const user = await admin
@@ -101,6 +104,8 @@ const handleUpdateProduct = async (appSdk, notification) => {
     return Promise.reject(error)
   }
 }
+
+exports.handleUpdateProduct = handleUpdateProduct
 
 const handleLinkProduct = async (appSdk, notification) => {
   try {
@@ -245,6 +250,10 @@ exports.onEcomNotification = functions.firestore
     snap.ref.delete()
     return true
   })
+
+exports.exportProduct = async() => {
+
+}
 
 const handleMLNotification = async (snap) => {
   const appSdk = await setup(null, true, admin.firestore())

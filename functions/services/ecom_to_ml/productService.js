@@ -63,7 +63,6 @@ class ProductService {
   }
 
   buildAvailableQuantity() {
-    functions.logger.info('[buildAvailableQuantity] ' + JSON.stringify(this.product))
     return new Promise((resolve, reject) => {
       if (this.product.variations) return resolve()
       this.product.available_quantity = this.data.quantity || 0
@@ -72,7 +71,6 @@ class ProductService {
       const balanceReserveService = new BalanceReserveService(sku)
       balanceReserveService.getQuantity()
         .then(reservedQuantity => {
-          functions.logger.info('[balanceReserveService] ' + JSON.stringify(this.product) + ' ', reservedQuantity)
           this.product.available_quantity = (this.data.quantity || 0) + reservedQuantity
           resolve()
         }).catch(error => reject(error))
@@ -92,8 +90,15 @@ class ProductService {
   }
 
   buildPrice() {
-    functions.logger.info('[buildPrice] ' + this.data.price)
     this.product.price = this.data.price
+    if (this.product.variations) {
+      const highestPrice = this.data.variations
+        ? _.maxBy(this.data.variations, 'price').price
+        : this.data.price
+      if (highestPrice > 0) {
+        delete this.product.price
+      }
+    }
   }
 
   getUniqPictures() {
@@ -125,37 +130,59 @@ class ProductService {
     })
   }
 
-  filterValidVariations(allowedAttributes) {
-    functions.logger.info('[filterValidVariations] ' + JSON.stringify(allowedAttributes) + ' ' + JSON.stringify(this))
+  filterValidVariations(allowedAttributes, mlVariations = []) {
     const variations = []
     for (const variation of (this.data.variations || [])) {
-      variations.push(this.buildVariation(variation, allowedAttributes))
+      const mlVariation =
+        mlVariations.find(({ seller_custom_field }) => {
+          return seller_custom_field === variation.sku
+        })
+      console.log('[filterValidVariations] ', mlVariation, variation.sku)
+      if (mlVariation) {
+        variations.push(this.buildUpdateVariation(variation, allowedAttributes, mlVariation.id))
+      } else {
+        variations.push(this.buildVariation(variation, allowedAttributes))
+      }
     }
     return Promise.all(variations)
       .then(values => {
-        functions.logger.info('[filterValidVariations-Promise.all] ' + JSON.stringify(values))
-        const validVariations = values.filter(({ mlVariation }) => mlVariation.attribute_combinations.length > 0)
+        const validVariations = values.filter(({ mlVariation }) => {
+          return mlVariation.id || mlVariation.attribute_combinations.length > 0
+        })
         return Promise.resolve(validVariations.map(variation => variation.mlVariation))
       })
       .catch(error => Promise.reject(error))
   }
 
-  buildUniqueVariations(variations) {
-    functions.logger.info('[buildUniqueVariations] ' + JSON.stringify(variations))
+  buildUniqueVariations(variations, checkAttributeCombinaitons=true) {
+    if (!checkAttributeCombinaitons) {
+      this.product.variations = variations
+      return
+    }
+
     if (variations && variations.length > 0) {
       this.product.variations = _.uniqWith(variations, (x, y) => {
         return _.isEqual(x.attribute_combinations, y.attribute_combinations)
       })
     }
-    functions.logger.info('[buildUniqueVariations] ' + JSON.stringify(this.product.variations))
     return
   }
 
   buildVariations(category_id) {
     return new Promise((resolve, reject) => {
       this.findAllowVariations(category_id)
-        .then(this.filterValidVariations.bind(this))
+        .then((allowedAttributes) => this.filterValidVariations(allowedAttributes))
         .then(this.buildUniqueVariations.bind(this))
+        .then(() => resolve(this.product))
+        .catch(error => reject(error))
+    })
+  }
+
+  buildUpdateVariations(category_id, mlVariations=[]) {
+    return new Promise((resolve, reject) => {
+      this.findAllowVariations(category_id)
+        .then((allowedAttributes) => this.filterValidVariations(allowedAttributes, mlVariations))
+        .then((variations) => this.buildUniqueVariations(variations, false))
         .then(() => resolve(this.product))
         .catch(error => reject(error))
     })
@@ -171,6 +198,16 @@ class ProductService {
       .then(this.buildVariationPictures.bind(this))
       .then(this.buildVariationSKU.bind(this))
       .then(this.buildVariationAvailableQuantity.bind(this))
+      .then(this.buildVariationPrice.bind(this))
+      .catch(error => Promise.reject(error))
+  }
+
+  buildUpdateVariation(ecomVariation, allowedAttributes, mlVariationID) {
+    const mlVariation = {
+      id: mlVariationID
+    }
+    return Promise
+      .resolve(this.buildVariationAvailableQuantity({ ecomVariation, mlVariation, allowedAttributes }))
       .then(this.buildVariationPrice.bind(this))
       .catch(error => Promise.reject(error))
   }
@@ -211,12 +248,12 @@ class ProductService {
         id: "SELLER_SKU",
         value_name: ecomVariation.sku
       }]
+      mlVariation.seller_custom_field = ecomVariation.sku
     }
     return { ecomVariation, mlVariation, allowedAttributes }
   }
 
   buildVariationsSpecs(options) {
-    functions.logger.info('[buildVariationsSpecs] ' + JSON.stringify(options, null, 4))
     const { ecomVariation, mlVariation, allowedAttributes } = options
     const { specifications } = ecomVariation
     for (const attribute of allowedAttributes) {
@@ -483,7 +520,7 @@ class ProductService {
     return new Promise((resolve, reject) => {
       this.product = {}
       this.findProduct(mlProductId)
-        .then(({ data }) => this.buildVariations(data.category_id))
+        .then(({ data }) => this.buildUpdateVariations(data.category_id, data.variations))
         .then(this.buildAvailableQuantity.bind(this))
         .then(this.buildPrice.bind(this))
         .then(() => resolve(this.product))
@@ -519,13 +556,12 @@ class ProductService {
 
   findProduct(id) {
     return new Promise((resolve, reject) => {
-      functions.logger.info('[findProduct] ' + id)
       this.server
         .get(`/items/${id}`)
         .then((response) => resolve(response))
         .catch(error => {
           if (error.response) {
-            console.log(error.response.data.cause)
+            console.log(JSON.stringify(error.response.data.cause, null, 4))
             return reject(error.response.data)
           }
           reject(error)
@@ -534,14 +570,13 @@ class ProductService {
   }
 
   create(data) {
-    console.log(JSON.stringify(data, null, 4))
     return new Promise((resolve, reject) => {
       this.server
         .post('/items', data)
         .then((response) => resolve(response))
         .catch(error => {
           if (error.response) {
-            console.log(error.response.data.cause)
+            console.log(JSON.stringify(error.response.data.cause, null, 4))
             return reject(error.response.data)
           }
           reject(error)
@@ -550,14 +585,14 @@ class ProductService {
   }
 
   update(id, data) {
-    console.log(JSON.stringify(data, null, 4))
+    console.log('UPDATE ', JSON.stringify(data, null, 4))
     return new Promise((resolve, reject) => {
       this.server
         .put(`items/${id}`, data)
         .then((response) => resolve(response))
         .catch(error => {
           if (error.response) {
-            console.log(error.response.data.cause)
+            console.log(JSON.stringify(error.response.data.cause, null, 4))
             return reject(error.response.data)
           }
           reject(error)
