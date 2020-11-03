@@ -52,20 +52,20 @@ const handleExportationProducts = async (appSdk, notification) => {
           }
           const fromMLProductService = new FromMLProductService(appSdk, notification.store_id)
           await fromMLProductService.link(mlResponse.data.id, product_id)
-          productsExported.push({ data: mlResponse.data, product_id})
+          productsExported.push({ data: mlResponse.data, product_id })
         } catch (error) {
           if (error.response) {
             functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${json.stringify(error.response)}`)
-            productsExported.push({ error: error.response, product_id})
+            productsExported.push({ error: error.response, product_id })
             log(appSdk, notification.store_id, '[handleApplication]', new Error(error.response))
           }
           functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
-          productsExported.push({ error: error, product_id})
+          productsExported.push({ error: error, product_id })
           log(appSdk, notification.store_id, '[handleApplication]', new Error(error))
         }
       } catch (error) {
         functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
-        productsExported.push({ error: error, product_id: product.id})
+        productsExported.push({ error: error, product_id: product.id })
       }
 
     }
@@ -78,10 +78,9 @@ const handleExportationProducts = async (appSdk, notification) => {
 exports.handleExportationProducts = handleExportationProducts
 
 const handleUpdateProduct = async (appSdk, notification) => {
+  const productsExported = []
   try {
-    functions.logger.info('inicio...')
     if (notification.resource_id) {
-      functions.logger.info('[handleProduct]')
       const user = await admin
         .firestore()
         .collection('ml_app_auth')
@@ -94,19 +93,19 @@ const handleUpdateProduct = async (appSdk, notification) => {
         try {
           const productService = new ProductService(user.data().access_token, { ...data, ...notification.body })
           const productData = await productService.getProductByUpdate(metafields.value)
-          await productService.update(metafields.value, productData)
+          const mlResponse = await productService.update(metafields.value, productData)
+          productsExported.push({ data: mlResponse.data, product_id: notification.resource_id })
         } catch (error) {
           functions.logger.error(error)
+          productsExported.push({ error: error, product_id: notification.resource_id })
         }
-
       }
-      functions.logger.info('[handleProduc]: UPDATED PRODUCTS:')
-      functions.logger.info(response.data.result)
     }
-    return Promise.resolve(true)
+    return Promise.resolve(productsExported)
   } catch (error) {
     functions.logger.error(error)
-    return Promise.reject(error)
+    productsExported.push({ error: error, product_id: notification.resource_id })
+    return Promise.reject(productsExported)
   }
 }
 
@@ -256,7 +255,7 @@ exports.onEcomNotification = functions.firestore
     return true
   })
 
-exports.exportProduct = async() => {
+exports.exportProduct = async () => {
 
 }
 

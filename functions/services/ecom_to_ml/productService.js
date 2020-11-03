@@ -64,7 +64,7 @@ class ProductService {
 
   buildAvailableQuantity() {
     return new Promise((resolve, reject) => {
-      if (this.product.variations) return resolve()
+      if (this.product.variations && this.product.length > 0 ) return resolve()
       this.product.available_quantity = this.data.quantity || 0
       const { sku } = this.data
       if (!sku) return resolve()
@@ -137,7 +137,6 @@ class ProductService {
         mlVariations.find(({ seller_custom_field }) => {
           return seller_custom_field === variation.sku
         })
-      console.log('[filterValidVariations] ', mlVariation, variation.sku)
       if (mlVariation) {
         variations.push(this.buildUpdateVariation(variation, allowedAttributes, mlVariation.id))
       } else {
@@ -279,64 +278,6 @@ class ProductService {
     }
     return { ecomVariation, mlVariation, allowedAttributes }
   }
-
-  // buildVariations(category_id) {
-  //   functions.logger.info('[buildVariations] ' + category_id)
-  //   return new Promise((resolve, reject) => {
-  //     this.findAllowVariations(category_id)
-  //       .then(allowedAttributes => {
-  //         this._variations = []
-  //         const highestPrice = this.data.variations
-  //           ? _.maxBy(this.data.variations, 'price').price
-  //           : this.data.price
-  //         for (const variation of (this.data.variations || [])) {
-  //           const { quantity, specifications } = variation
-  //           const mlVariation = {
-  //             available_quantity: quantity || 0,
-  //             price: highestPrice,
-  //             attribute_combinations: [],
-  //             picture_ids: []
-  //           }
-
-  //           if (variation.picture_id) {
-  //             const pictureUrl = this.data.pictures
-  //               .find(({ _id }) => _id === variation.picture_id).zoom.url
-  //             mlVariation.picture_ids.push(pictureUrl)
-  //           } else {
-  //             const pictures = this.getUniqPictures()
-  //             if (Array.isArray(pictures) && pictures.length > 0) {
-  //               mlVariation.picture_ids.push(pictures[0].source)
-  //             }
-  //           }
-
-  //           for (const attribute of allowedAttributes) {
-  //             const spec = this.getSpecByProps(specifications, VARIATION_CORRELATIONS[attribute] || [attribute.toLowerCase()])
-  //             if (spec.text) {
-  //               mlVariation.attribute_combinations.push({ id: attribute, value_name: spec.text })
-  //             }
-  //           }
-
-  //           if (variation.sku) {
-  //             mlVariation.attributes = [{
-  //               id: "SELLER_SKU",
-  //               value_name: variation.sku
-  //             }]
-  //           }
-
-  //           if (mlVariation.attribute_combinations.length > 0) {
-  //             this._variations.push(mlVariation)
-  //           }
-  //         }
-  //         if (this._variations.length > 0) {
-  //           this.product.variations = _.uniqWith(this._variations, (x, y) => {
-  //             return _.isEqual(x.attribute_combinations, y.attribute_combinations)
-  //           })
-  //         }
-  //         resolve()
-  //       })
-  //       .catch(error => reject(error))
-  //   })
-  // }
 
   buildSellerCustomField() {
     this.product.seller_custom_field = this.data.sku
@@ -527,32 +468,6 @@ class ProductService {
         .catch(error => reject(error))
     })
   }
-
-  // getProductByUpdate(mlProductId) {
-  //   //findProduct
-  //   //setUpdateOptions
-  //   //buildVariations
-  //   //hasVariations
-  //   //buildPrice
-  //   //buildAvailableQuantity
-
-  //   return new Promise((resolve, reject) => {
-  //     this.product = {}
-  //     this.findProduct(mlProductId)
-  //       .then(({ data }) => {
-  //         this.options.category_id = data.category_id
-  //         this.buildVariations()
-  //           .then(() => {
-  //             if (data.variations) return resolve(this.product)
-  //             this.buildPrice()
-  //             this.buildAvailableQuantity()
-  //               .then(() => resolve(this.product))
-  //               .catch(() => reject())
-  //           }).catch(error => reject(error))
-  //       }).catch(error => reject(error))
-  //   })
-  // }
-
 
   findProduct(id) {
     return new Promise((resolve, reject) => {
