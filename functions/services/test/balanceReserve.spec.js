@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const faker = require("faker");
 const BalanceReserve = require("../balanceReserveService");
 
-describe.only('test balance reserve features', () => {
+describe('test balance reserve features', () => {
   const sku = 'I/VO//4.1..31'
   const storeId = 1117
 

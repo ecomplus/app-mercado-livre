@@ -2,10 +2,11 @@ const axios = require('axios').default
 const _ = require('lodash')
 const VARIATION_CORRELATIONS = require('./variations_correlations.json')
 const BalanceReserveService = require('../balanceReserveService')
-const functions = require('firebase-functions');
+
 
 class ProductService {
-  constructor(token, data, category = {}, options = {}) {
+  constructor(token, data, storeId, category = {}, options = {}) {
+    this.storeId = storeId
     this.server = axios.create({
       baseURL: 'https://api.mercadolibre.com',
       timeout: 60000,
@@ -68,7 +69,7 @@ class ProductService {
       this.product.available_quantity = this.data.quantity || 0
       const { sku } = this.data
       if (!sku) return resolve()
-      const balanceReserveService = new BalanceReserveService(sku)
+      const balanceReserveService = new BalanceReserveService(this.storeId, sku)
       balanceReserveService.getQuantity()
         .then(reservedQuantity => {
           this.product.available_quantity = (this.data.quantity || 0) + reservedQuantity
@@ -230,7 +231,7 @@ class ProductService {
         resolve({ ecomVariation, mlVariation, allowedAttributes })
       }
 
-      const balanceReserveService = new BalanceReserveService(ecomVariation.sku)
+      const balanceReserveService = new BalanceReserveService(this.storeId, ecomVariation.sku)
       balanceReserveService.getQuantity()
         .then(reservedQuantity => {
           mlVariation.available_quantity += reservedQuantity

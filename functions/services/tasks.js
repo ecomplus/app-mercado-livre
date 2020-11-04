@@ -42,7 +42,7 @@ const handleExportationProducts = async (appSdk, notification) => {
         const { response } = await appSdk.apiRequest(parseInt(notification.store_id), resource, 'GET')
         const utilsService = new UtilsService(user)
         const category = await utilsService.getCategory(category_id)
-        const productService = new ProductService(user.access_token, response.data, category, { listing_type_id, category_id })
+        const productService = new ProductService(user.access_token, response.data, notification.store_id, category, { listing_type_id, category_id })
         const productData = await productService.getProductByCreate()
         try {
           const mlResponse = await productService.create(productData)
@@ -91,7 +91,7 @@ const handleUpdateProduct = async (appSdk, notification) => {
       const { data } = response
       for (const metafields of (data.metafields || []).filter(({ field }) => field === 'ml_id')) {
         try {
-          const productService = new ProductService(user.data().access_token, { ...data, ...notification.body })
+          const productService = new ProductService(user.data().access_token, { ...data, ...notification.body }, notification.store_id)
           const productData = await productService.getProductByUpdate(metafields.value)
           const mlResponse = await productService.update(metafields.value, productData)
           productsExported.push({ data: mlResponse.data, product_id: notification.resource_id })
