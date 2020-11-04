@@ -1,7 +1,9 @@
 const admin = require('firebase-admin');
 
 class BalanceReserve {
-  constructor(sku) {
+  constructor(storeId, sku) {
+    this.storeId = storeId
+    this.sku = sku
     this.collection = 'balance_reserve'
     this.productRef = admin
       .firestore()
@@ -10,7 +12,7 @@ class BalanceReserve {
   }
 
   formatSKU(sku) {
-    return sku.replace(/\./g, '_').replace(/\//g, '-')
+    return `${this.storeId}-${sku.replace(/\./g, '_').replace(/\//g, '-')}`
   }
 
   getQuantity() {

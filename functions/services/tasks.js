@@ -152,7 +152,7 @@ const handleShipment = async (appSdk, storeId, mlNotificationService, ecomOrderI
 
 
 
-const handleBalanceReserve = (mlOrder, ecomStatus = false) => {
+const handleBalanceReserve = (storeId, mlOrder, ecomStatus = false) => {
   let { status, order_items } = mlOrder
   if (status !== ecomStatus) {
     let operation
@@ -176,7 +176,7 @@ const handleBalanceReserve = (mlOrder, ecomStatus = false) => {
           }
         }
         if (sku) {
-          const balanceReserve = new BalanceReserve(sku)
+          const balanceReserve = new BalanceReserve(storeId, sku)
           balanceReserve[operation](quantity)
         } else {
           functions.logger.error(`[handleBalanceReserve] - ML ORDER: ${mlOrder.id} SKU NOT FOUND $${JSON.stringify(product)}`)
@@ -208,7 +208,7 @@ const handleOrder = async (appSdk, snap) => {
         const { response } = await orderService.create(orderDataToCreate)
         functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
         await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
-        handleBalanceReserve(mlOrder, false)
+        handleBalanceReserve(storeId, mlOrder, false)
       } else {
         const orderDataToUpdate = orderService.getOrderToUpdate()
         const mlOrderStatusOnEcom = await orderService.findMLOrderStatus(orderOnEcomId)
