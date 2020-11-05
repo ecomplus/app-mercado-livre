@@ -5,8 +5,9 @@ const BalanceReserveService = require('../balanceReserveService')
 
 
 class ProductService {
-  constructor(token, data, storeId, category = {}, options = {}) {
+  constructor(token, data, storeId, mlId = false, category = {}, options = {}) {
     this.storeId = storeId
+    this.mlId = mlId
     this.server = axios.create({
       baseURL: 'https://api.mercadolibre.com',
       timeout: 60000,
@@ -65,7 +66,7 @@ class ProductService {
 
   buildAvailableQuantity() {
     return new Promise((resolve, reject) => {
-      if (this.product.variations && this.product.length > 0 ) return resolve()
+      if (this.product.variations && this.product.length > 0) return resolve()
       this.product.available_quantity = this.data.quantity || 0
       const { sku } = this.data
       if (!sku) return resolve()
@@ -154,7 +155,7 @@ class ProductService {
       .catch(error => Promise.reject(error))
   }
 
-  buildUniqueVariations(variations, checkAttributeCombinaitons=true) {
+  buildUniqueVariations(variations, checkAttributeCombinaitons = true) {
     if (!checkAttributeCombinaitons) {
       this.product.variations = variations
       return
@@ -178,7 +179,7 @@ class ProductService {
     })
   }
 
-  buildUpdateVariations(category_id, mlVariations=[]) {
+  buildUpdateVariations(category_id, mlVariations = []) {
     return new Promise((resolve, reject) => {
       this.findAllowVariations(category_id)
         .then((allowedAttributes) => this.filterValidVariations(allowedAttributes, mlVariations))
@@ -458,10 +459,10 @@ class ProductService {
     })
   }
 
-  getProductByUpdate(mlProductId) {
+  getProductByUpdate() {
     return new Promise((resolve, reject) => {
       this.product = {}
-      this.findProduct(mlProductId)
+      this.findProduct(this.mlId)
         .then(({ data }) => this.buildUpdateVariations(data.category_id, data.variations))
         .then(this.buildAvailableQuantity.bind(this))
         .then(this.buildPrice.bind(this))
@@ -485,33 +486,38 @@ class ProductService {
     })
   }
 
-  create(data) {
+  create() {
     return new Promise((resolve, reject) => {
-      this.server
-        .post('/items', data)
-        .then((response) => resolve(response))
-        .catch(error => {
-          if (error.response) {
-            console.log(JSON.stringify(error.response.data.cause, null, 4))
-            return reject(error.response.data)
-          }
-          reject(error)
+      this.getProductByCreate()
+        .then(data => {
+          this.server
+            .post('/items', data)
+            .then((response) => resolve(response))
+            .catch(error => {
+              if (error.response) {
+                console.log(JSON.stringify(error.response.data.cause, null, 4))
+                return reject(error.response.data)
+              }
+              reject(error)
+            })
         })
     })
   }
 
-  update(id, data) {
-    console.log('UPDATE ', JSON.stringify(data, null, 4))
+  update() {
     return new Promise((resolve, reject) => {
-      this.server
-        .put(`items/${id}`, data)
-        .then((response) => resolve(response))
-        .catch(error => {
-          if (error.response) {
-            console.log(JSON.stringify(error.response.data.cause, null, 4))
-            return reject(error.response.data)
-          }
-          reject(error)
+      this.getProductByUpdate()
+        .then(data => {
+          this.server
+            .put(`items/${this.mlId}`, data)
+            .then((response) => resolve(response))
+            .catch(error => {
+              if (error.response) {
+                console.log(JSON.stringify(error.response.data.cause, null, 4))
+                return reject(error.response.data)
+              }
+              reject(error)
+            })
         })
     })
   }

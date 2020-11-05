@@ -1,3 +1,6 @@
+const { auth } = require('firebase-admin')
+const getAppData = require('./../../lib/store-api/get-app-data')
+const updateAppData = require('./../../lib/store-api/update-app-data')
 
 class ProductService {
   constructor(appSdk, storeId) {
@@ -7,17 +10,18 @@ class ProductService {
 
   link(mlProductId, ecomProductId) {
     return new Promise((resolve, reject) => {
-      const resource = `products/${ecomProductId}/metafields.json`
-      const metafields = { field: 'ml_id', value: mlProductId }
-      this.appSdk
-        .apiRequest(this.storeId, resource, 'POST', metafields)
-        .then(response => resolve(response))
-        .catch(error => {
-          if (error.response) {
-            return reject(error.response.data)
+      const { appSdk, storeId } = this
+      return getAppData({ appSdk, storeId, auth })
+        .then((data) => {
+          if (!data.product_correlations) {
+            data.product_correlations = {}
           }
-          return reject(error)
-        })
+          if (!data.product_correlations[ecomProductId]) {
+            data.product_correlations[ecomProductId] = []
+          }
+          data.product_correlations[ecomProductId].push(mlProductId)
+          resolve(updateAppData({ appSdk, storeId, auth }, data))
+        }).catch(error => reject(error))
     })
   }
 }

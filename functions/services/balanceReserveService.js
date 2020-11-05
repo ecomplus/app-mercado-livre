@@ -29,7 +29,7 @@ class BalanceReserve {
     return this.productRef.get()
       .then(snap => {
         const quantity = (snap.data() || {}).quantity || 0
-        this.productRef.set({ quantity: quantity + value })
+        return this.productRef.set({ quantity: quantity + value })
       })
   }
 
@@ -37,7 +37,7 @@ class BalanceReserve {
     return this.productRef.get()
       .then(snap => {
         const quantity = (snap.data() || {}).quantity || 0
-        this.productRef.set({ quantity: quantity - value })
+        return this.productRef.set({ quantity: quantity - value })
       })
   }
 

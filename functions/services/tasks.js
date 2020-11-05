@@ -5,7 +5,8 @@ const MLNotificationService = require('./ml_to_ecom/notificationService')
 const ProductService = require('./ecom_to_ml/productService')
 const OrderService = require('./ml_to_ecom/orderService')
 const ShipmentService = require('./ml_to_ecom/shipmentService')
-
+const { auth } = require('firebase-admin')
+const getAppData = require('../lib/store-api/get-app-data')
 const { setup } = require('@ecomplus/application-sdk')
 const admin = require('firebase-admin');
 
@@ -15,101 +16,140 @@ const ORDER_UPDATED_SUCCESS = '[handleOrder]: UPDATED ORDER ON ECOM'
 
 const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
 const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
-const log = require('./logService');
 const BalanceReserve = require('./balanceReserveService');
 
 
-const handleExportationProducts = async (appSdk, notification) => {
-  functions.logger.info(`[handleApplication]: HANDLER APPLICATION`)
-  try {
-    const products = notification.body.exportation_products || []
-    const productsExported = []
-    for (const product of products) {
-      try {
-        const { listing_type_id, category_id, product_id } = product
-        if (!listing_type_id || !category_id || !product_id) {
-          functions.logger.error('[handleApplication]: The body does not contains some or none of the following properties [listing_type_id, category_id, product_id]')
-          return
-        }
-        const result = await admin
-          .firestore()
-          .collection('ml_app_auth')
-          .doc(notification.store_id.toString())
-          .get()
-
-        const user = result.data()
-        const resource = `/products/${product_id}.json`
-        const { response } = await appSdk.apiRequest(parseInt(notification.store_id), resource, 'GET')
-        const utilsService = new UtilsService(user)
-        const category = await utilsService.getCategory(category_id)
-        const productService = new ProductService(user.access_token, response.data, notification.store_id, category, { listing_type_id, category_id })
-        const productData = await productService.getProductByCreate()
-        try {
-          const mlResponse = await productService.create(productData)
-          if (mlResponse.status !== 201) {
-            functions.logger.info(`[handleApplication]: SUCCESS TO CREATE PRODUCT ON ML: ${mlResponse.data}`)
-            log(appSdk, notification.store_id, '[handleApplication]', mlResponse.data)
-          }
-          const fromMLProductService = new FromMLProductService(appSdk, notification.store_id)
-          await fromMLProductService.link(mlResponse.data.id, product_id)
-          productsExported.push({ data: mlResponse.data, product_id })
-        } catch (error) {
-          if (error.response) {
-            functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${json.stringify(error.response)}`)
-            productsExported.push({ error: error.response, product_id })
-            log(appSdk, notification.store_id, '[handleApplication]', new Error(error.response))
-          }
-          functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
-          productsExported.push({ error: error, product_id })
-          log(appSdk, notification.store_id, '[handleApplication]', new Error(error))
-        }
-      } catch (error) {
-        functions.logger.error(`[handleApplication]: ERROR TO CREATE PRODUCT ON ML: ${error}`)
-        productsExported.push({ error: error, product_id: product.id })
-      }
-
-    }
-    return Promise.resolve(productsExported)
-  } catch (error) {
-    Promise.reject(error)
-  }
+const getUser = (params) => {
+  return new Promise((resolve, reject) => {
+    const { notification } = params
+    return admin
+      .firestore()
+      .collection('ml_app_auth')
+      .doc(notification.store_id.toString())
+      .get()
+      .then(user => resolve({ ...params, user }))
+      .catch(error => reject(error))
+  })
 }
 
-exports.handleExportationProducts = handleExportationProducts
-
-const handleUpdateProduct = async (appSdk, notification) => {
-  const productsExported = []
-  try {
-    if (notification.resource_id) {
-      const user = await admin
-        .firestore()
-        .collection('ml_app_auth')
-        .doc(notification.store_id.toString())
-        .get()
-      const resource = `/products/${notification.resource_id}.json`
-      const { response } = await appSdk.apiRequest(parseInt(notification.store_id), resource, 'GET')
-      const { data } = response
-      for (const metafields of (data.metafields || []).filter(({ field }) => field === 'ml_id')) {
-        try {
-          const productService = new ProductService(user.data().access_token, { ...data, ...notification.body }, notification.store_id)
-          const productData = await productService.getProductByUpdate(metafields.value)
-          const mlResponse = await productService.update(metafields.value, productData)
-          productsExported.push({ data: mlResponse.data, product_id: notification.resource_id })
-        } catch (error) {
-          functions.logger.error(error)
-          productsExported.push({ error: error, product_id: notification.resource_id })
+const getEcomProduct = (params) => {
+  return new Promise((resolve, reject) => {
+    const { appSdk, notification } = params
+    const resource = `/products/${notification.resource_id}.json`
+    appSdk.apiRequest(parseInt(notification.store_id), resource, 'GET')
+      .then(({ response }) => resolve({
+        ...params, product: {
+          status: response.status, data: response.data
         }
-      }
-    }
-    return Promise.resolve(productsExported)
-  } catch (error) {
-    functions.logger.error(error)
-    productsExported.push({ error: error, product_id: notification.resource_id })
-    return Promise.reject(productsExported)
-  }
+      }))
+      .catch(error => reject(error))
+  })
 }
 
-exports.handleUpdateProduct = handleUpdateProduct
+const getMlCategory = (params) => {
+  return new Promise((resolve, reject) => {
+    const { user, product } = params
+    const utilsService = new UtilsService(user.data())
+    return utilsService.getCategory(product.category_id)
+      .then(category => resolve({ ...params, category }))
+      .catch(error => reject(error))
+  })
+}
+
+const createProduct = (params) => {
+  return new Promise((resolve, reject) => {
+    const { user, product, ecomProduct, notification, category } = params
+    const { category_id, listing_type_id } = product
+    const accessToken = user.data().access_token
+    const storeId = notification.store_id
+    const productService = new ProductService(accessToken, ecomProduct, storeId, false, category, { listing_type_id, category_id })
+    return productService.create()
+      .then(result => resolve({ ...params, result }))
+      .catch(error => reject(error))
+  })
+}
+
+const linkProduct = (params) => {
+  return new Promise((resolve, reject) => {
+    const { appSdk, notification, result, ecomProduct } = params
+    const fromMLProductService = new FromMLProductService(appSdk, notification.store_id)
+    return fromMLProductService.link(result.data.id, ecomProduct._id)
+      .then(() => resolve(params))
+      .catch(error => reject(error))
+  })
+}
+
+const createProducts = (params) => {
+  return new Promise((resolve, reject) => {
+    const { appSdk, notification } = params
+    const productsToExport = notification.body.exportation_products || []
+    const products = []
+    for (const product of productsToExport) {
+      const resource = `/products/${product.product_id}.json`
+      products.push(
+        appSdk.apiRequest(parseInt(notification.store_id, 10), resource, 'GET')
+          .then(({ response }) => getMlCategory({ ...params, product, ecomProduct: response.data }))
+          .then(createProduct)
+          .then(linkProduct)
+      )
+    }
+    return Promise.all(products)
+      .then(values => {
+        return resolve(values.map(({ result }) => ({ status: result.status, data: result.data })))
+      })
+      .catch(error => reject(error))
+  })
+}
+
+const exportProducts = (appSdk, notification) => {
+  return new Promise((resolve, reject) => {
+    getUser({ appSdk, notification })
+      .then(createProducts)
+      .then(result => resolve(result))
+      .catch(error => reject(error))
+  })
+}
+
+const getMlIds = (params) => {
+  return new Promise((resolve, reject) => {
+    const { appSdk, notification } = params
+    getAppData({ appSdk, storeId: notification.store_id, auth })
+      .then(data => {
+        const productCorrelations = data.product_correlations || {}
+        const mlIds = productCorrelations[notification.resource_id] || []
+        return resolve({ ...params, mlIds })
+      })
+      .catch(error => reject(error))
+  })
+}
+
+const updateProducts = (params) => {
+  return new Promise((resolve, reject) => {
+    const { user, product, notification, mlIds } = params
+    const productsToUpdate = []
+    for (const mlId of mlIds) {
+      const data = { ...product, ...notification.body }
+      const accessToken = user.data().access_token
+      const storeId = notification.store_id
+      const productService = new ProductService(accessToken, data, storeId, mlId)
+      productsToUpdate.push(productService.update())
+    }
+    return Promise.all(productsToUpdate)
+      .then(values => resolve({ ...params, result: values }))
+      .catch(error => reject(error))
+  })
+}
+
+const handleUpdateProduct = (appSdk, notification) => {
+  return new Promise((resolve, reject) => {
+    getUser({ appSdk, notification })
+      .then(getEcomProduct)
+      .then(getMlIds)
+      .then(updateProducts)
+      .then(({ result }) => resolve(result))
+      .catch(error => reject(error))
+  })
+}
 
 const handleLinkProduct = async (appSdk, notification) => {
   try {
@@ -149,8 +189,6 @@ const handleShipment = async (appSdk, storeId, mlNotificationService, ecomOrderI
     return Promise.reject(error)
   }
 }
-
-
 
 const handleBalanceReserve = (storeId, mlOrder, ecomStatus = false) => {
   let { status, order_items } = mlOrder
@@ -233,32 +271,6 @@ const handleOrder = async (appSdk, snap) => {
   }
 }
 
-
-exports.onEcomNotification = functions.firestore
-  .document('ecom_notifications/{documentId}')
-  .onCreate(async (snap) => {
-    functions.logger.info('TRIGGER ECOM NOTIFICATION', snap.data())
-    const appSdk = await setup(null, true, admin.firestore())
-    const notification = snap.data()
-    switch (notification.resource) {
-      case 'products':
-        await handleUpdateProduct(appSdk, notification)
-        break;
-      case 'applications':
-        await handleExportationProducts(appSdk, notification)
-        await handleLinkProduct(appSdk, notification)
-        break;
-      default:
-        break;
-    }
-    snap.ref.delete()
-    return true
-  })
-
-exports.exportProduct = async () => {
-
-}
-
 const handleMLNotification = async (snap) => {
   const appSdk = await setup(null, true, admin.firestore())
   const notification = snap.data()
@@ -282,4 +294,28 @@ const handleMLNotification = async (snap) => {
   return true
 }
 
+exports.onEcomNotification = functions.firestore
+  .document('ecom_notifications/{documentId}')
+  .onCreate(async (snap) => {
+    functions.logger.info('TRIGGER ECOM NOTIFICATION', snap.data())
+    const appSdk = await setup(null, true, admin.firestore())
+    const notification = snap.data()
+    switch (notification.resource) {
+      case 'products':
+        await handleUpdateProduct(appSdk, notification)
+        break;
+      case 'applications':
+        await exportProducts(appSdk, notification)
+        await handleLinkProduct(appSdk, notification)
+        break;
+      default:
+        break;
+    }
+    snap.ref.delete()
+    return true
+  })
+
+
+exports.exportProducts = exportProducts
 exports.handleMLNotification = handleMLNotification
+exports.handleUpdateProduct = handleUpdateProduct

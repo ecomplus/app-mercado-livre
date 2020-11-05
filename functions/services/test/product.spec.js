@@ -1,7 +1,7 @@
 process.env.FIREBASE_CONFIG = JSON.stringify(require(process.env.GOOGLE_APPLICATION_CREDENTIALS))
 const admin = require('firebase-admin')
 admin.initializeApp()
-const { handleExportationProducts, handleUpdateProduct } = require('../tasks')
+const { exportProducts, handleUpdateProduct } = require('../tasks')
 const { expect } = require('chai')
 const { productWithVariations } = require('./mocks/productWithVariations')
 const { productWithoutVariations } = require('./mocks/productWithoutVariations')
@@ -84,7 +84,7 @@ describe('export product without variations', () => {
       "resource_id": "5f95ab39b2161709fa43811c",
       "store_id": STORE_ID
     }
-    return handleExportationProducts(appSdk, notification).then(res => {
+    return exportProducts(appSdk, notification).then(res => {
       expect(res).to.be.length(1)
       const { data } = res[0]
       expect(data).to.be.an('object')
@@ -164,7 +164,7 @@ describe('export product with variations', () => {
       "resource_id": "5f95ab39b2161709fa43811c",
       "store_id": STORE_ID
     }
-    return handleExportationProducts(appSdk, notification).then(res => {
+    return exportProducts(appSdk, notification).then(res => {
       expect(res).to.be.length(1)
       const { data } = res[0]
       expect(data).to.be.an('object')
@@ -176,5 +176,4 @@ describe('export product with variations', () => {
   after(function () {
     deleteProduct(appSdk, product._id)
   })
-
 })
