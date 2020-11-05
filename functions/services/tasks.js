@@ -37,11 +37,13 @@ const getEcomProduct = (params) => {
     const { appSdk, notification } = params
     const resource = `/products/${notification.resource_id}.json`
     appSdk.apiRequest(parseInt(notification.store_id), resource, 'GET')
-      .then(({ response }) => resolve({
-        ...params, product: {
-          status: response.status, data: response.data
-        }
-      }))
+      .then(({ response }) => {
+        resolve({
+          ...params, product: {
+            status: response.status, data: response.data
+          }
+        })
+      })
       .catch(error => reject(error))
   })
 }
@@ -117,6 +119,7 @@ const getMlIds = (params) => {
       .then(data => {
         const productCorrelations = data.product_correlations || {}
         const mlIds = productCorrelations[notification.resource_id] || []
+
         return resolve({ ...params, mlIds })
       })
       .catch(error => reject(error))
@@ -136,7 +139,9 @@ const updateProducts = (params) => {
     }
     return Promise.all(productsToUpdate)
       .then(values => resolve({ ...params, result: values }))
-      .catch(error => reject(error))
+      .catch(error => {
+        return reject(error)
+      })
   })
 }
 
@@ -146,8 +151,12 @@ const handleUpdateProduct = (appSdk, notification) => {
       .then(getEcomProduct)
       .then(getMlIds)
       .then(updateProducts)
-      .then(({ result }) => resolve(result))
-      .catch(error => reject(error))
+      .then(({ result }) => {
+        resolve(result)
+      })
+      .catch(error => {
+        reject(error)
+      })
   })
 }
 

@@ -121,6 +121,34 @@ describe('export product without variations', () => {
       })
   })
 
+  it(`shold be updated price to 300`, () => {
+    const notification = {
+      "_id": "5f95ac73b2161709fa438127",
+      "action": "change",
+      "authentication_id": "5eee209814ff772fde7a8295",
+      "body": {
+        "price": 300
+      },
+      "datetime": "2020-10-25T16:48:51.927Z",
+      "fields": [
+        "price"
+      ],
+      "method": "PATCH",
+      "resource": "products",
+      "resource_id": product._id,
+      "store_id": 1117
+    }
+
+    return updateProduct(appSdk, product._id, { price: 300 })
+      .then(() => {
+        return handleUpdateProduct(appSdk, notification).then(res => {
+          expect(res).to.be.length(1)
+          const { data } = res[0]
+          expect(data.price).to.be.equal(300)
+        })
+      })
+  })
+
   after(function () {
     deleteProduct(appSdk, product._id)
   })

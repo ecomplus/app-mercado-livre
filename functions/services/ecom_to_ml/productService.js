@@ -93,7 +93,7 @@ class ProductService {
 
   buildPrice() {
     this.product.price = this.data.price
-    if (this.product.variations) {
+    if (this.product.variations && this.product.variations.length > 0) {
       const highestPrice = this.data.variations
         ? _.maxBy(this.data.variations, 'price').price
         : this.data.price
@@ -452,7 +452,7 @@ class ProductService {
       this.buildSpecifications()
       this.buildAttributes()
       this.buildWeight()
-      this.buildVariations(this.options.category_id)
+      return this.buildVariations(this.options.category_id)
         .then(this.buildAvailableQuantity.bind(this))
         .then(() => resolve(this.product))
         .catch(error => reject(error))
@@ -462,7 +462,7 @@ class ProductService {
   getProductByUpdate() {
     return new Promise((resolve, reject) => {
       this.product = {}
-      this.findProduct(this.mlId)
+      return this.findProduct(this.mlId)
         .then(({ data }) => this.buildUpdateVariations(data.category_id, data.variations))
         .then(this.buildAvailableQuantity.bind(this))
         .then(this.buildPrice.bind(this))
