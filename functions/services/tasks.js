@@ -64,7 +64,7 @@ const createProduct = (params) => {
     const { category_id, listing_type_id } = product
     const accessToken = user.data().access_token
     const storeId = notification.store_id
-    const productService = new ProductService(accessToken, ecomProduct, storeId, false, category, { listing_type_id, category_id })
+    const productService = new ProductService(accessToken, ecomProduct, storeId, {}, category, { listing_type_id, category_id })
     return productService.create()
       .then(result => resolve({ ...params, result }))
       .catch(error => reject(error))
@@ -112,16 +112,16 @@ const exportProducts = (appSdk, notification) => {
   })
 }
 
-const getMlIds = (params) => {
+const getMlMetadata = (params) => {
   return new Promise((resolve, reject) => {
     const { appSdk, notification } = params
     getAppData({ appSdk, storeId: notification.store_id, auth })
       .then(data => {
         const productCorrelations = data.product_correlations || {}
-        const mlIds = (productCorrelations[notification.resource_id] || [])
-          .map(({ ml_id }) => ml_id)
+        const mlMetadata = (productCorrelations[notification.resource_id] || [])
+          .map((mlMetadata) => mlMetadata)
 
-        return resolve({ ...params, mlIds })
+        return resolve({ ...params, mlMetadata })
       })
       .catch(error => reject(error))
   })
@@ -129,13 +129,13 @@ const getMlIds = (params) => {
 
 const updateProducts = (params) => {
   return new Promise((resolve, reject) => {
-    const { user, product, notification, mlIds } = params
+    const { user, product, notification, mlMetadata } = params
     const productsToUpdate = []
-    for (const mlId of mlIds) {
+    for (const metadata of mlMetadata) {
       const data = { ...product, ...notification.body }
       const accessToken = user.data().access_token
       const storeId = notification.store_id
-      const productService = new ProductService(accessToken, data, storeId, mlId)
+      const productService = new ProductService(accessToken, data, storeId, metadata)
       productsToUpdate.push(productService.update())
     }
     return Promise.all(productsToUpdate)
@@ -150,7 +150,7 @@ const handleUpdateProduct = (appSdk, notification) => {
   return new Promise((resolve, reject) => {
     getUser({ appSdk, notification })
       .then(getEcomProduct)
-      .then(getMlIds)
+      .then(getMlMetadata)
       .then(updateProducts)
       .then(({ result }) => {
         resolve(result)

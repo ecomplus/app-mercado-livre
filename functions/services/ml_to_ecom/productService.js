@@ -19,7 +19,7 @@ class ProductService {
           if (!data.product_correlations[ecomProductId]) {
             data.product_correlations[ecomProductId] = []
           }
-          const correlationData = { ml_id: mlProductId, metadata}
+          const correlationData = { mlId: mlProductId, metadata}
           data.product_correlations[ecomProductId].push(correlationData)
           resolve(updateAppData({ appSdk, storeId, auth }, data))
         }).catch(error => reject(error))

@@ -5,9 +5,8 @@ const BalanceReserveService = require('../balanceReserveService')
 
 
 class ProductService {
-  constructor(token, data, storeId, mlId = false, category = {}, options = {}) {
+  constructor(token, data, storeId, mlMetadata = {}, category = {}, options = {}) {
     this.storeId = storeId
-    this.mlId = mlId
     this.server = axios.create({
       baseURL: 'https://api.mercadolibre.com',
       timeout: 60000,
@@ -21,6 +20,8 @@ class ProductService {
     this.options = options
     this._attributes = []
     this._variations = []
+    this.mlId = mlMetadata.mlId
+    this.mlMetadata = mlMetadata.metadata
   }
 
   getSpecByProps(specs, props) {
@@ -67,6 +68,9 @@ class ProductService {
   buildAvailableQuantity() {
     return new Promise((resolve, reject) => {
       if (this.product.variations && this.product.length > 0) return resolve()
+      if (this.mlId && !this.mlMetadata.allows_balance_update) {
+        return resolve()
+      }
       this.product.available_quantity = this.data.quantity || 0
       const { sku } = this.data
       if (!sku) return resolve()
@@ -224,6 +228,9 @@ class ProductService {
 
   buildVariationAvailableQuantity(options) {
     return new Promise((resolve, reject) => {
+      if (this.mlId && !this.mlMetadata.allows_balance_update) {
+        return resolve()
+      }
       const { ecomVariation, mlVariation, allowedAttributes } = options
       const { quantity } = ecomVariation
       mlVariation.available_quantity = quantity || 0
