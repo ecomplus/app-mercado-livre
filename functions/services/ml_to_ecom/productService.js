@@ -8,7 +8,7 @@ class ProductService {
     this.storeId = parseInt(storeId, 10)
   }
 
-  link(mlProductId, ecomProductId) {
+  link(mlProductId, ecomProductId, metadata={}) {
     return new Promise((resolve, reject) => {
       const { appSdk, storeId } = this
       return getAppData({ appSdk, storeId, auth })
@@ -19,7 +19,8 @@ class ProductService {
           if (!data.product_correlations[ecomProductId]) {
             data.product_correlations[ecomProductId] = []
           }
-          data.product_correlations[ecomProductId].push(mlProductId)
+          const correlationData = { ml_id: mlProductId, metadata}
+          data.product_correlations[ecomProductId].push(correlationData)
           resolve(updateAppData({ appSdk, storeId, auth }, data))
         }).catch(error => reject(error))
     })

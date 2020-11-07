@@ -73,9 +73,9 @@ const createProduct = (params) => {
 
 const linkProduct = (params) => {
   return new Promise((resolve, reject) => {
-    const { appSdk, notification, result, ecomProduct } = params
+    const { appSdk, notification, result, ecomProduct, product } = params
     const fromMLProductService = new FromMLProductService(appSdk, notification.store_id)
-    return fromMLProductService.link(result.data.id, ecomProduct._id)
+    return fromMLProductService.link(result.data.id, ecomProduct._id, product)
       .then(() => resolve(params))
       .catch(error => reject(error))
   })
@@ -118,7 +118,8 @@ const getMlIds = (params) => {
     getAppData({ appSdk, storeId: notification.store_id, auth })
       .then(data => {
         const productCorrelations = data.product_correlations || {}
-        const mlIds = productCorrelations[notification.resource_id] || []
+        const mlIds = (productCorrelations[notification.resource_id] || [])
+          .map(({ ml_id }) => ml_id)
 
         return resolve({ ...params, mlIds })
       })
