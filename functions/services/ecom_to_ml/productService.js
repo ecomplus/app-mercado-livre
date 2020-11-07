@@ -67,7 +67,7 @@ class ProductService {
 
   buildAvailableQuantity() {
     return new Promise((resolve, reject) => {
-      if (this.product.variations && this.product.length > 0) return resolve()
+      if (this.product.variations && this.product.variations.length > 0) return resolve()
       if (this.mlId && !this.mlMetadata.allows_balance_update) {
         return resolve()
       }
@@ -138,17 +138,26 @@ class ProductService {
 
   filterValidVariations(allowedAttributes, mlVariations = []) {
     const variations = []
-    for (const variation of (this.data.variations || [])) {
-      const mlVariation =
-        mlVariations.find(({ seller_custom_field }) => {
-          return seller_custom_field === variation.sku
-        })
-      if (mlVariation) {
-        variations.push(this.buildUpdateVariation(variation, allowedAttributes, mlVariation.id))
-      } else {
-        variations.push(this.buildVariation(variation, allowedAttributes))
+    const ecomVariations = this.data.variations || []
+    const updatedVariations = []
+
+    for (const variation of mlVariations) {
+      const ecomVariation = ecomVariations
+        .find(({ sku }) => sku === variation.seller_custom_field)
+      variations.push(this.buildUpdateVariation(ecomVariation, allowedAttributes, variation.id))
+      if (ecomVariation) {
+        updatedVariations.push(ecomVariation._id)
       }
+
     }
+
+    const variationsToCreate = ecomVariations
+      .filter(({ _id }) => !updatedVariations.includes(_id))
+
+    for (const variation of variationsToCreate) {
+      variations.push(this.buildVariation(variation, allowedAttributes))
+    }
+
     return Promise.all(variations)
       .then(values => {
         const validVariations = values.filter(({ mlVariation }) => {
@@ -220,7 +229,7 @@ class ProductService {
   buildVariationPrice(options) {
     const { ecomVariation, mlVariation, allowedAttributes } = options
     const highestPrice = this.data.variations
-      ? _.maxBy(this.data.variations, 'price').price
+      ? (_.maxBy(this.data.variations, 'price') || {}).price
       : this.data.price
     mlVariation.price = highestPrice
     return { ecomVariation, mlVariation, allowedAttributes }
@@ -228,10 +237,10 @@ class ProductService {
 
   buildVariationAvailableQuantity(options) {
     return new Promise((resolve, reject) => {
-      if (this.mlId && !this.mlMetadata.allows_balance_update) {
-        return resolve()
-      }
       const { ecomVariation, mlVariation, allowedAttributes } = options
+      if (!ecomVariation || (this.mlId && !this.mlMetadata.allows_balance_update)) {
+        return resolve({ ecomVariation, mlVariation, allowedAttributes })
+      }
       const { quantity } = ecomVariation
       mlVariation.available_quantity = quantity || 0
 
@@ -499,7 +508,9 @@ class ProductService {
         .then(data => {
           this.server
             .post('/items', data)
-            .then((response) => resolve(response))
+            .then((response) => {
+              resolve(response)
+            })
             .catch(error => {
               if (error.response) {
                 console.log(JSON.stringify(error.response.data.cause, null, 4))
