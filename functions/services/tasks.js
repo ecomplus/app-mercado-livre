@@ -172,7 +172,7 @@ const handleLinkProduct = async (appSdk, notification) => {
           functions.logger.error('[linkProduct]: The body does not contains some or none of the following properties [ecom_product_id, ml_product_id]')
         }
         const fromMLProductService = new FromMLProductService(appSdk, store_id)
-        await fromMLProductService.link(ml_product_id, product_id)
+        await fromMLProductService.link(ml_product_id, product_id, product)
       } catch (error) {
         functions.logger.error(error)
       }
