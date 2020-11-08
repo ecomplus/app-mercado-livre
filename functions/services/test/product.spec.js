@@ -519,3 +519,316 @@ describe('export product and not update balance', () => {
   })
 
 })
+
+describe('export product and update price', () => {
+  let appSdk
+  let product
+  let productVariation
+  const randomPrice = faker.random.number(500)
+  const newPrice = productWithoutVariations.price + randomPrice
+
+  before(function () {
+    const { setup } = require('@ecomplus/application-sdk')
+    return setup(null, true, admin.firestore())
+      .then(sdk => {
+        appSdk = sdk
+        return createProduct(appSdk, productWithoutVariations)
+          .then(res => product = res)
+          .then(() => {
+            return createProduct(appSdk, productWithVariations)
+              .then(res => productVariation = res)
+              .catch(error => console.log(error))
+          })
+          .catch(error => console.log(error))
+      })
+  })
+
+  it('should export product without variations and allow price update', () => {
+    const notification = {
+      "_id": "5f95ac73b2161709fa438127",
+      "action": "change",
+      "authentication_id": "5eee209814ff772fde7a8295",
+      "body": {
+        "exportation_products": [
+          {
+            "category_id": "MLB108704",
+            "listing_type_id": "gold_pro",
+            "product_id": product._id,
+            "allows_price_update": true
+          }
+        ]
+      },
+      "datetime": "2020-10-25T16:48:51.927Z",
+      "fields": [
+        "data"
+      ],
+      "method": "PATCH",
+      "resource": "applications",
+      "resource_id": "5f95ab39b2161709fa43811c",
+      "store_id": STORE_ID
+    }
+
+    const notificationUpdatePrice = {
+      "_id": "5f95ac73b2161709fa438127",
+      "action": "change",
+      "authentication_id": "5eee209814ff772fde7a8295",
+      "body": {
+        "price": newPrice
+      },
+      "datetime": "2020-10-25T16:48:51.927Z",
+      "fields": [
+        "quantity"
+      ],
+      "method": "PATCH",
+      "resource": "products",
+      "resource_id": product._id,
+      "store_id": 1117
+    }
+
+    return exportProducts(appSdk, notification).then(res => {
+      expect(res).to.be.length(1)
+      const { data } = res[0]
+      expect(data).to.be.an('object')
+      expect(data.variations).is.empty
+      expect(data.price).to.be.equal(productWithoutVariations.price)
+      return updateProduct(appSdk, product._id, { price: newPrice })
+        .then(() => {
+          return handleUpdateProduct(appSdk, notificationUpdatePrice).then(res => {
+            expect(res).to.be.length(1)
+            const { data } = res[0]
+            expect(data.price).to.be.equal(newPrice)
+          })
+        })
+    })
+  })
+
+  it('should export product with variations and allow price update', () => {
+    const ecomVariation = productWithVariations.variations[0]
+    const notification = {
+      "_id": "5f95ac73b2161709fa438127",
+      "action": "change",
+      "authentication_id": "5eee209814ff772fde7a8295",
+      "body": {
+        "exportation_products": [
+          {
+            "category_id": "MLB108704",
+            "listing_type_id": "gold_pro",
+            "product_id": productVariation._id,
+            "allows_price_update": true
+          }
+        ]
+      },
+      "datetime": "2020-10-25T16:48:51.927Z",
+      "fields": [
+        "data"
+      ],
+      "method": "PATCH",
+      "resource": "applications",
+      "resource_id": "5f95ab39b2161709fa43811c",
+      "store_id": STORE_ID
+    }
+
+    const variationUpdate = [{
+      ...ecomVariation,
+      price: newPrice
+    }]
+
+    const notificationUpdatePrice = {
+      "_id": "5f95ac73b2161709fa438127",
+      "action": "change",
+      "authentication_id": "5eee209814ff772fde7a8295",
+      "body": {
+        "variations": variationUpdate
+      },
+      "datetime": "2020-10-25T16:48:51.927Z",
+      "fields": [
+        "variations"
+      ],
+      "method": "PATCH",
+      "resource": "products",
+      "resource_id": productVariation._id,
+      "store_id": 1117
+    }
+
+    return exportProducts(appSdk, notification).then(res => {
+      expect(res).to.be.length(1)
+      const { data } = res[0]
+      expect(data).to.be.an('object')
+      expect(data.variations).to.be.an('array').that.not.is.empty
+      return updateProduct(appSdk, productVariation._id, { variations: variationUpdate })
+        .then(delay(1000))
+        .then(() => {
+          return handleUpdateProduct(appSdk, notificationUpdatePrice).then(res => {
+            expect(res).to.be.length(1)
+            const { data } = res[0]
+            const mlVariation = data.variations
+              .find(({ seller_custom_field }) => seller_custom_field === ecomVariation.sku)
+            expect(mlVariation.price).to.be.equal(newPrice)
+          })
+        })
+    })
+  })
+
+  after(function () {
+    deleteProduct(appSdk, product._id)
+    deleteProduct(appSdk, productVariation._id)
+  })
+
+})
+
+describe('export product and not updated price', () => {
+  let appSdk
+  let product
+  let productVariation
+  const randomPrice = faker.random.number(500)
+  const newPrice = productWithoutVariations.price + randomPrice
+  const highestPrice = _.maxBy(productWithVariations.variations, 'price').price
+  const newPriceVariation = highestPrice + randomPrice
+
+  before(function () {
+    const { setup } = require('@ecomplus/application-sdk')
+    return setup(null, true, admin.firestore())
+      .then(sdk => {
+        appSdk = sdk
+        return createProduct(appSdk, productWithoutVariations)
+          .then(res => product = res)
+          .then(() => {
+            return createProduct(appSdk, productWithVariations)
+              .then(res => productVariation = res)
+              .catch(error => console.log(error))
+          })
+          .catch(error => console.log(error))
+      })
+  })
+
+  it('should export product without variations and not allow price update', () => {
+    const notification = {
+      "_id": "5f95ac73b2161709fa438127",
+      "action": "change",
+      "authentication_id": "5eee209814ff772fde7a8295",
+      "body": {
+        "exportation_products": [
+          {
+            "category_id": "MLB108704",
+            "listing_type_id": "gold_pro",
+            "product_id": product._id,
+            "allows_price_update": false
+          }
+        ]
+      },
+      "datetime": "2020-10-25T16:48:51.927Z",
+      "fields": [
+        "data"
+      ],
+      "method": "PATCH",
+      "resource": "applications",
+      "resource_id": "5f95ab39b2161709fa43811c",
+      "store_id": STORE_ID
+    }
+
+    const notificationUpdatePrice = {
+      "_id": "5f95ac73b2161709fa438127",
+      "action": "change",
+      "authentication_id": "5eee209814ff772fde7a8295",
+      "body": {
+        "price": newPrice
+      },
+      "datetime": "2020-10-25T16:48:51.927Z",
+      "fields": [
+        "quantity"
+      ],
+      "method": "PATCH",
+      "resource": "products",
+      "resource_id": product._id,
+      "store_id": 1117
+    }
+
+    return exportProducts(appSdk, notification).then(res => {
+      expect(res).to.be.length(1)
+      const { data } = res[0]
+      expect(data).to.be.an('object')
+      expect(data.variations).is.empty
+      expect(data.price).to.be.equal(productWithoutVariations.price)
+      return updateProduct(appSdk, product._id, { price: newPrice })
+        .then(() => {
+          return handleUpdateProduct(appSdk, notificationUpdatePrice).then(res => {
+            expect(res).to.be.length(1)
+            const { data } = res[0]
+            expect(data.price).to.be.equal(productWithoutVariations.price)
+          })
+        })
+    })
+  })
+
+  it('should export product with variations and not allow price update', () => {
+    const ecomVariation = productWithVariations.variations[0]
+    const notification = {
+      "_id": "5f95ac73b2161709fa438127",
+      "action": "change",
+      "authentication_id": "5eee209814ff772fde7a8295",
+      "body": {
+        "exportation_products": [
+          {
+            "category_id": "MLB108704",
+            "listing_type_id": "gold_pro",
+            "product_id": productVariation._id,
+            "allows_price_update": false
+          }
+        ]
+      },
+      "datetime": "2020-10-25T16:48:51.927Z",
+      "fields": [
+        "data"
+      ],
+      "method": "PATCH",
+      "resource": "applications",
+      "resource_id": "5f95ab39b2161709fa43811c",
+      "store_id": STORE_ID
+    }
+
+    const variationUpdate = [{
+      ...ecomVariation,
+      price: newPriceVariation
+    }]
+
+    const notificationUpdatePrice = {
+      "_id": "5f95ac73b2161709fa438127",
+      "action": "change",
+      "authentication_id": "5eee209814ff772fde7a8295",
+      "body": {
+        "variations": variationUpdate
+      },
+      "datetime": "2020-10-25T16:48:51.927Z",
+      "fields": [
+        "variations"
+      ],
+      "method": "PATCH",
+      "resource": "products",
+      "resource_id": productVariation._id,
+      "store_id": 1117
+    }
+
+    return exportProducts(appSdk, notification).then(res => {
+      expect(res).to.be.length(1)
+      const { data } = res[0]
+      expect(data).to.be.an('object')
+      expect(data.variations).to.be.an('array').that.not.is.empty
+      return updateProduct(appSdk, productVariation._id, { variations: variationUpdate })
+        .then(delay(1000))
+        .then(() => {
+          return handleUpdateProduct(appSdk, notificationUpdatePrice).then(res => {
+            expect(res).to.be.length(1)
+            const { data } = res[0]
+            const mlVariation = data.variations
+              .find(({ seller_custom_field }) => seller_custom_field === ecomVariation.sku)
+            expect(mlVariation.price).to.be.equal(highestPrice)
+          })
+        })
+    })
+  })
+
+  after(function () {
+    deleteProduct(appSdk, product._id)
+    deleteProduct(appSdk, productVariation._id)
+  })
+})

@@ -21,7 +21,7 @@ class ProductService {
     this._attributes = []
     this._variations = []
     this.mlId = mlMetadata.mlId
-    this.mlMetadata = mlMetadata.metadata
+    this.mlMetadata = mlMetadata.metadata || {}
   }
 
   getSpecByProps(specs, props) {
@@ -96,13 +96,15 @@ class ProductService {
   }
 
   buildPrice() {
-    this.product.price = this.data.price
-    if (this.product.variations && this.product.variations.length > 0) {
-      const highestPrice = this.data.variations
-        ? _.maxBy(this.data.variations, 'price').price
-        : this.data.price
-      if (highestPrice > 0) {
-        delete this.product.price
+    if (!this.mlId || this.mlMetadata.allows_price_update) {
+      this.product.price = this.data.price
+      if (this.product.variations && this.product.variations.length > 0) {
+        const highestPrice = this.data.variations
+          ? _.maxBy(this.data.variations, 'price').price
+          : this.data.price
+        if (highestPrice > 0) {
+          delete this.product.price
+        }
       }
     }
   }
@@ -228,10 +230,12 @@ class ProductService {
 
   buildVariationPrice(options) {
     const { ecomVariation, mlVariation, allowedAttributes } = options
-    const highestPrice = this.data.variations
-      ? (_.maxBy(this.data.variations, 'price') || {}).price
-      : this.data.price
-    mlVariation.price = highestPrice
+    if (!this.mlId || this.mlMetadata.allows_price_update) {
+      const highestPrice = this.data.variations
+        ? (_.maxBy(this.data.variations, 'price') || {}).price
+        : this.data.price
+      mlVariation.price = highestPrice
+    }
     return { ecomVariation, mlVariation, allowedAttributes }
   }
 
