@@ -60,11 +60,11 @@ const getMlCategory = (params) => {
 
 const createProduct = (params) => {
   return new Promise((resolve, reject) => {
-    const { user, product, ecomProduct, notification, category } = params
+    const { appSdk, user, product, ecomProduct, notification, category } = params
     const { category_id, listing_type_id } = product
     const accessToken = user.data().access_token
     const storeId = notification.store_id
-    const productService = new ProductService(accessToken, ecomProduct, storeId, {}, category, { listing_type_id, category_id })
+    const productService = new ProductService(appSdk, accessToken, ecomProduct, storeId, {}, category, { listing_type_id, category_id })
     return productService.create()
       .then(result => resolve({ ...params, result }))
       .catch(error => reject(error))
@@ -129,13 +129,13 @@ const getMlMetadata = (params) => {
 
 const updateProducts = (params) => {
   return new Promise((resolve, reject) => {
-    const { user, product, notification, mlMetadata } = params
+    const { appSdk, user, product, notification, mlMetadata } = params
     const productsToUpdate = []
     for (const metadata of mlMetadata) {
       const data = { ...product, ...notification.body }
       const accessToken = user.data().access_token
       const storeId = notification.store_id
-      const productService = new ProductService(accessToken, data, storeId, metadata)
+      const productService = new ProductService(appSdk, accessToken, data, storeId, metadata)
       productsToUpdate.push(productService.update())
     }
     return Promise.all(productsToUpdate)

@@ -2,10 +2,11 @@ const axios = require('axios').default
 const _ = require('lodash')
 const VARIATION_CORRELATIONS = require('./variations_correlations.json')
 const BalanceReserveService = require('../balanceReserveService')
-
+const log = require('../logService')
 
 class ProductService {
-  constructor(token, data, storeId, mlMetadata = {}, category = {}, options = {}) {
+  constructor(appSdk, token, data, storeId, mlMetadata = {}, category = {}, options = {}) {
+    this.appSdk = appSdk
     this.storeId = storeId
     this.server = axios.create({
       baseURL: 'https://api.mercadolibre.com',
@@ -513,9 +514,11 @@ class ProductService {
           this.server
             .post('/items', data)
             .then((response) => {
+              log(this.appSdk, this.storeId, '[CREATE PRODUCT]', response.data)
               resolve(response)
             })
             .catch(error => {
+              log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error)
               if (error.response) {
                 console.log(JSON.stringify(error.response.data.cause, null, 4))
                 return reject(error.response.data)

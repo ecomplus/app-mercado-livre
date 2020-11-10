@@ -1,11 +1,9 @@
 const getAppData = require('../lib/store-api/get-app-data')
 const updateAppData = require('../lib/store-api/update-app-data')
 
-const log = (appSdk, storeId, entity, payload) => {
-  const isError = payload instanceof Error
+const log = (appSdk, storeId, entity, payload, success=true) => {
   appSdk.getAuth(storeId)
     .then(auth => {
-      console.log(auth)
       return getAppData({ appSdk, storeId, auth })
         .then(appData => {
           let { logs } = appData
@@ -15,7 +13,7 @@ const log = (appSdk, storeId, entity, payload) => {
           const logData = {
             entity,
             timestamp: new Date(),
-            success: isError,
+            success: success,
             notes: JSON.stringify(payload)
           }
           logs.unshift(logData)
