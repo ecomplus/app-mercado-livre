@@ -518,7 +518,7 @@ class ProductService {
               resolve(response)
             })
             .catch(error => {
-              log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error)
+              log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error, false)
               if (error.response) {
                 console.log(JSON.stringify(error.response.data.cause, null, 4))
                 return reject(error.response.data)
@@ -535,10 +535,13 @@ class ProductService {
         .then(data => {
           this.server
             .put(`items/${this.mlId}`, data)
-            .then((response) => resolve(response))
+            .then((response) => {
+              log(this.appSdk, this.storeId, '[UPDATE PRODUCT]', response.data)
+              resolve(response)
+            })
             .catch(error => {
+              log(this.appSdk, this.storeId, '[UPDATE PRODUCT]', error.response || error, false)
               if (error.response) {
-                console.log(JSON.stringify(error.response.data.cause, null, 4))
                 return reject(error.response.data)
               }
               reject(error)

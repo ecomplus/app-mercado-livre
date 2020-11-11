@@ -14,7 +14,7 @@ const log = (appSdk, storeId, entity, payload, success=true) => {
             entity,
             timestamp: new Date(),
             success: success,
-            notes: JSON.stringify(payload)
+            notes: JSON.stringify(payload, null, 4)
           }
           logs.unshift(logData)
           return updateAppData({ appSdk, storeId, auth }, {
