@@ -344,9 +344,14 @@ exports.onEcomNotification = functions.firestore
 exports.onMLAuthentication = functions.firestore
   .document('ml_app_auth/{documentId}')
   .onCreate(async (snap) => {
-    return handleUpdateMLProfile(snap)
+    return await handleUpdateMLProfile(snap)
   })
 
+exports.onMLAuthentication = functions.firestore
+  .document('ml_app_auth/{documentId}')
+  .onUpdate(async (snap) => {
+    return await handleUpdateMLProfile(snap)
+  })
 
 
 exports.exportProducts = exportProducts
