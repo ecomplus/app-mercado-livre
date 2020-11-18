@@ -47,6 +47,14 @@ class UtilsService {
       return Promise.reject(error)
     }
   }
+
+  async getUserInfo() {
+    try {
+      return this.server(`/users/${this.user.user_id}`)
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
 module.exports = UtilsService

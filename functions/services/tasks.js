@@ -3,6 +3,7 @@ const FromMLProductService = require('./ml_to_ecom/productService')
 const UtilsService = require('./utilsService')
 const MLNotificationService = require('./ml_to_ecom/notificationService')
 const ProductService = require('./ecom_to_ml/productService')
+const ProfileService = require('./ml_to_ecom/profileService')
 const OrderService = require('./ml_to_ecom/orderService')
 const ShipmentService = require('./ml_to_ecom/shipmentService')
 const { auth } = require('firebase-admin')
@@ -17,7 +18,6 @@ const ORDER_UPDATED_SUCCESS = '[handleOrder]: UPDATED ORDER ON ECOM'
 const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
 const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
 const BalanceReserve = require('./balanceReserveService');
-
 
 const getUser = (params) => {
   return new Promise((resolve, reject) => {
@@ -324,6 +324,22 @@ exports.onEcomNotification = functions.firestore
     snap.ref.delete()
     return true
   })
+
+
+exports.onMLAuthentication = functions.firestore
+  .document('ml_app_auth/{documentId}')
+  .onCreate(async (snap) => {
+    try {
+      const appSdk = await setup(null, true, admin.firestore())
+      const utilsService = new UtilsService(snap.data())
+      const userInfo = await utilsService.getUserInfo()
+      const profileService = new ProfileService(appSdk, snap.id)
+      return profileService.updateUserInfo(userInfo)
+    } catch (error) {
+      throw error
+    }
+  })
+
 
 
 exports.exportProducts = exportProducts
