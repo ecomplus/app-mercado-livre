@@ -18,6 +18,7 @@ const ORDER_UPDATED_SUCCESS = '[handleOrder]: UPDATED ORDER ON ECOM'
 const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
 const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
 const BalanceReserve = require('./balanceReserveService');
+const { user } = require('firebase-functions/lib/providers/auth');
 
 const getUser = (params) => {
   return new Promise((resolve, reject) => {
@@ -304,6 +305,20 @@ const handleMLNotification = async (snap) => {
   return true
 }
 
+const handleUpdateMLProfile = async (snap) => {
+  try {
+    functions.logger.info('TRIGGER handleUpdateMLProfile', snap.data())
+    const appSdk = await setup(null, true, admin.firestore())
+    const utilsService = new UtilsService(snap.data())
+    const userInfo = await utilsService.getUserInfo()
+    functions.logger.info('TRIGGER handleUpdateMLProfile utilsInfo', userInfo)
+    const profileService = new ProfileService(appSdk, snap.id)
+    return profileService.updateUserInfo(userInfo)
+  } catch (error) {
+    throw error
+  }
+}
+
 exports.onEcomNotification = functions.firestore
   .document('ecom_notifications/{documentId}')
   .onCreate(async (snap) => {
@@ -329,15 +344,7 @@ exports.onEcomNotification = functions.firestore
 exports.onMLAuthentication = functions.firestore
   .document('ml_app_auth/{documentId}')
   .onCreate(async (snap) => {
-    try {
-      const appSdk = await setup(null, true, admin.firestore())
-      const utilsService = new UtilsService(snap.data())
-      const userInfo = await utilsService.getUserInfo()
-      const profileService = new ProfileService(appSdk, snap.id)
-      return profileService.updateUserInfo(userInfo)
-    } catch (error) {
-      throw error
-    }
+    return handleUpdateMLProfile(snap)
   })
 
 
@@ -345,3 +352,4 @@ exports.onMLAuthentication = functions.firestore
 exports.exportProducts = exportProducts
 exports.handleMLNotification = handleMLNotification
 exports.handleUpdateProduct = handleUpdateProduct
+exports.handleUpdateMLProfile = handleUpdateMLProfile
