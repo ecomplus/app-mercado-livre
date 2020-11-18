@@ -21,7 +21,7 @@ exports.get = ({ admin }, req, res) => {
         .collection('ml_app_auth')
         .doc(`${store_id}`)
         .set(authData)
-        .then(() => res.send('ok'))
+        .then(() => res.send('loading...'))
         .catch(err => { throw new Error(err) })
     })
   } catch (error) {
