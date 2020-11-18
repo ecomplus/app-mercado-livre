@@ -50,7 +50,8 @@ class UtilsService {
 
   async getUserInfo() {
     try {
-      return this.server(`/users/${this.user.user_id}`)
+      const { data } = this.server.get(`/users/${this.user.user_id}`)
+      return data
     } catch (error) {
       throw error
     }
