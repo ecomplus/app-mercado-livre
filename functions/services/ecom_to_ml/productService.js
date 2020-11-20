@@ -517,10 +517,11 @@ class ProductService {
               resolve(response)
             })
             .catch(error => {
-              log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error, false)
+              log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error.response || error, false)
               if (error.response) {
                 return reject(error.response.data)
               }
+              log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error, false)
               reject(error)
             })
         })
