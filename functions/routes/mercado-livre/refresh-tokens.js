@@ -44,7 +44,6 @@ exports.post = ({ admin }, req, res) => {
           promises.push(refreshToken(admin, auth.id, auth.data()))
         })
         Promise.all(promises).then(() => {
-          console.log('[ML - ALL REFRESH TOKENS UPDATED]')
           return res.send('ok')
         })
       })

@@ -499,7 +499,6 @@ class ProductService {
         .then((response) => resolve(response))
         .catch(error => {
           if (error.response) {
-            console.log(JSON.stringify(error.response.data.cause, null, 4))
             return reject(error.response.data)
           }
           reject(error)
@@ -520,7 +519,6 @@ class ProductService {
             .catch(error => {
               log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error, false)
               if (error.response) {
-                console.log(JSON.stringify(error.response.data.cause, null, 4))
                 return reject(error.response.data)
               }
               reject(error)

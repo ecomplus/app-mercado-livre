@@ -51,7 +51,6 @@ class UtilsService {
   async getUserInfo() {
     try {
       const { data } = await this.server.get(`/users/${this.user.user_id}`)
-      console.log(this.user)
       return Promise.resolve(data)
     } catch (error) {
       return Promise.reject(error)

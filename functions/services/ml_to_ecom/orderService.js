@@ -274,7 +274,6 @@ class OrderService {
         .apiRequest(this.storeId, resource, 'PATCH', data)
         .then(response => resolve(response))
         .catch(error => {
-          console.log('UPDATE --->>>', error.response)
           if (error.response) {
             return reject(error.response.data)
           }
@@ -290,7 +289,6 @@ class OrderService {
         .apiRequest(this.storeId, resource, 'POST', data)
         .then(response => resolve(response))
         .catch(error => {
-          console.log('CREATE --->>>', error.response)
           if (error.response) {
             return reject(error.response.data)
           }

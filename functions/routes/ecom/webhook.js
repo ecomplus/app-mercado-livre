@@ -69,7 +69,6 @@ exports.post = ({ admin, appSdk }, req, res) => {
         return res.status(204).send()
 
       } catch (error) {
-        console.log('[ERROR]', error)
         throw error
       }
     })
