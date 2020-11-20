@@ -4,7 +4,7 @@ const updateAppData = require('../lib/store-api/update-app-data')
 const log = (appSdk, storeId, entity, payload, success=true) => {
   appSdk.getAuth(storeId)
     .then(auth => {
-      return getAppData({ appSdk, storeId, auth }, false)
+      return getAppData({ appSdk, storeId, auth })
         .then(appData => {
           let { logs } = appData
           if (!Array.isArray(logs)) {
@@ -19,7 +19,7 @@ const log = (appSdk, storeId, entity, payload, success=true) => {
           logs.unshift(logData)
           return updateAppData({ appSdk, storeId, auth }, {
             logs: logs.slice(0, 200)
-          })
+          }, true)
         })
     })
     .catch(console.error)
