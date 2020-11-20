@@ -19,7 +19,7 @@ const log = (appSdk, storeId, entity, payload, success=true) => {
           logs.unshift(logData)
           return updateAppData({ appSdk, storeId, auth }, {
             logs: logs.slice(0, 200)
-          }, true)
+          })
         })
     })
     .catch(console.error)
