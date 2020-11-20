@@ -169,20 +169,16 @@ const handleLinkProduct = async (appSdk, notification) => {
     for (const product of products) {
       try {
         const { product_id, ml_product_id } = product
-        if (!product_id || !ml_product_id) {
-          functions.logger.error('[linkProduct]: The body does not contains some or none of the following properties [ecom_product_id, ml_product_id]')
-        }
         const fromMLProductService = new FromMLProductService(appSdk, store_id)
         await fromMLProductService.link(ml_product_id, product_id, product)
       } catch (error) {
-        functions.logger.error(error)
+        throw error
       }
     }
     Promise.resolve(true)
   }
   catch (error) {
-    functions.logger.error(error)
-    Promise.reject(error)
+    throw error
   }
 }
 
@@ -192,12 +188,9 @@ const handleShipment = async (appSdk, storeId, mlNotificationService, ecomOrderI
     const shipmentService = new ShipmentService(appSdk, storeId, mlShipment)
     const shipmentData = shipmentService.getDataToCreate()
     await shipmentService.create(ecomOrderId, shipmentData)
-    functions.logger.info(`${SHIPMENT_CREATED_SUCCESS} TO ORDER: ${ecomOrderId}`)
     return Promise.resolve(true)
   } catch (error) {
-    functions.logger.error(`${SHIPMENT_CREATED_ERROR} TO SHIPMENT ON ML: ${mlShipmentId}`)
-    functions.logger.error(error)
-    return Promise.reject(error)
+    throw error
   }
 }
 
@@ -227,8 +220,6 @@ const handleBalanceReserve = (storeId, mlOrder, ecomStatus = false) => {
         if (sku) {
           const balanceReserve = new BalanceReserve(storeId, sku)
           balanceReserve[operation](quantity)
-        } else {
-          functions.logger.error(`[handleBalanceReserve] - ML ORDER: ${mlOrder.id} SKU NOT FOUND $${JSON.stringify(product)}`)
         }
       }
     }
@@ -255,7 +246,6 @@ const handleOrder = async (appSdk, snap) => {
       if (!orderOnEcomId) {
         const orderDataToCreate = await orderService.getOrderToCreate()
         const { response } = await orderService.create(orderDataToCreate)
-        functions.logger.info(`${ORDER_CREATED_SUCCESS} ID: ${mlOrder.id}`);
         await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
         handleBalanceReserve(storeId, mlOrder, false)
       } else {
@@ -263,19 +253,14 @@ const handleOrder = async (appSdk, snap) => {
         const mlOrderStatusOnEcom = await orderService.findMLOrderStatus(orderOnEcomId)
         if (mlOrderStatusOnEcom !== mlOrder.status) {
           await orderService.update(orderOnEcomId, orderDataToUpdate)
-          functions.logger.info(`${ORDER_UPDATED_SUCCESS} ID: ${orderOnEcomId}`);
           handleBalanceReserve(mlOrder, mlOrderStatusOnEcom)
           await handleShipment(appSdk, storeId, mlNotificationService, orderOnEcomId, mlOrder.shipping.id)
-        } else {
-          functions.logger.info(`[handleOrder] SKIPPED ORDER NOT HAS CHANGED: ${mlOrderStatusOnEcom}`);
         }
       }
       return Promise.resolve(true)
     }
-    functions.logger.error(` ${ORDER_ML_USER_NOT_FOUND} - ${notification}`);
     return Promise.resolve(true)
   } catch (error) {
-    functions.logger.error(`[handleOrder]: FATAL ERROR ${JSON.stringify(error)}`);
     return Promise.reject(error)
   } finally {
     await snap.ref.delete()
@@ -307,11 +292,9 @@ const handleMLNotification = async (snap) => {
 
 const handleUpdateMLProfile = async (snap) => {
   try {
-    functions.logger.info('TRIGGER handleUpdateMLProfile', snap.data())
     const appSdk = await setup(null, true, admin.firestore())
     const utilsService = new UtilsService(snap.data())
     const userInfo = await utilsService.getUserInfo()
-    functions.logger.info('TRIGGER handleUpdateMLProfile utilsInfo', userInfo)
     const profileService = new ProfileService(appSdk, snap.id)
     return profileService.updateUserInfo(userInfo)
   } catch (error) {
@@ -322,7 +305,6 @@ const handleUpdateMLProfile = async (snap) => {
 exports.onEcomNotification = functions.firestore
   .document('ecom_notifications/{documentId}')
   .onCreate(async (snap) => {
-    functions.logger.info('TRIGGER ECOM NOTIFICATION', snap.data())
     const appSdk = await setup(null, true, admin.firestore())
     const notification = snap.data()
     switch (notification.resource) {
