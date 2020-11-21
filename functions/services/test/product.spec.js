@@ -4,7 +4,7 @@ const admin = require('firebase-admin')
 admin.initializeApp()
 const { exportProducts, handleUpdateProduct } = require('../tasks')
 const { expect } = require('chai')
-const { productWithVariations } = require('./mocks/productWithVariations')
+const { productWithVariations } = require('./mocks/productWithVariations2')
 const { productWithoutVariations } = require('./mocks/productWithoutVariations')
 const STORE_ID = 1117
 const faker = require('faker')
@@ -682,7 +682,7 @@ describe('export product and not updated price', () => {
   let productVariation
   const randomPrice = faker.random.number(500)
   const newPrice = productWithoutVariations.price + randomPrice
-  const highestPrice = _.maxBy(productWithVariations.variations, 'price').price
+  const highestPrice = (_.maxBy(productWithVariations.variations, 'price') || {}).price || productWithVariations.price
   const newPriceVariation = highestPrice + randomPrice
 
   before(function () {

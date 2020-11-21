@@ -233,7 +233,7 @@ class ProductService {
     const { ecomVariation, mlVariation, allowedAttributes } = options
     if (!this.mlId || this.mlMetadata.allows_price_update) {
       const highestPrice = this.data.variations
-        ? (_.maxBy(this.data.variations, 'price') || {}).price
+        ? (_.maxBy(this.data.variations, 'price') || {}).price || this.data.price
         : this.data.price
       mlVariation.price = highestPrice
     }
