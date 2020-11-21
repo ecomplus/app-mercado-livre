@@ -11,14 +11,8 @@ const getAppData = require('../lib/store-api/get-app-data')
 const { setup } = require('@ecomplus/application-sdk')
 const admin = require('firebase-admin');
 
-const ORDER_ML_USER_NOT_FOUND = '[handleOrder]: ERROR TO HANDLER ORDER, ML USER NOT FOUND'
-const ORDER_CREATED_SUCCESS = '[handleOrder]: CREATED ORDER ON ECOM BY ML ORLDER '
-const ORDER_UPDATED_SUCCESS = '[handleOrder]: UPDATED ORDER ON ECOM'
-
-const SHIPMENT_CREATED_SUCCESS = '[handleShipment]: SUCCESS TO CREATED SHIPMENT'
-const SHIPMENT_CREATED_ERROR = '[handleShipment]: ERROR TO CREATED SHIPMENT'
 const BalanceReserve = require('./balanceReserveService');
-const { user } = require('firebase-functions/lib/providers/auth');
+
 
 const getUser = (params) => {
   return new Promise((resolve, reject) => {

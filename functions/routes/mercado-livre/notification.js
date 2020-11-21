@@ -24,7 +24,8 @@ exports.post = async ({ admin }, req, res) => {
     const docRef = await admin
       .firestore()
       .collection(NOTIFICATION_COLLECTION)
-      .add(notification)
+      .doc(notification.resource.replace(/\//g, ''))
+      .set(notification, { merge: true })
 
     const snap = await docRef.get()
 
