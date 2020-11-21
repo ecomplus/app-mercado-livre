@@ -270,8 +270,6 @@ const handleMLNotification = async (snap) => {
   try {
     switch (notification.topic) {
       case 'created_orders':
-        await handleOrder(appSdk, snap)
-        break;
       case 'orders':
         await handleOrder(appSdk, snap)
         break;
