@@ -31,57 +31,59 @@ exports.post = ({ admin, appSdk }, req, res) => {
   getAppData({ appSdk, storeId, auth })
 
     .then(appData => {
-      if (
-        Array.isArray(appData.ignore_triggers) &&
-        appData.ignore_triggers.indexOf(trigger.resource) > -1
-      ) {
-        // ignore current trigger
-        const err = new Error()
-        err.name = SKIP_TRIGGER_NAME
-        throw err
-      }
-
-      /* DO YOUR CUSTOM STUFF HERE */
-      try {
-        const { body, fields, resource } = trigger
-        switch (resource) {
-          case 'applications':
-            if (fields.includes('data')) {
-              const data = {}
-              addNotification(admin, trigger).then(() => {
-                let hasJobs = false
-                for (const job of JOBS) {
-                  if (Array.isArray(body[job]) && body[job].length > 0) {
-                    hasJobs = true
-                    data[job] = []
-                  }
-                }
-                if (hasJobs) {
-                  updateAppData({ appSdk, storeId, auth }, data)
-                }
-              })
-            }
-            break;
-          default:
-            addNotification(admin, trigger).catch(err => { throw err })
-            break;
+      setTimeout(() => {
+        if (
+          Array.isArray(appData.ignore_triggers) &&
+          appData.ignore_triggers.indexOf(trigger.resource) > -1
+        ) {
+          // ignore current trigger
+          const err = new Error()
+          err.name = SKIP_TRIGGER_NAME
+          throw err
         }
-        return res.status(204).send()
 
-      } catch (error) {
-        throw error
-      }
-    })
-    .catch(err => {
-      if (err.name === SKIP_TRIGGER_NAME) {
-        res.send(ECHO_SKIP)
-      } else {
-        res.status(500)
-        const { message } = err
-        res.send({
-          error: ECHO_API_ERROR,
-          message
+        /* DO YOUR CUSTOM STUFF HERE */
+        try {
+          const { body, fields, resource } = trigger
+          switch (resource) {
+            case 'applications':
+              if (fields.includes('data')) {
+                const data = {}
+                addNotification(admin, trigger).then(() => {
+                  let hasJobs = false
+                  for (const job of JOBS) {
+                    if (Array.isArray(body[job]) && body[job].length > 0) {
+                      hasJobs = true
+                      data[job] = []
+                    }
+                  }
+                  if (hasJobs) {
+                    updateAppData({ appSdk, storeId, auth }, data)
+                  }
+                })
+              }
+              break;
+            default:
+              addNotification(admin, trigger).catch(err => { throw err })
+              break;
+          }
+          return res.status(204).send()
+
+        } catch (error) {
+          throw error
+        }
+      })
+        .catch(err => {
+          if (err.name === SKIP_TRIGGER_NAME) {
+            res.send(ECHO_SKIP)
+          } else {
+            res.status(500)
+            const { message } = err
+            res.send({
+              error: ECHO_API_ERROR,
+              message
+            })
+          }
         })
-      }
-    })
+    }, Math.floor(Math.random() * (3000 - 10)) + 10)
 }
