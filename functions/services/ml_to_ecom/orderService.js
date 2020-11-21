@@ -1,6 +1,9 @@
+const { auth } = require('firebase-admin')
+const getAppData = require('./../../lib/store-api/get-app-data')
 const qs = require('qs')
 const { randomObjectId } = require('@ecomplus/utils')
 const logger = require('../logService')
+const _ = require('lodash')
 
 class OrderService {
   constructor(appSdk, storeId, data) {
@@ -41,32 +44,39 @@ class OrderService {
 
   buildItem(mlItem) {
     return new Promise((resolve, reject) => {
-      const { quantity, unit_price, item } = mlItem
-      const { seller_custom_field } = item
-      const resource = `/products.json?sku=${seller_custom_field}`
-      this.appSdk.apiRequest(this.storeId, resource)
-        .then(({ response }) => {
-          if (response.data && response.data.result.length > 0) {
-            const productId = response.data.result[0]._id
-            return this.appSdk.apiRequest(this.storeId, `/products/${productId}.json`)
+      const { appSdk, storeId } = this
+      getAppData({ appSdk, storeId, auth })
+        .then(appData => {
+          const correlations = _.flattenDeep(Object.values(appData.product_correlations))
+          const correlation = correlations.find(item => item.mlId === mlItem.item.id)
+          if (correlation) {
+            const { quantity, unit_price, item } = mlItem
+            const { seller_custom_field } = item
+            const { product_id } = correlation.metadata
+            return this.appSdk
+              .apiRequest(this.storeId, `/products/${product_id}.json`)
               .then(({ response }) => {
                 const { data } = response
-                return resolve({
+                const itemData = {
                   _id: randomObjectId(),
-                  product_id: data._id,
-                  quantity,
+                  product_id,
                   sku: seller_custom_field,
-                  name: data.name,
+                  quantity,
                   price: unit_price
-                })
+                }
+                let productName = data.name
+                if (data.sku !== seller_custom_field) {
+                  const variation = data.variations.find(v => v.sku === seller_custom_field)
+                  productName = variation.name
+                }
+                itemData.name = productName
+                return resolve(itemData)
               })
-              .catch(err => reject(err))
+              .catch(error => reject(error))
           }
           return resolve()
         })
-        .catch(err => {
-          reject(err)
-        })
+        .catch(error => reject(error))
     })
   }
 
@@ -80,7 +90,9 @@ class OrderService {
         }
         Promise.all(promises)
           .then(items => {
-            this.order.items = items
+            if (items.length > 0) {
+              this.order.items = items
+            }
             resolve()
           }).catch(error => {
             Promise.reject(error)
@@ -275,7 +287,6 @@ class OrderService {
         .apiRequest(this.storeId, resource, 'PATCH', data)
         .then(response => {
           logger.success(this.appSdk, this.storeId, '[UPDATE ORDER]', response.data)
-          log(this.appSdk, this.storeId, '[UPDATE ORDER]', response.data)
           resolve(response)
         })
         .catch(error => {
