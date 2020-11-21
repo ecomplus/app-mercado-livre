@@ -517,8 +517,8 @@ class ProductService {
               resolve(response)
             })
             .catch(error => {
-              log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error.response || error, false)
               if (error.response) {
+                log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error.response.data || error, false)
                 return reject(error.response.data)
               }
               log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error, false)
@@ -539,10 +539,11 @@ class ProductService {
               resolve(response)
             })
             .catch(error => {
-              log(this.appSdk, this.storeId, '[UPDATE PRODUCT]', error.response || error, false)
               if (error.response) {
+                log(this.appSdk, this.storeId, '[UPDATE PRODUCT]', error.response.data, false)
                 return reject(error.response.data)
               }
+              log(this.appSdk, this.storeId, '[UPDATE PRODUCT]', error, false)
               reject(error)
             })
         })
