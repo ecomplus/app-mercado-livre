@@ -262,26 +262,31 @@ const handleOrder = async (appSdk, snap) => {
 }
 
 const handleMLNotification = async (snap) => {
-  const appSdk = await setup(null, true, admin.firestore())
   const notification = snap.data()
-  switch (notification.topic) {
-    case 'created_orders':
-      handleOrder(appSdk, snap)
-      break;
-    case 'orders':
-      handleOrder(appSdk, snap)
-      break;
-    case 'orders_v2':
-      handleOrder(appSdk, snap)
-      break;
-    case 'shipments':
-      // handleShipments(appSdk, notification)
-      break;
-    default:
-      snap.ref.delete()
-      break;
+  if (notification.running) return true
+
+  await snap.ref.set({ running: true }, { merge: true })
+  const appSdk = await setup(null, true, admin.firestore())
+  try {
+    switch (notification.topic) {
+      case 'created_orders':
+        await handleOrder(appSdk, snap)
+        break;
+      case 'orders':
+        await handleOrder(appSdk, snap)
+        break;
+      case 'orders_v2':
+        await handleOrder(appSdk, snap)
+        break;
+      default:
+        await snap.ref.delete()
+        break;
+    }
+    return await snap.ref.delete()
+  } catch (error) {
+    await snap.ref.set({ running: false, error: true }, { merge: true })
+    throw (error)
   }
-  return true
 }
 
 const handleUpdateMLProfile = async (snap) => {

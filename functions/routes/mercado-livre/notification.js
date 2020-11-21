@@ -9,18 +9,6 @@ const { handleMLNotification } = require('../../services/tasks')
 exports.post = async ({ admin }, req, res) => {
   const notification = req.body
   try {
-
-    const result = await admin.firestore()
-      .collection(NOTIFICATION_COLLECTION)
-      .where('resource', '==', notification.resource)
-      .get()
-
-    // const notifications = result.docs.map(doc => doc.data())
-
-    // if (notifications.length > 0) {
-    //   return res.status(422).send('processing for this resource already exists')
-    // }
-
     const docRef = await admin
       .firestore()
       .collection(NOTIFICATION_COLLECTION)
