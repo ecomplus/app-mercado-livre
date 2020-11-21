@@ -2,7 +2,7 @@ name: Call ML refresh tokens
 
 on:
   schedule:
-    - cron: '30 1,7,13,19 * * *'
+    - cron: '30 1,3,5,7,9,13,15,17,19,21 * * *'
   push:
     branches:
       - master
