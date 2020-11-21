@@ -73,17 +73,17 @@ exports.post = ({ admin, appSdk }, req, res) => {
           throw error
         }
       })
-        .catch(err => {
-          if (err.name === SKIP_TRIGGER_NAME) {
-            res.send(ECHO_SKIP)
-          } else {
-            res.status(500)
-            const { message } = err
-            res.send({
-              error: ECHO_API_ERROR,
-              message
-            })
-          }
-        })
     }, Math.floor(Math.random() * (3000 - 10)) + 10)
+    .catch(err => {
+      if (err.name === SKIP_TRIGGER_NAME) {
+        res.send(ECHO_SKIP)
+      } else {
+        res.status(500)
+        const { message } = err
+        res.send({
+          error: ECHO_API_ERROR,
+          message
+        })
+      }
+    })
 }
