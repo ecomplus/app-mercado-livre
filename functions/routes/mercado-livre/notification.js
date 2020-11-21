@@ -15,11 +15,11 @@ exports.post = async ({ admin }, req, res) => {
       .where('resource', '==', notification.resource)
       .get()
 
-    const notifications = result.docs.map(doc => doc.data())
+    // const notifications = result.docs.map(doc => doc.data())
 
-    if (notifications.length > 0) {
-      return res.status(422).send('processing for this resource already exists')
-    }
+    // if (notifications.length > 0) {
+    //   return res.status(422).send('processing for this resource already exists')
+    // }
 
     const docRef = await admin
       .firestore()
