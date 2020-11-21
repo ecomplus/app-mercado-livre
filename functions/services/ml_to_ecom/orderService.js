@@ -1,5 +1,6 @@
 const qs = require('qs')
 const { randomObjectId } = require('@ecomplus/utils')
+const log = require('../logService')
 
 class OrderService {
   constructor(appSdk, storeId, data) {
@@ -272,11 +273,16 @@ class OrderService {
       const resource = `/orders/${orderId}.json`
       this.appSdk
         .apiRequest(this.storeId, resource, 'PATCH', data)
-        .then(response => resolve(response))
+        .then(response => {
+          log(this.appSdk, this.storeId, '[UPDATE ORDER]', response.data)
+          resolve(response)
+        })
         .catch(error => {
           if (error.response) {
+            log(this.appSdk, this.storeId, '[UPDATE ORDER]', error.response.data, false)
             return reject(error.response.data)
           }
+          log(this.appSdk, this.storeId, '[UPDATE ORDER]', error, false)
           return reject(error)
         })
     })
@@ -287,11 +293,16 @@ class OrderService {
       const resource = '/orders.json'
       this.appSdk
         .apiRequest(this.storeId, resource, 'POST', data)
-        .then(response => resolve(response))
+        .then(response => {
+          log(this.appSdk, this.storeId, '[CREATE ORDER]', response.data)
+          resolve(response)
+        })
         .catch(error => {
           if (error.response) {
+            log(this.appSdk, this.storeId, '[CREATE ORDER]', error.response.data, false)
             return reject(error.response.data)
           }
+          log(this.appSdk, this.storeId, '[CREATE ORDER]', error, false)
           return reject(error)
         })
     })
