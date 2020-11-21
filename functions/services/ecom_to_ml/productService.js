@@ -2,7 +2,7 @@ const axios = require('axios').default
 const _ = require('lodash')
 const VARIATION_CORRELATIONS = require('./variations_correlations.json')
 const BalanceReserveService = require('../balanceReserveService')
-const log = require('../logService')
+const logger = require('../logService')
 
 class ProductService {
   constructor(appSdk, token, data, storeId, mlMetadata = {}, category = {}, options = {}) {
@@ -513,15 +513,14 @@ class ProductService {
           this.server
             .post('/items', data)
             .then((response) => {
-              log(this.appSdk, this.storeId, '[CREATE PRODUCT]', response.data)
+              logger.success(this.appSdk, this.storeId, '[CREATE PRODUCT]', response.data)
               resolve(response)
             })
             .catch(error => {
+              logger.error(this.appSdk, this.storeId, '[CREATE PRODUCT]', error)
               if (error.response) {
-                log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error.response.data || error, false)
                 return reject(error.response.data)
               }
-              log(this.appSdk, this.storeId, '[CREATE PRODUCT]', error, false)
               reject(error)
             })
         })
@@ -535,15 +534,14 @@ class ProductService {
           this.server
             .put(`items/${this.mlId}`, data)
             .then((response) => {
-              log(this.appSdk, this.storeId, '[UPDATE PRODUCT]', response.data)
+              logger.success(this.appSdk, this.storeId, '[UPDATE PRODUCT]', response.data)
               resolve(response)
             })
             .catch(error => {
+              logger.error(this.appSdk, this.storeId, '[UPDATE PRODUCT]', error)
               if (error.response) {
-                log(this.appSdk, this.storeId, '[UPDATE PRODUCT]', error.response.data, false)
                 return reject(error.response.data)
               }
-              log(this.appSdk, this.storeId, '[UPDATE PRODUCT]', error, false)
               reject(error)
             })
         })

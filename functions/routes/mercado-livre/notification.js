@@ -9,12 +9,12 @@ const { handleMLNotification } = require('../../services/tasks')
 exports.post = async ({ admin }, req, res) => {
   const notification = req.body
   try {
-    const docRef = await admin
+    const docRef = admin
       .firestore()
       .collection(NOTIFICATION_COLLECTION)
       .doc(notification.resource.replace(/\//g, ''))
-      .set(notification, { merge: true })
 
+    await docRef.set(notification, { merge: true })
     const snap = await docRef.get()
 
     await handleMLNotification(snap)

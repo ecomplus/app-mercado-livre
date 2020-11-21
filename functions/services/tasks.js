@@ -282,6 +282,7 @@ const handleMLNotification = async (snap) => {
     }
     return await snap.ref.delete()
   } catch (error) {
+    functions.logger.error(error)
     await snap.ref.set({ running: false, error: true }, { merge: true })
     throw (error)
   }
