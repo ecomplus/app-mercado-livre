@@ -112,7 +112,7 @@ class OrderService {
         _id: randomObjectId(),
         payment_method: {
           code: (paymentOptions.find(type => type === payment.payment_type) || 'other'),
-          name: payment.payment_method_id,
+          name: `${payment.payment_method_id} (Mercado Livre)`,
         },
         amount: payment.total_paid_amount,
         intermediator: {
