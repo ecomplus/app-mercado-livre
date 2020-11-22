@@ -286,8 +286,8 @@ class OrderService {
       const resource = `/orders/${orderId}.json`
       this.appSdk
         .apiRequest(this.storeId, resource, 'PATCH', data)
-        .then(response => {
-          logger.success(this.appSdk, this.storeId, '[UPDATE ORDER]', response.data)
+        .then(({ response }) => {
+          logger.success(this.appSdk, this.storeId, '[UPDATE ORDER]', response)
           resolve(response)
         })
         .catch(error => {
@@ -305,7 +305,7 @@ class OrderService {
       const resource = '/orders.json'
       this.appSdk
         .apiRequest(this.storeId, resource, 'POST', data)
-        .then(response => {
+        .then(({ response }) => {
           logger.success(this.appSdk, this.storeId, '[CREATE ORDER]', response.data)
           resolve(response)
         })

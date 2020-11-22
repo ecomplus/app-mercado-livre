@@ -239,7 +239,7 @@ const handleOrder = async (appSdk, snap) => {
       const orderOnEcomId = await orderService.findOrderOnEcom(mlOrder.id)
       if (!orderOnEcomId) {
         const orderDataToCreate = await orderService.getOrderToCreate()
-        const { response } = await orderService.create(orderDataToCreate)
+        const response = await orderService.create(orderDataToCreate)
         await handleShipment(appSdk, storeId, mlNotificationService, response.data._id, mlOrder.shipping.id)
         handleBalanceReserve(storeId, mlOrder, false)
       } else {
