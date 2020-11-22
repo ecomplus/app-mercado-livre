@@ -62,7 +62,8 @@ class OrderService {
                   product_id,
                   sku: seller_custom_field,
                   quantity,
-                  price: unit_price
+                  price: unit_price,
+                  flags: [`ML-${item.id}`.substring(0, 20)]
                 }
                 let productName = data.name
                 if (data.sku !== seller_custom_field) {
