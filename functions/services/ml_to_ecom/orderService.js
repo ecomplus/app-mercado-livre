@@ -189,6 +189,18 @@ class OrderService {
     }
   }
 
+  buildSourceName() {
+    this.order.source_name = 'Mercado Livre'
+  }
+
+  buildStaffNotes() {
+    this.order.staff_notes = `Pedido importado do Mercado Livre com ID ${this.data.id}`
+  }
+
+  buildSellerStatus() {
+    this.order.seller_status = this.data.status.toString().substring(0, 50)
+  }
+
   buildNotes() {
     this.order.notes = `Order: ${this.data.id}`
   }
@@ -254,6 +266,9 @@ class OrderService {
     return new Promise((resolve, reject) => {
       this.order = {}
       try {
+        this.buildSourceName()
+        this.buildSellerStatus()
+        this.buildStaffNotes()
         this.buildTransactions()
         this.buildAmount()
         this.buildBuyer()
@@ -271,6 +286,7 @@ class OrderService {
 
   getOrderToUpdate() {
     this.order = {}
+    this.buildSellerStatus()
     this.buildTransactions()
     this.buildAmount()
     this.buildBuyer()
