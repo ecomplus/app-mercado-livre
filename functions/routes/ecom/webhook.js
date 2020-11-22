@@ -52,18 +52,17 @@ exports.post = ({ admin, appSdk }, req, res) => {
             case 'applications':
               if (fields.includes('data')) {
                 const data = {}
-                addNotification(admin, trigger).then(() => {
-                  let hasJobs = false
-                  for (const job of JOBS) {
-                    if (Array.isArray(body[job]) && body[job].length > 0) {
-                      hasJobs = true
-                      data[job] = []
-                    }
+                let hasJobs = false
+                for (const job of JOBS) {
+                  if (Array.isArray(body[job]) && body[job].length > 0) {
+                    hasJobs = true
+                    data[job] = []
                   }
-                  if (hasJobs) {
-                    updateAppData({ appSdk, storeId, auth }, data)
-                  }
-                })
+                }
+                if (hasJobs) {
+                  addNotification(admin, trigger).catch(err => { throw err })
+                  updateAppData({ appSdk, storeId, auth }, data)
+                }
               }
               break;
             default:
