@@ -1,3 +1,4 @@
+const fulfillmentStatus = require('./fulfillmentStatus')
 
 class ShipmentService {
   constructor(appSdk, storeId, data) {
@@ -60,6 +61,15 @@ class ShipmentService {
           code: this.data.tracking_number
         }
       ]
+    }
+  }
+
+  buildStatus() {
+    const status = fulfillmentStatus.getStatus(this.data.status)
+    if (status) {
+      this.shipping.status = {
+        current: status
+      }
     }
   }
 
