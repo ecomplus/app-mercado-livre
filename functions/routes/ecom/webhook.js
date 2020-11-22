@@ -2,6 +2,8 @@
 const { auth } = require('firebase-admin')
 const getAppData = require('./../../lib/store-api/get-app-data')
 const updateAppData = require('./../../lib/store-api/update-app-data')
+const functions = require('firebase-functions');
+
 
 const SKIP_TRIGGER_NAME = 'SkipTrigger'
 const ECHO_SUCCESS = 'SUCCESS'
@@ -9,6 +11,7 @@ const ECHO_SKIP = 'SKIP'
 const ECHO_API_ERROR = 'STORE_API_ERR'
 
 const addNotification = (admin, trigger) => {
+  functions.logger.info('[addNotification]', trigger)
   return admin.firestore()
     .collection('ecom_notifications')
     .add(trigger)

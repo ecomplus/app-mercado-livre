@@ -256,8 +256,6 @@ const handleOrder = async (appSdk, snap) => {
     return Promise.resolve(true)
   } catch (error) {
     return Promise.reject(error)
-  } finally {
-    // await snap.ref.delete()
   }
 }
 
