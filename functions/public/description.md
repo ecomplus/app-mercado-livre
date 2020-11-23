@@ -96,9 +96,7 @@ ____
 
 Após entender as particularidades, vamos à configuração:
 
-1. Instale o aplicativo Mercado Livre acessando o seu painel administrativo da E-com Plus:
-
-**COLOCAR IMAGEM AQUI**
+1. Instale o aplicativo Mercado Livre acessando o seu painel administrativo da E-com Plus
 
 2. Faça a configuração, preenchendo os seus dados de conexão do **Mercado Livre** em Autenticação:
 
