@@ -1,5 +1,5 @@
 
-# [ml](https://github.com/ecomplus/app-mercado-livre/tree/master/functions/public/icon.png)Integração E-com Plus com Mercado Livre
+# [ml](http://us-central1-ecom-mercado-livre.cloudfunctions.net/app/icon.png)Integração E-com Plus com Mercado Livre
 
 O Aplicativo Mercado Livre tem o objetivo de integrar os anúncios existentes na plataforma E-com Plus com os anúncios do Mercado Livre e também os pedidos feitos no Mercado Livre que possuiem vínculos vão ser integrados.
 
@@ -77,7 +77,7 @@ ____
 
 . Mesmo que o produto já esteja vinculado à algum anúncio no **Mercado Livre**, sempre ao exportar, será criado um *novo anúncio*, ou seja: É possível ter o mesmo produto anunciado mais de uma vez (Semopre confira o ID do ML do produto, que pode ser visto pelo painel oferecido pelo site):
 
-[ID no ML](https://github.com/ecomplus/app-mercado-livre/tree/master/functions/public/img/img1.png).
+[ID no ML](http://us-central1-ecom-mercado-livre.cloudfunctions.net/app/img/img1.png).
 
 ### Produtos que possuem cadastro de kits não são exportados.
 
@@ -106,7 +106,7 @@ Após entender as particularidades, vamos à configuração:
 
 Vá na aba Exportar produtos e preencha conforme detalhado abaixo:
 
-[exportar_produto](https://github.com/ecomplus/app-mercado-livre/tree/master/functions/public/img/produto.gif)
+[exportar_produto](http://us-central1-ecom-mercado-livre.cloudfunctions.net/app/img/produto.gif)
 
 #### Vincular produto já existente:
 
@@ -115,11 +115,11 @@ Vá na aba **vincular produto**. Ela serve para vincular um anúncio já existen
 2 - Sincronizar preço: Apśo alterar preço de venda, ele será alterado no Mercado Livre.
 3- Se cadastrar nova variação na E-com Plus, ela será integrada.
 
-[vincular_produto](https://github.com/ecomplus/app-mercado-livre/tree/master/functions/public/img/vincular_produto.png)
+[vincular_produto](http://us-central1-ecom-mercado-livre.cloudfunctions.net/app/img/vincular_produto.png)
 
 
 #### Desvincular produto do Mercado Livre:
 
 Retira o vínculo do produto na E-com Plus ao anúncio do Mercado Livre. Ele não exclui o pedido no Mercado Livre, apenas retira o vínculo. Basta localizar o produto e clicar para *Desvincular*:
 
-[des/vincular_produto](https://github.com/ecomplus/app-mercado-livre/tree/master/functions/public/img/desvincular.png)
+[des/vincular_produto](http://us-central1-ecom-mercado-livre.cloudfunctions.net/app/img/desvincular.png)
