@@ -1,8 +1,8 @@
 
 # ![ml](https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/icon.png)
-# Integração E-com Plus com Mercado Livre
+# Integração E-Com Plus com Mercado Livre
 
-O Aplicativo Mercado Livre tem o objetivo de integrar os anúncios existentes na plataforma E-com Plus com os anúncios do Mercado Livre e também os pedidos feitos no Mercado Livre que possuiem vínculos vão ser integrados.
+O Aplicativo Mercado Livre tem o objetivo de integrar os anúncios existentes na plataforma E-Com Plus com os anúncios do Mercado Livre e também os pedidos feitos no Mercado Livre que possuiem vínculos vão ser integrados.
 
 Antes de iniciar a configuração, leia atentamente as características importantes dessa integração:
 
@@ -17,24 +17,24 @@ Veja o exemplo abaixo:
 4. Se durante esse período de compensação do boleto, alguém vier e comprar 3 ou 2 unidades com cartão de crédito(a compra é aprovada praticamente simultaneamente), então o produto vai seguir para ser entregue para a segunda pessoa.
 5. E o boleto que o primeiro comprador fez? Será revertido para o Mercado pago seguindo as normas da empresa e devolvendo para o usuário.
 
-O que a E-com Plus fez para isso?
+O que a E-Com Plus fez para isso?
 
-* Criamos um **saldo reservado**. Quando é feita uma venda com boleto bancário, na E-com baixa o saldo do produto e a quantidade do boleto vai ficar reservada aguardando o pagamento. Dessa forma, sempre que o saldo for exportado para o Mercado Livre, será considerado o saldo do produto + reservado.
+* Criamos um **saldo reservado**. Quando é feita uma venda com boleto bancário, na E-Com baixa o saldo do produto e a quantidade do boleto vai ficar reservada aguardando o pagamento. Dessa forma, sempre que o saldo for exportado para o Mercado Livre, será considerado o saldo do produto + reservado.
 
 * Seguindo o exemplo acima, vai ficar assim:
 
 1. Saldo total de 3 unidades.
 2. Venda de 2 unidades em Boleto no **Mercado livre**.
-3. Na E-com o saldo vai ficar 1 + 2 reservado.
+3. Na E-Com o saldo vai ficar 1 + 2 reservado.
 
 ____
-Seguindo isso, podem ocorrer momentos que o saldo na E-com do produto vai estar menor que no mercado Livre:
+Seguindo isso, podem ocorrer momentos que o saldo na E-Com do produto vai estar menor que no mercado Livre:
 Na e-com o saldo vai ser 1 e no mercado livre 3 (os 2 estarão reservados e vão ser baixados com a confirmação do pagamento ou estornados caso o pagamento não seja aprovado).
 ____
 
 ### 2- Categoria do produto no Mercado Livre / Particularidades para cadastro do anúncio.
 
-. O **Mercado Livre** tem uma política de estrutura obrigatória para criar o anúncio. Determinadas categorias tem campos que são obrigatórios. Por exemplo: Calça é obrigatório as variações `tamanho` e `cor`. Se existir calça no cadastro da E-com e não possui essa variação, o anúcio não será enviado, gerando o log de erro mostrando que o campo é obrigatório.
+. O **Mercado Livre** tem uma política de estrutura obrigatória para criar o anúncio. Determinadas categorias tem campos que são obrigatórios. Por exemplo: Calça é obrigatório as variações `tamanho` e `cor`. Se existir calça no cadastro da E-Com e não possui essa variação, o anúcio não será enviado, gerando o log de erro mostrando que o campo é obrigatório.
 
 . Assim como existem variações que são obrigatórias para algumas categorias, também existem categorias do **Mercado Livre** que não permitem variação. Se ele não aceitar, o anúncio vai ser criado *desconsiderando* as variações existentes no produto.
 
@@ -42,26 +42,26 @@ ____
 
 . Se o nome do produto for maior que a categoria permite, também será enviado somente a quantidade de caracteres permitidos (desconsiderando sempre o final da descrição).
 
-### 3- Vínculo do produto E-com ao anúncio do Mercado Livre.
+### 3- Vínculo do produto E-Com ao anúncio do Mercado Livre.
 
-. Se você já possui anúncios no mercado livre, basta utilizar a opção de vincular para informar o produto E-com correspondente. Isso fará com que de acordo com a sua confiração, a E-com possa enviar atualizações de preço e saldo por exemplo. Os pedidos gerados no Mercado Livre com esse produto, também serão importados para a plataforma da E-com.
+. Se você já possui anúncios no mercado livre, basta utilizar a opção de vincular para informar o produto E-Com correspondente. Isso fará com que de acordo com a sua confiração, a E-Com possa enviar atualizações de preço e saldo por exemplo. Os pedidos gerados no Mercado Livre com esse produto, também serão importados para a plataforma da E-Com.
 
 ### 4- Anúncio inativo no Mercado Livre.
 
-. O Mercado livre possibilita inativar um anúncio para que paralise venda dele na plataforma. Se o anúncio estiver inativo, a E-com não enviará atualizações de preço, saldo.
+. O Mercado livre possibilita inativar um anúncio para que paralise venda dele na plataforma. Se o anúncio estiver inativo, a E-Com não enviará atualizações de preço, saldo.
 
-### Desvincular produto na E-com.
+### Desvincular produto na E-Com.
 
-. Ao acessar a E-com e *desvincular* o produto, ele apenas retira o vńculo da comunicação E-com ➙ Mercado  Livre. O anúncio continua ativo. Se for necessário inativar ou excluir o anúncio, ele deve ser feito diretamente no site do **Mercado Livre**.
+. Ao acessar a E-Com e *desvincular* o produto, ele apenas retira o vńculo da comunicação E-Com ➙ Mercado  Livre. O anúncio continua ativo. Se for necessário inativar ou excluir o anúncio, ele deve ser feito diretamente no site do **Mercado Livre**.
 
-### O cliente fez a compra de mais de um produto da minha loja. Porque gerou 2 pedidos na E-com?
+### O cliente fez a compra de mais de um produto da minha loja. Porque gerou 2 pedidos na E-Com?
 
-. Quando é feito no mesmo tícket de venda 2 produtos diferentes do mesmo anunciante (ou seja: A pessoa adquiriu na mesma compra o produto A e o produto B), o mercado Livre gera 2 pedidos diferentes. Como a E-com apenas importa o pedido, se foram gerados 2, serão importados 2:Cada um com um produto.
+. Quando é feito no mesmo tícket de venda 2 produtos diferentes do mesmo anunciante (ou seja: A pessoa adquiriu na mesma compra o produto A e o produto B), o mercado Livre gera 2 pedidos diferentes. Como a E-Com apenas importa o pedido, se foram gerados 2, serão importados 2:Cada um com um produto.
 . E se eu comprar mais unidades do mesmo produto? Se for o mesmo produto, gera um único pedido.
 
 ### Variação de produtos com preço de venda diferente.
 
-. Na E-com é possível ter uma variação com preço diferente das demais. Para ser exportado para o Mercado Livre, se o preço for diferente, vai ser usado o maior preço para **todos** incluídos na variação. Ou seja: Se a cor Azul é 10,00 e a cor vermelho é 12,00. Será aplicado o maior valor (12,00).
+. Na E-Com é possível ter uma variação com preço diferente das demais. Para ser exportado para o Mercado Livre, se o preço for diferente, vai ser usado o maior preço para **todos** incluídos na variação. Ou seja: Se a cor Azul é 10,00 e a cor vermelho é 12,00. Será aplicado o maior valor (12,00).
 
 ### Produto com saldo em branco ou zero gera anúncio *inativo*.
 
@@ -69,7 +69,7 @@ ____
 
 ### Após enviar um anúncio, quais campos são sempre atualizados?
 
-. A descrição do produto é um exemplo de campo que não é atualizado. Se você enviar um anúncio e deixar ele vinculado à E-com, ao mudar o nome do produto, essa alteração não é enviada. Veja os campos atualizados sempre que houver alteração:
+. A descrição do produto é um exemplo de campo que não é atualizado. Se você enviar um anúncio e deixar ele vinculado à E-Com, ao mudar o nome do produto, essa alteração não é enviada. Veja os campos atualizados sempre que houver alteração:
 1. Preço de venda (desde que tenha sido configurado).
 2. Saldo (desde que tenha sido configurado).
 3. Variação.
@@ -84,7 +84,7 @@ ____
 
 . Se o produto esta com Kit habilitado no cadastro dele, não será exportado.
 
-### Campanhas e descontos na E-com Plus.
+### Campanhas e descontos na E-Com Plus.
 
 . Ao exportar o produto, a opção de campanhas e descontos NÃO será considerada para criação do anúncio.Será exportado o produto como esta no cadastro.
 
@@ -96,7 +96,7 @@ ____
 
 Após entender as particularidades, vamos à configuração:
 
-1. Instale o aplicativo Mercado Livre acessando o seu painel administrativo da E-com Plus
+1. Instale o aplicativo Mercado Livre acessando o seu painel administrativo da E-Com Plus
 
 2. Faça a configuração, preenchendo os seus dados de conexão do **Mercado Livre** em Autenticação:
 
@@ -109,16 +109,16 @@ Vá na aba Exportar produtos e preencha conforme detalhado abaixo:
 
 #### Vincular produto já existente:
 
-Vá na aba **vincular produto**. Ela serve para vincular um anúncio já existente no **MErcado Livre** ao cadastro da E-com Plus. Após fazer o vínculo, novos pedidos feitos no MErcado Livre com esse produto serão integrados à plataforma E-com Plus. Se você marcar as opções:
+Vá na aba **vincular produto**. Ela serve para vincular um anúncio já existente no **MErcado Livre** ao cadastro da E-Com Plus. Após fazer o vínculo, novos pedidos feitos no MErcado Livre com esse produto serão integrados à plataforma E-Com Plus. Se você marcar as opções:
 1 - Sincronizar saldo: A cada mudança do saldo, será atualizado o saldo no Mercado Livre.
 2 - Sincronizar preço: Apśo alterar preço de venda, ele será alterado no Mercado Livre.
-3- Se cadastrar nova variação na E-com Plus, ela será integrada.
+3- Se cadastrar nova variação na E-Com Plus, ela será integrada.
 
 ![vincular_produto](https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/img/vincular_produto.png)
 
 
 #### Desvincular produto do Mercado Livre:
 
-Retira o vínculo do produto na E-com Plus ao anúncio do Mercado Livre. Ele não exclui o pedido no Mercado Livre, apenas retira o vínculo. Basta localizar o produto e clicar para *Desvincular*:
+Retira o vínculo do produto na E-Com Plus ao anúncio do Mercado Livre. Ele não exclui o pedido no Mercado Livre, apenas retira o vínculo. Basta localizar o produto e clicar para *Desvincular*:
 
 ![des/vincular_produto](https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/img/desvincular.png)
