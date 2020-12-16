@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Mercado Livre (BETA)",
-    "short_description": "O Aplicativo Mercado Livre tem o objetivo de integrar os anúncios existentes na plataforma E-com Plus com os anúncios do Mercado Livre e também os pedidos feitos no Mercado Livre que possuiem vínculos vão ser integrados.",
-    "category": "tools"
+    "short_description": "Integração direta de anúncios e pedidos com o marketplace Mercado Livre",
+    "category": "sales-channels"
   }
 }
