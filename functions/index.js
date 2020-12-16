@@ -10,9 +10,7 @@ const admin = require('firebase-admin')
 const functions = require('firebase-functions')
 admin.initializeApp()
 
-//tasks
 const tasks = require('./services/tasks')
-
 
 // web server with Express
 const express = require('express')
@@ -69,6 +67,14 @@ router.get('/', (req, res) => {
   require(`${routes}/`)(req, res)
 })
 
+const prepareAppSdk = () => {
+  // debug ecomAuth processes and ensure enable token updates by default
+  process.env.ECOM_AUTH_DEBUG = 'true'
+  process.env.ECOM_AUTH_UPDATE = 'enabled'
+  // setup ecomAuth client with Firestore instance
+  return setup(null, true, admin.firestore())
+}
+
 // base routes for E-Com Plus Store API
 const routesDir = path.join(__dirname, routes)
 recursiveReadDir(routesDir).filter(filepath => filepath.endsWith('.js')).forEach(filepath => {
@@ -109,12 +115,7 @@ recursiveReadDir(routesDir).filter(filepath => filepath.endsWith('.js')).forEach
     if (middleware) {
       router[method](filename, (req, res) => {
         console.log(`${method} ${filename}`)
-
-        // debug ecomAuth processes and ensure enable token updates by default
-        process.env.ECOM_AUTH_DEBUG = 'true'
-        process.env.ECOM_AUTH_UPDATE = 'enabled'
-        // setup ecomAuth client with Firestore instance
-        setup(null, true, admin.firestore()).then(appSdk => {
+        prepareAppSdk().then(appSdk => {
           middleware({ appSdk, admin }, req, res)
         }).catch(err => {
           console.error(err)
@@ -136,3 +137,12 @@ exports[functionName] = functions.https.onRequest(server)
 exports.tasks = tasks
 
 console.log(`-- Starting '${app.title}' E-Com Plus app with Function '${functionName}'`)
+
+// schedule update tokens job
+const cron = '12 3,11,19 * * *'
+exports.updateTokens = functions.pubsub.schedule(cron).onRun(() => {
+  return prepareAppSdk().then(appSdk => {
+    return appSdk.updateTokens()
+  })
+})
+console.log(`-- Sheduled update E-Com Plus tokens '${cron}'`)
