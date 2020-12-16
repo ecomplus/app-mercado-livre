@@ -1,6 +1,4 @@
-
-# ![ml](https://us-central1-ecom-mercado-livre.cloudfunctions.net/app/icon.png)
-# Integração E-Com Plus com Mercado Livre
+# Marketplace Mercado Livre
 
 O Aplicativo Mercado Livre tem o objetivo de integrar os anúncios existentes na plataforma E-Com Plus com os anúncios do Mercado Livre e também os pedidos feitos no Mercado Livre que possuiem vínculos vão ser integrados.
 
