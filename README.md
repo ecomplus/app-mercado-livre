@@ -1,10 +1,14 @@
+# App Mercado Livre
+
+[![Deploy](https://github.com/ecomplus/app-mercado-livre/workflows/Deploy/badge.svg)](https://github.com/ecomplus/app-mercado-livre/actions?workflow=Deploy) [![Publish](https://github.com/ecomplus/app-mercado-livre/workflows/Publish/badge.svg)](https://github.com/ecomplus/app-mercado-livre/actions?workflow=Publish) [![License GPL](https://img.shields.io/badge/License-GPL-orange.svg)](https://opensource.org/licenses/GPL)
+
+E-Com Plus app to integrate Mercado Livre marketplace
+
+[CHANGELOG](https://github.com/ecomplus/app-mercado-livre/blob/master/CHANGELOG.md)
+
 # E-Com Plus Application Starter
 
-[![Deploy](https://github.com/ecomplus/application-starter/workflows/Deploy/badge.svg)](https://github.com/ecomplus/application-starter/actions?workflow=Deploy) [![Call refresh tokens](https://github.com/ecomplus/application-starter/workflows/Call%20refresh%20tokens/badge.svg)](https://github.com/ecomplus/application-starter/actions?workflow=Call+refresh+tokens) [![License MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 :dog: Boilerplate for E-Com Plus apps with [Firebase](https://firebase.google.com/) Cloud Functions and GitHub Actions.
-
-[CHANGELOG](https://github.com/ecomplus/application-starter/blob/master/CHANGELOG.md)
 
 ## Getting started
 
