@@ -139,7 +139,7 @@ exports.tasks = tasks
 console.log(`-- Starting '${app.title}' E-Com Plus app with Function '${functionName}'`)
 
 // schedule update tokens job
-const cron = '12 3,11,19 * * *'
+const cron = '10 7,15,23 * * *'
 exports.updateTokens = functions.pubsub.schedule(cron).onRun(() => {
   return prepareAppSdk().then(appSdk => {
     return appSdk.updateTokens()
