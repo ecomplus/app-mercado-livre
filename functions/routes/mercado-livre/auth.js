@@ -1,29 +1,39 @@
 const meli = require('mercadolibre')
 const { ml } = require('firebase-functions').config()
 const ProfileService = require('../../services/ml_to_ecom/profileService')
+const UtilsService = require('../../services/utilsService')
 const { logger } = require('firebase-functions');
 
 
-const updateProfile = (appSdk, store_id, user) => {
+const getProfile = (user) => {
+  return new Promise((resolve, reject) => {
+    if (user && user.data().access_token) {
+      const utilsservice = new UtilsService(user)
+      utilsservice.getUserInfo()
+        .then(profile => resolve(profile))
+        .catch(error => reject(error))
+    }
+    reject('invalid user!')
+  })
+}
+
+const updateProfile = (appSdk, store_id, profile) => {
   return new Promise((resolve, reject) => {
     const profileService = new ProfileService(appSdk, store_id)
-    logger.info('[ML AUTH: START UPDATE USER INFO]', user.data())
-    if (user && user.data().access_token) {
-      return profileService.updateUserInfo(user.data())
-        .then(({ response }) => {
-          if (response && response.status == 204) {
-            logger.info('[SUCCESS TO UPDATE USER INFO]', user.data())
-            return resolve()
-          }
-          logger.error('[ML AUTH: ERROR TO UPDATE USER INFO]', response)
-          return reject('Error to process login with Mercado Livre!')
-        })
-        .catch((err) => {
-          logger.error('[ML AUTH: ERROR TO HANDLE updateUserInfo]', err)
-          return reject(err)
-        })
-    }
-    return reject('Error to proccess login with Mercado Livre')
+    logger.info('[ML AUTH: START UPDATE PROFILE]', profile)
+    return profileService.updateUserInfo(profile)
+      .then(({ response }) => {
+        if (response && response.status == 204) {
+          logger.info('[SUCCESS TO UPDATE PROFILE]', profile)
+          return resolve()
+        }
+        logger.error('[ML AUTH: ERROR TO UPDATE PROFILE]', response)
+        return reject('Error to process login with Mercado Livre!')
+      })
+      .catch((err) => {
+        logger.error('[ML AUTH: ERROR TO UPDATE PROFILE]', err)
+        return reject(err)
+      })
   })
 }
 
@@ -46,7 +56,8 @@ exports.get = ({ admin, appSdk }, req, res) => {
           .collection('ml_app_auth')
           .doc(`${store_id}`)
           .get()
-          .then(user => updateProfile(appSdk, store_id, user))
+          .then(getProfile)
+          .then(profile => updateProfile(appSdk, store_id, profile))
           .then(() => res.send('loading...'))
           .catch(error => res.status(500).send(error))
       }
@@ -67,7 +78,8 @@ exports.get = ({ admin, appSdk }, req, res) => {
         docRef.set(authData)
 
         return docRef.get()
-          .then(user => updateProfile(appSdk, store_id, user))
+          .then(getProfile)
+          .then(profile => updateProfile(appSdk, store_id, profile))
           .then(() => res.send('loading...'))
           .catch(error => res.status(500).send(error))
       }
