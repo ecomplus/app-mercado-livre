@@ -8,7 +8,7 @@ const { logger } = require('firebase-functions');
 const getProfile = (user) => {
   return new Promise((resolve, reject) => {
     if (user && user.data().access_token) {
-      const utilsservice = new UtilsService(user)
+      const utilsservice = new UtilsService(user.data())
       return utilsservice.getUserInfo()
         .then(profile => resolve(profile))
         .catch(error => reject(error))
