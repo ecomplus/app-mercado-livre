@@ -33,7 +33,7 @@ const refreshToken = (admin, storeId, data) => {
   })
 }
 
-exports.post = ({ admin }, req, res) => {
+exports.updateMLTokens = ({ admin }, req, res) => {
   try {
     const promises = []
     admin.firestore()
