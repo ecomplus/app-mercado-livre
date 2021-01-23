@@ -9,7 +9,7 @@ const getProfile = (user) => {
   return new Promise((resolve, reject) => {
     if (user && user.data().access_token) {
       const utilsservice = new UtilsService(user)
-      utilsservice.getUserInfo()
+      return utilsservice.getUserInfo()
         .then(profile => resolve(profile))
         .catch(error => reject(error))
     }
