@@ -32,8 +32,7 @@ exports.get = ({ admin, appSdk }, req, res) => {
     const { code } = req.query
     const meliObject = new meli.Meli(ml.client_id, ml.secret_key)
     const redirectUri = ml.redirect_uri
-    // const { store_id } = req.cookies
-    var store_id = 1117
+    const { store_id } = req.cookies
 
     meliObject.authorize(code, redirectUri, (err, result) => {
       if (err) {
