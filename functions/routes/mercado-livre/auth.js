@@ -61,7 +61,7 @@ exports.get = ({ admin, appSdk }, req, res) => {
           .set(authData)
           .then(({ response }) => {
             if (response && response.status == 204) {
-              logger.info('[SUCCESS TO UPDATE USER INFO]', user.data())
+              logger.info('[SUCCESS TO UPDATE USER INFO]', authData)
               return res.send('loading...')
             }
             logger.error('[ML AUTH: ERROR TO UPDATE USER INFO]', response)
