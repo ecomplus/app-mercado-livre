@@ -63,7 +63,8 @@ exports.get = ({ admin, appSdk }, req, res) => {
         const docRef = admin.firestore()
           .collection('ml_app_auth')
           .doc(`${store_id}`)
-          .set(authData)
+
+        docRef.set(authData)
 
         return docRef.get()
           .then(user => updateProfile(appSdk, store_id, user))
