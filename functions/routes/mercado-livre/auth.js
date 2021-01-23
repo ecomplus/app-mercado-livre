@@ -60,11 +60,12 @@ exports.get = ({ admin, appSdk }, req, res) => {
           updated_at: new Date()
         }
 
-        return admin.firestore()
+        const docRef = admin.firestore()
           .collection('ml_app_auth')
           .doc(`${store_id}`)
           .set(authData)
-          .get()
+
+        return docRef.get()
           .then(user => updateProfile(appSdk, store_id, user))
           .then(() => res.send('loading...'))
           .catch(error => res.status(500).send(error))
