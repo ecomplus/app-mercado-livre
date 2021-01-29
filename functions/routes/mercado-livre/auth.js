@@ -11,7 +11,10 @@ const getProfile = (user) => {
       const utilsservice = new UtilsService(user.data())
       return utilsservice.getUserInfo()
         .then(profile => resolve(profile))
-        .catch(error => reject(error))
+        .catch(error => {
+          logger.info('[ML AUTH:getProfil ERROR]', error)
+          reject(error)
+        })
     }
     reject('invalid user!')
   })
@@ -20,18 +23,18 @@ const getProfile = (user) => {
 const updateProfile = (appSdk, store_id, profile) => {
   return new Promise((resolve, reject) => {
     const profileService = new ProfileService(appSdk, store_id)
-    logger.log('[ML AUTH: START UPDATE PROFILE]', profile)
+    logger.log('[ML AUTH:updateProfile START UPDATE PROFILE]', profile)
     return profileService.updateUserInfo(profile)
       .then(({ response }) => {
         if (response && response.status == 204) {
           logger.log('[SUCCESS TO UPDATE PROFILE]', profile)
           return resolve()
         }
-        logger.log('[ML AUTH: ERROR TO UPDATE PROFILE]', response)
+        logger.log('[ML AUTH:updateProfile ERROR TO UPDATE PROFILE]', response)
         return reject('Error to process login with Mercado Livre!')
       })
       .catch((err) => {
-        logger.log('[ML AUTH: ERROR TO UPDATE PROFILE]', err)
+        logger.log('[ML AUTH:updateProfile ERROR TO UPDATE PROFILE]', err)
         return reject(err)
       })
   })
@@ -46,7 +49,7 @@ exports.get = ({ admin, appSdk }, req, res) => {
 
     meliObject.authorize(code, redirectUri, (err, result) => {
       if (err) {
-        logger.log(err)
+        logger.log('[ML AUTH: ERROR]', err)
         throw err
       }
 
@@ -59,7 +62,10 @@ exports.get = ({ admin, appSdk }, req, res) => {
           .then(getProfile)
           .then(profile => updateProfile(appSdk, store_id, profile))
           .then(() => res.send('loading...'))
-          .catch(error => res.status(500).send(error))
+          .catch(error => {
+            logger.log('[ML AUTH: ERROR]', error)
+            res.status(500).send(error)
+          })
       }
 
       logger.log('[ML AUTH: RESULT]', result)
@@ -81,12 +87,15 @@ exports.get = ({ admin, appSdk }, req, res) => {
           .then(getProfile)
           .then(profile => updateProfile(appSdk, store_id, profile))
           .then(() => res.send('loading...'))
-          .catch(error => res.status(500).send(error))
+          .catch(error => {
+            logger.log('[ML AUTH: ERROR]', error)
+            res.status(500).send(error)
+          })
       }
       return res.status(500).send('Error to process login with Mercado Livre!')
     })
   } catch (error) {
-    console.log(error)
+    logger.log('[ML AUTH: ERROR]', error)
     return res.status(500).send(error)
   }
 
