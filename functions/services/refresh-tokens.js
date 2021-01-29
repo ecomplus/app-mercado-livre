@@ -1,5 +1,6 @@
 const meli = require('mercadolibre')
 const { ml } = require('firebase-functions').config()
+const { logger } = require('firebase-functions');
 
 const refreshToken = (admin, storeId, data) => {
   const { access_token, refresh_token, created_at } = data
@@ -33,7 +34,7 @@ const refreshToken = (admin, storeId, data) => {
   })
 }
 
-exports.updateMLTokens = ({ admin }, req, res) => {
+exports.updateMLTokens = (admin) => {
   try {
     const promises = []
     admin.firestore()
@@ -44,11 +45,12 @@ exports.updateMLTokens = ({ admin }, req, res) => {
           promises.push(refreshToken(admin, auth.id, auth.data()))
         })
         Promise.all(promises).then(() => {
-          return res.send('ok')
+          logger.info('[updateMLTokens]: success to update ml tokens')
         })
       })
       .catch(err => { throw err })
   } catch (error) {
-    return res.status(500).send(error)
+    logger.error('[updateMLTokens]', error)
+    throw error
   }
 }
