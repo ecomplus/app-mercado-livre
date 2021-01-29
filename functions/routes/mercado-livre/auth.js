@@ -20,18 +20,18 @@ const getProfile = (user) => {
 const updateProfile = (appSdk, store_id, profile) => {
   return new Promise((resolve, reject) => {
     const profileService = new ProfileService(appSdk, store_id)
-    logger.info('[ML AUTH: START UPDATE PROFILE]', profile)
+    logger.log('[ML AUTH: START UPDATE PROFILE]', profile)
     return profileService.updateUserInfo(profile)
       .then(({ response }) => {
         if (response && response.status == 204) {
-          logger.info('[SUCCESS TO UPDATE PROFILE]', profile)
+          logger.log('[SUCCESS TO UPDATE PROFILE]', profile)
           return resolve()
         }
-        logger.error('[ML AUTH: ERROR TO UPDATE PROFILE]', response)
+        logger.log('[ML AUTH: ERROR TO UPDATE PROFILE]', response)
         return reject('Error to process login with Mercado Livre!')
       })
       .catch((err) => {
-        logger.error('[ML AUTH: ERROR TO UPDATE PROFILE]', err)
+        logger.log('[ML AUTH: ERROR TO UPDATE PROFILE]', err)
         return reject(err)
       })
   })
@@ -46,12 +46,12 @@ exports.get = ({ admin, appSdk }, req, res) => {
 
     meliObject.authorize(code, redirectUri, (err, result) => {
       if (err) {
-        logger.error(err)
+        logger.log(err)
         throw err
       }
 
-      if (result && result.error && result.status == 400) {
-        logger.error('[ML AUTH: RESULT]', result)
+      if (result && result.log && result.status == 400) {
+        logger.log('[ML AUTH: RESULT]', result)
         return admin.firestore()
           .collection('ml_app_auth')
           .doc(`${store_id}`)
@@ -62,7 +62,7 @@ exports.get = ({ admin, appSdk }, req, res) => {
           .catch(error => res.status(500).send(error))
       }
 
-      logger.info('[ML AUTH: RESULT]', result)
+      logger.log('[ML AUTH: RESULT]', result)
 
       if (result && result.access_token) {
         const authData = {

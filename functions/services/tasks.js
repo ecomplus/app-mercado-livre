@@ -12,6 +12,7 @@ const { setup } = require('@ecomplus/application-sdk')
 const admin = require('firebase-admin');
 
 const BalanceReserve = require('./balanceReserveService');
+const { logger } = require('firebase-functions');
 
 
 const getUser = (params) => {
@@ -288,12 +289,14 @@ const handleMLNotification = async (snap) => {
 
 const handleUpdateMLProfile = async (snap) => {
   try {
+    logger.log('[handleUpdateMLProfile: starting...]')
     const appSdk = await setup(null, true, admin.firestore())
     const utilsService = new UtilsService(snap.data())
     const userInfo = await utilsService.getUserInfo()
     const profileService = new ProfileService(appSdk, snap.id)
     return profileService.updateUserInfo(userInfo)
   } catch (error) {
+    logger.log('[handleUpdateMLProfile: error]', error)
     throw error
   }
 }
