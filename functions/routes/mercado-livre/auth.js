@@ -8,7 +8,7 @@ const { logger } = require('firebase-functions');
 const getProfile = (user) => {
   return new Promise((resolve, reject) => {
     logger.info('[ML AUTH:getProfil user.data()]', user, user.data())
-    if (user && user.data().access_token) {
+    if (user && user.data() && user.data().access_token) {
       const utilsservice = new UtilsService(user.data())
       return utilsservice.getUserInfo()
         .then(profile => resolve(profile))
@@ -54,7 +54,7 @@ exports.get = ({ admin, appSdk }, req, res) => {
         throw err
       }
 
-      if (result && result.log && result.status == 400) {
+      if (result && result.status == 400) {
         logger.log('[ML AUTH: RESULT]', result)
         return admin.firestore()
           .collection('ml_app_auth')
@@ -82,12 +82,19 @@ exports.get = ({ admin, appSdk }, req, res) => {
           .collection('ml_app_auth')
           .doc(`${store_id}`)
 
-        docRef.set(authData)
-
-        return docRef.get()
-          .then(getProfile)
-          .then(profile => updateProfile(appSdk, store_id, profile))
-          .then(() => res.send('loading...'))
+        return docRef
+          .set(authData)
+          .then(() => {
+            return docRef
+              .get()
+              .then(getProfile)
+              .then(profile => updateProfile(appSdk, store_id, profile))
+              .then(() => res.send('loading...'))
+              .catch(error => {
+                logger.log('[ML AUTH: ERROR]', error)
+                res.status(500).send(error)
+              })
+          })
           .catch(error => {
             logger.log('[ML AUTH: ERROR]', error)
             res.status(500).send(error)
