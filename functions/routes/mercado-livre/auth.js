@@ -7,16 +7,17 @@ const { logger } = require('firebase-functions');
 
 const getProfile = (user) => {
   return new Promise((resolve, reject) => {
+    logger.info('[ML AUTH:getProfil user.data()]', user, user.data())
     if (user && user.data().access_token) {
       const utilsservice = new UtilsService(user.data())
       return utilsservice.getUserInfo()
         .then(profile => resolve(profile))
         .catch(error => {
           logger.info('[ML AUTH:getProfil ERROR]', error)
-          reject(error)
+          return reject(error)
         })
     }
-    reject('invalid user!')
+    return reject('invalid user!')
   })
 }
 
