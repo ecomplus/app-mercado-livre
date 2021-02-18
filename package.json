@@ -1,7 +1,7 @@
 {
   "name": "@ecomplus/app-mercado-livre",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "E-Com Plus app to integrate ML marketplace",
   "main": "functions/index.js",
   "scripts": {

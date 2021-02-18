@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1](https://github.com/ecomplus/application-starter/compare/v1.0.0...v1.0.1) (2021-02-18)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#26](https://github.com/ecomplus/application-starter/issues/26)) ([9cbfd76](https://github.com/ecomplus/application-starter/commit/9cbfd76dd2454b81a492b83e7ec893ffa8a2a253))
+* add logs ([aaee55d](https://github.com/ecomplus/application-starter/commit/aaee55d834322c739ee6c3c6b7c3dea8df34ffd2))
+* adjusted auth validation ([8f34a9e](https://github.com/ecomplus/application-starter/commit/8f34a9e5d49653b4b86fce07f31ce86f78268db8))
+* adjusted to get profile before save ([840faaf](https://github.com/ecomplus/application-starter/commit/840faaf1103d20d555f74caa4dd7a3b4ed8dd70d))
+* changed authorization url ([aac5beb](https://github.com/ecomplus/application-starter/commit/aac5beb201acb31e9eec914c45f0638cdbcada4b))
+* fix ([5089a9a](https://github.com/ecomplus/application-starter/commit/5089a9a714ec83abe272eaea0321e36176c91001))
+* fix ([67ac369](https://github.com/ecomplus/application-starter/commit/67ac36932b8ea386dd22c3a5fe89daf3ee29ae40))
+* fix ([7d44030](https://github.com/ecomplus/application-starter/commit/7d440308fc7a4ff63b5de1d88aa549d1e4f66497))
+* fix ([0dfd1b1](https://github.com/ecomplus/application-starter/commit/0dfd1b1a7edb45c04eb2605219f939925b3e06fe))
+* fix ([3493b7c](https://github.com/ecomplus/application-starter/commit/3493b7cdc8c1158109475322e877a23f43e28a63))
+* fix bug to set ml auth data ([b1cb580](https://github.com/ecomplus/application-starter/commit/b1cb580563f24cd448a971c8fac382708350ec2d))
+* fix ml update tokens ([630203a](https://github.com/ecomplus/application-starter/commit/630203a9daeb99f77d6d2730531be721503c464f))
+* fix update profile ([fc069f8](https://github.com/ecomplus/application-starter/commit/fc069f8b6612c04641c6fb110cb1a7f83d628b6d))
+* fix update user info ([88b5ff2](https://github.com/ecomplus/application-starter/commit/88b5ff20d77b6f5d09b30a35851c134cc0bcc225))
+* fixes to update ml profile ([44d4901](https://github.com/ecomplus/application-starter/commit/44d4901a3f15cc07e2140fa40f466c87a2eb6e76))
+* removed test code ([2ebe61b](https://github.com/ecomplus/application-starter/commit/2ebe61b1bbfeae8297132c99048902716f45fa75))
+* **deps:** update all non-major dependencies ([#8](https://github.com/ecomplus/application-starter/issues/8)) ([c06ee47](https://github.com/ecomplus/application-starter/commit/c06ee4748e10f7bee38560a2fc6451e7226fe609))
+
 ## 1.0.0 (2020-12-16)
 
 
