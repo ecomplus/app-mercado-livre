@@ -149,7 +149,7 @@ exports.updateTokens = functions.pubsub.schedule(cron).onRun(() => {
 })
 console.log(`-- Sheduled update E-Com Plus tokens '${cron}'`)
 
-const mlCron = '30 1,3,5,7,9,13,15,17,19,21 * * *'
+const mlCron = '30 */2 * * *'
 exports.updateMLTokens = functions.pubsub.schedule(mlCron).onRun(() => {
   return updateMLTokens(admin)
 })
