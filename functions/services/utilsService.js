@@ -15,7 +15,7 @@ class UtilsService {
   async findSuggestedCategories(term) {
     try {
       const { data } = await this.server
-        .get(`/sites/MLB/domain_discovery/search?limit=5&q=${term}`)
+        .get(`/sites/MLB/domain_discovery/search?q=${term}`)
       return Promise.resolve(data)
     } catch (error) {
       if (error.response) {
