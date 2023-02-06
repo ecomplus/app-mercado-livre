@@ -84,6 +84,7 @@ const createProducts = (params) => {
     const products = []
     for (const product of productsToExport) {
       const resource = `/products/${product.product_id}.json`
+      console.log('resource product on creation')
       products.push(
         appSdk.apiRequest(parseInt(notification.store_id, 10), resource, 'GET')
           .then(({ response }) => getMlCategory({ ...params, product, ecomProduct: response.data }))
@@ -93,6 +94,7 @@ const createProducts = (params) => {
     }
     return Promise.all(products)
       .then(values => {
+        console.log('Promisse fulfilled', values)
         return resolve(values.map(({ result }) => ({ status: result.status, data: result.data })))
       })
       .catch(error => reject(error))
@@ -101,6 +103,7 @@ const createProducts = (params) => {
 
 const exportProducts = (appSdk, notification) => {
   return new Promise((resolve, reject) => {
+    console.log('Iniciando exportação do produto')
     getUser({ appSdk, notification })
       .then(createProducts)
       .then(result => resolve(result))
