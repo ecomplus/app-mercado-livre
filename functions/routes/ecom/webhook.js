@@ -25,7 +25,7 @@ exports.post = ({ admin, appSdk }, req, res) => {
   const { storeId } = req
 
   /**
-   * Treat E-Com Plus trigger body here
+   * Treat E-Com Plus trigger body here 
    * Ref.: https://developers.e-com.plus/docs/api/#/store/triggers/
    */
   const trigger = req.body
