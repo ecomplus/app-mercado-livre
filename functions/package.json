@@ -29,7 +29,7 @@
     "eslint": "^6.8.0",
     "eslint-plugin-promise": "^4.3.1",
     "faker": "^5.5.3",
-    "firebase-functions-test": "^0.3.2",
+    "firebase-functions-test": "^3.1.1",
     "mocha": "^8.4.0"
   },
   "private": true
