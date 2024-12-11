@@ -14,12 +14,12 @@
     "node": "14"
   },
   "dependencies": {
-    "@ecomplus/application-sdk": "^22.0.0-firestore.1.15.4",
+    "@ecomplus/application-sdk": "^22.0.0-firestore.1.15.7",
     "@google-cloud/firestore": "^4.15.0",
     "axios": "^0.21.0",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
-    "firebase-admin": "^9.11.1",
+    "firebase-admin": "^11.4.1",
     "firebase-functions": "^3.15.4",
     "mercadolibre": "0.0.13",
     "uuid": "^8.3.2"
